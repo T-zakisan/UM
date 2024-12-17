@@ -1,0 +1,28 @@
+\documentclass{article}
+\usepackage{tcolorbox}
+
+\renewcommand{\section}[1]{%
+    \cleardoublepage  %　右ページから開始
+    \stepcounter{part} % パート番号を更新
+    \thispagestyle{empty} % このページのページ番号を非表示
+    \begin{tcolorbox}[
+        enhanced,
+        colback=gray!20, % 背景色を薄い灰色に設定
+        colframe=gray!20, % 枠線を背景色と同じにして非表示
+        borderline horizontal={5.5pt}{0.0pt}{black}, % 上下の装飾線のみ表示
+        sharp corners % 角を直角に
+    ]%
+    \LARGE\bfseries\gtfamily\centering \thesection AA \hspace{1ex} #1
+    \end{tcolorbox}%
+    \cleardoublepage
+}
+
+\begin{document}
+
+\section{1st Section}
+aaaaaaaaaaaaaaaa
+
+\section{2nd Section}
+aaaaaaaaaaaa
+
+\end{document}
