@@ -8,13 +8,13 @@
 
 
 
-% 余白設定
+% デフォルトの余白設定
 \usepackage[top     =20truemm, 
             bottom  =18truemm, 
             left    =23truemm, 
             right   =23truemm]{geometry}
 
-% 和文をゴシック体に変更
+% 和文をゴシック体に変更　※通常オフ
 %\renewcommand{\kanjifamilydefault}{\gtdefault} % 和文フォントをゴシック体に
 
 
@@ -24,6 +24,7 @@
 \fancyfoot[C]{\bfseries\ttfamily\ifnum\value{section}=0 S-\thepage\else \thesection-\thepage \fi} % ページ番号
 \renewcommand{\headrulewidth}{0pt} % デフォルトのヘッダー罫線を非表示
 \renewcommand{\footrulewidth}{0.4pt} % フッターに罫線を表示
+
 
 % ヘッダー部にセクション名を表示
 \fancyhead[C]{%
