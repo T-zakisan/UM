@@ -4,18 +4,47 @@
 \usepackage{lastpage}
 \usepackage{xcolor} % 色指定用
 
-% \usepackage[bold]{otf}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{latexsym}
+
+
+% レイアウト設定
+% \setlength{ \hoffset }          { 0truemm }
+% \setlength{ \voffset }          { -15.4truemm }
+% \setlength{ \oddsidemargin }    { 0truemm }
+% \setlength{ \topmargin }        { 13truemm }
+% \setlength{ \headheight }       { 10truemm }
+% \setlength{ \headsep }          { 5truemm }
+% \setlength{ \textwidth }        { 100truemm }
+% \setlength{ \marginparsep }     { 0truemm }
+% \setlength{ \marginparwidth }   { 0truemm }
+% \setlength{ \footskip }         { 17.5truemm }
 
 
 
 % デフォルトの余白設定
-\usepackage[top     =20truemm, 
-            bottom  =18truemm, 
+\usepackage[top     =20truemm,
+            bottom  =18truemm,
             left    =23truemm, 
             right   =23truemm]{geometry}
+\setlength{ \headheight }   { 10mm }
+\setlength{ \headsep }      { 5mm }
 
 % 和文をゴシック体に変更　※通常オフ
 %\renewcommand{\kanjifamilydefault}{\gtdefault} % 和文フォントをゴシック体に
+
+
+%字下げを行わない
+\setlength{\parindent}{0pt}
+
+
+% 1ページあたりの行数
+\newcommand{\linesparpage}[1]{%
+    \setlength{\baselineskip}{\dimexpr \textheight / #1 \relax}%
+}
 
 
 % ページ番号の形式設定
@@ -29,8 +58,8 @@
 % ヘッダー部にセクション名を表示
 \fancyhead[C]{%
     \begin{tcolorbox}[colback=gray!100, colframe=black, sharp corners, 
-                      boxrule=0pt, toprule=0.5pt, bottomrule=0.5pt, 
-                      width=\linewidth, boxsep=0pt ]
+                        boxrule=0pt, toprule=0.5pt, bottomrule=0.5pt, 
+                        width=\linewidth, boxsep=0pt ]
         \centering\bfseries\ttfamily\textcolor{white}{\leftmark}
     \end{tcolorbox}
 }
@@ -48,11 +77,12 @@
     \thispagestyle{empty} % このページのページ番号を非表示
     \setcounter{page}{0} % ページ番号リセット
     \stepcounter{section} % セクション番号をインクリメント
+    \leftskip = 0pt%
     \markboth{\protect\textcolor{white}{\thesection 章 #1}}{} % セクション名をヘッダーに設定
     \begin{tcolorbox}[colback=gray!20, colframe=black, sharp corners, 
-                      top=5mm, left=0mm, bottom=5mm, right=0mm,
-                      boxrule=0pt, toprule=1.5pt, bottomrule=1.5pt, 
-                      width=\linewidth ] % 上下に1ptの罫線
+                        top=5mm, left=0mm, bottom=5mm, right=0mm,
+                        boxrule=0pt, toprule=1.5pt, bottomrule=1.5pt, 
+                        width=\linewidth ] % 上下に1ptの罫線
         \fontsize{34pt}{34pt}\selectfont\bfseries\gtfamily\centering \thesection 章 \hspace{1ex} #1
     \end{tcolorbox}%
     \clearpage
@@ -65,11 +95,12 @@
     \newgeometry{top=80truemm, bottom=18truemm, left=23truemm, right=23truemm}
     \thispagestyle{empty} % このページのページ番号を非表示
     \setcounter{page}{0} % ページ番号リセット
+    \leftskip = 0pt%
     \markboth{\protect\textcolor{white}{#1}}{} % セクション名をヘッダーに設定
     \begin{tcolorbox}[colback=gray!20, colframe=black, sharp corners, 
-                      top=5mm, left=0mm, bottom=5mm, right=0mm,
-                      boxrule=0pt, toprule=1.5pt, bottomrule=1.5pt, 
-                      width=\linewidth ]
+                        top=5mm, left=0mm, bottom=5mm, right=0mm,
+                        boxrule=0pt, toprule=1.5pt, bottomrule=1.5pt, 
+                        width=\linewidth ]
         \fontsize{34pt}{34pt}\selectfont\bfseries\gtfamily\centering #1
     \end{tcolorbox}%
     \clearpage
@@ -78,24 +109,233 @@
 
 % subsectionの再定義：(1) 形式
 \renewcommand{\subsection}[1]{%
+    \leftskip = 0pt%
     \refstepcounter{subsection}%
     \noindent{\normalsize\bfseries (\arabic{subsection}) #1}%
     \par\nobreak\vspace{0.5ex}%
 }
 
-% subsubsectionの再定義：a. 形式
-\renewcommand{\subsubsection}[1]{%
+
+% subsubsectionの再定義
+\renewcommand{\subsubsection}{%
+    \@ifstar{\customsubsubsectionstar}{\customsubsubsection}} % *付きと無しで分岐
+% a. 形式
+\newcommand{\customsubsubsection}[1]{%
+    \leftskip = 0pt%
     \refstepcounter{subsubsection}%
     \noindent{\normalsize\bfseries \alph{subsubsection}. #1}%
     \par\nobreak\vspace{0.5ex}%
+    \leftskip = 2em%
 }
-
+% ■形式：*付
+\newcommand{\customsubsubsectionstar}[1]{%
+    \leftskip = 0pt%
+    \noindent{\normalsize\bfseries $\blacksquare$ \hspace{0em} #1}%
+    \par\nobreak\vspace{0.5ex}%
+    \leftskip = 1.5em%
+}
 \makeatother
 
-\begin{document}
 
-\section*{安全絵の注意事項}
-ここに特別なセクションの内容が入ります。
+% ◯数：数字付きリスト用
+\renewcommand{\labelenumi}{\textcircled{\scriptsize \theenumi}}
+
+
+% enumerateの前後のスペースを調整
+\usepackage{enumitem}
+\setlist[enumerate]{
+    topsep      =0pt,      % 縦方向の余白（前後）
+    leftmargin  =2.5em,  % 左のインデント幅（デフォルトは2.5em程度）
+    labelindent =0em  % ラベルの位置を調整（必要に応じて）
+}
+
+
+% ◯段組み
+\usepackage{multicol}
+
+
+% レイアウト確認
+\usepackage{layout}
+
+
+
+\begin{document}
+\linesparpage{42}
+\layout
+
+
+\section*{安全上の注意事項}
+
+\subsubsection{点検・整備時の注意}
+
+\subsubsection*{始業点検の励行}
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+安全で公開的にお使いいただくために，点検要領にそって始業点検を・・・
+
+
+\subsubsection*{始業点検の励行}
+\begin{enumerate}
+    \item コメント１
+    \item コメント２
+    \item コメント３
+    \item コメント１
+    \item コメント２
+    \item コメント３
+    \item コメント１
+    \item コメント２
+    \item コメント３
+    \item コメント１
+    \item コメント２
+    \item コメント３
+    \item コメント１
+    \item コメント２
+    \item コメント３
+    \item コメント１
+    \item コメント２
+    \item コメント３
+    \item コメント１
+    \item コメント２
+    \item コメント３
+    \item コメント１
+    \item コメント２
+\end{enumerate}
+
+
+
+\newpage
+\subsubsection*{始業点検の励行}
+\begin{multicols}{2}%
+\begin{enumerate}
+    \item コメント１
+    \item コメント２
+    \item コメント３
+    \item コメント１
+    \item コメント２
+    \item コメント３
+    \item コメント１
+    \item コメント２
+    \item コメント３
+    \item コメント１
+    \item コメント２
+    \item コメント３
+    \item コメント１
+    \item コメント２
+    \item コメント３
+    \item コメント１
+    \item コメント２
+    \item コメント３
+    \item コメント１
+    \item コメント２
+    \item コメント３
+    \item コメント１
+    \item コメント２
+\end{enumerate}
+\end{multicols}
+
+\subsubsection*{始業点検の励行}
+\subsubsection*{始業点検の励行}
+
+
+
+
 
 \newpage
 ここに特別なセクションの内容が入ります。
