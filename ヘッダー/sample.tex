@@ -78,14 +78,14 @@
 % subsectionの再定義：(1) 形式
 \renewcommand{\subsection}[1]{%
     \refstepcounter{subsection}%
-    \noindent{\large\bfseries (\arabic{subsection}) #1}%
-    \par\nobreak\vspace{1ex}%
+    \noindent{\normalsize\bfseries (\arabic{subsection}) #1}%
+    \par\nobreak\vspace{0.5ex}%
 }
 
 % subsubsectionの再定義：a. 形式
 \renewcommand{\subsubsection}[1]{%
     \refstepcounter{subsubsection}%
-    \noindent{\normalsize\bfseries (\alph{subsubsection}) #1}%
+    \noindent{\normalsize\bfseries \alph{subsubsection}. #1}%
     \par\nobreak\vspace{0.5ex}%
 }
 
