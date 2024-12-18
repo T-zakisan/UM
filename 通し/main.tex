@@ -40,9 +40,6 @@
 %\renewcommand{\kanjifamilydefault}{\gtdefault} % 和文フォントをゴシック体に
 
 
-%字下げを行わない
-\setlength{\parindent}{0pt}
-
 
 % 1ページあたりの行数
 \newcommand{\linesparpage}[1]{%
@@ -147,7 +144,7 @@
 % enumerateの前後のスペースを調整
 \usepackage{enumitem}
 \setlist[enumerate]{
-    topsep      =0pt,      % 縦方向の余白（前後）
+    topsep      =0pt,   % 縦方向の余白（前後）
     leftmargin  =2.5em,  % 左のインデント幅（デフォルトは2.5em程度）
     labelindent =0em  % ラベルの位置を調整（必要に応じて）
 }
@@ -161,16 +158,31 @@
 % \usepackage{layout}
 
 
+% フォント
+% \usepackage{luatexja-fontspec}
+% \usepackage{fontspec} % LuaLaTeXを使用している場合
+% \setmainfont{"BIZUDGothic"} % フォントを統一
+
+
+% \usepackage{titlesec} % タイトル書式変更のため
+
+% \partの書式設定
+% \titleformat{\part}[block]
+%   {\normalfont\huge\bfseries\centering}  % フォントと中央寄せ
+%   {}{1em}{}  % パート番号なし、中央寄せに設定
+
+% \titlecontents{part}[0pt] % 目次設定
+%   {\normalfont\huge\bfseries\centering}{\contentslabel{2em}}{}{\titlerule*[.5pc]{.}\contentspage}
+
+
 
 \begin{document}
 
 
-\input{./1_cover.tex}       % 表紙
-\input{./2_greetings.tex}   % ごあいさつ，整備とサービスについて
-\tableofcontents            % もくじ
-\clearpage
-
-
+\input{./1_cover.tex}               % 表紙
+\input{./2_greetings.tex}           % ごあいさつ，整備とサービスについて
+\input{./3_toc.tex}                 % もくじ
+\input{./4_safety-precautions.tex}  % 安全上の注意事項
 
 
 \end{document}
