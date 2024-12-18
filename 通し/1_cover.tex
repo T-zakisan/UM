@@ -1,1 +1,45 @@
 
+%
+% 1_cover.tex 表紙
+%
+
+\newgeometry{top=82truemm, bottom=18truemm, left=42truemm, right=42truemm}
+\thispagestyle{empty} % このページのページ番号を非表示
+
+\centering
+\framebox[125.0mm]{
+    \begin{minipage}[c][69.0mm][c]{124.0mm} %Boxのサイズ(タテ×ヨコ)
+        \vspace*{10mm} %枠上端から1文字目上端までの距離
+        \makebox[124.0mm][c]{\Huge{\textbf{\textsf{自動カーバ}}}}   \\  [5.5mm]  %タイトル
+        \makebox[124.0mm][c]{\Huge{\textbf{\textsf{AC-R8型}}}}     \\  [12.0mm]    %機種
+        \makebox[124.0mm][c]{\Huge{\textbf{\textsf{取扱説明書}}}}   \\  [3.0mm] 
+        \makebox[124.0mm][c]{\Huge{\textbf{\textsf{パーツリスト}}}} \\  [5.0mm] 
+    \end{minipage}
+}
+
+\vspace{3.0truemm}
+\textbf{適応号機}\\
+\textbf{\texttt{ｘｘｘｘ号機以降}} %適応号機
+
+
+\centering
+\vspace{30.0truemm}
+\begin{minipage}[c][25.0mm][c]{110.0mm} %Boxのサイズ(タテ×ヨコ)
+    \renewcommand{\labelitemi}{$\ast$}
+    \begin{itemize}
+        \item ご使用前に必ずお読みください．
+        \item 本書は大切に保管し，必要なときにすぐに見られる場所に保管してください．
+        \item 将来の参照用として保存してください．
+    \end{itemize}
+\end{minipage}
+
+
+\centering
+\vspace{17.0truemm}
+\textbf{\texttt{発行日：2024年　〇月〇〇日}} \\ [0.0mm] %発行日
+\textbf{\texttt{第0.0版}}                  \\ [0.0mm] %版
+\textbf{\texttt{Book No. AAAAAAAAAAAAAA}}  \\ [10.0mm] %BookNo
+\huge{\textbf{\texttt{範多機械株式会社}}} %会社名
+\thispagestyle{empty} %ページ番号非表示
+\cleardoublepage %右ページから開始
+\restoregeometry %余白設定を戻す
