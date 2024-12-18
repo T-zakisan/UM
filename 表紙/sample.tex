@@ -1,28 +1,209 @@
-\documentclass{article}
+\documentclass[11pt]{ltjsarticle}
 \usepackage{tcolorbox}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{xcolor} % 色指定用
 
-\renewcommand{\section}[1]{%
-    \cleardoublepage  %　右ページから開始
-    \stepcounter{part} % パート番号を更新
-    \thispagestyle{empty} % このページのページ番号を非表示
-    \begin{tcolorbox}[
-        enhanced,
-        colback=gray!20, % 背景色を薄い灰色に設定
-        colframe=gray!20, % 枠線を背景色と同じにして非表示
-        borderline horizontal={5.5pt}{0.0pt}{black}, % 上下の装飾線のみ表示
-        sharp corners % 角を直角に
-    ]%
-    \LARGE\bfseries\gtfamily\centering \thesection AA \hspace{1ex} #1
-    \end{tcolorbox}%
-    \cleardoublepage
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{latexsym}
+
+
+% レイアウト設定
+% \setlength{ \hoffset }          { 0truemm }
+% \setlength{ \voffset }          { -15.4truemm }
+% \setlength{ \oddsidemargin }    { 0truemm }
+% \setlength{ \topmargin }        { 13truemm }
+% \setlength{ \headheight }       { 10truemm }
+% \setlength{ \headsep }          { 5truemm }
+% \setlength{ \textwidth }        { 100truemm }
+% \setlength{ \marginparsep }     { 0truemm }
+% \setlength{ \marginparwidth }   { 0truemm }
+% \setlength{ \footskip }         { 17.5truemm }
+
+
+
+% デフォルトの余白設定
+\usepackage[top     =20truemm,
+            bottom  =18truemm,
+            left    =23truemm, 
+            right   =23truemm]{geometry}
+\setlength{ \topmargin }    { -20mm }
+\setlength{ \headheight }   { 23mm }
+\setlength{ \headsep }      { -8mm }
+
+% 和文をゴシック体に変更　※通常オフ
+%\renewcommand{\kanjifamilydefault}{\gtdefault} % 和文フォントをゴシック体に
+
+
+%字下げを行わない
+\setlength{\parindent}{0pt}
+
+
+% 1ページあたりの行数
+\newcommand{\linesparpage}[1]{%
+    \setlength{\baselineskip}{\dimexpr \textheight / #1 \relax}%
 }
+
+
+% ページ番号の形式設定
+\pagestyle{fancy}
+\fancyhf{} % 全てのヘッダー・フッターをクリア
+\fancyfoot[C]{\bfseries\ttfamily\ifnum\value{section}=0 S-\thepage\else \thesection-\thepage \fi} % ページ番号
+\renewcommand{\headrulewidth}{0pt} % デフォルトのヘッダー罫線を非表示
+\renewcommand{\footrulewidth}{0.4pt} % フッターに罫線を表示
+
+
+% ヘッダー部にセクション名を表示
+\fancyhead[C]{%
+    \begin{tcolorbox}[colback=gray!100, colframe=black, sharp corners, 
+                        boxrule=0pt, toprule=0.5pt, bottomrule=0.5pt, 
+                        width=\linewidth, boxsep=0pt ]
+        \centering\bfseries\ttfamily\textcolor{white}{\leftmark}
+    \end{tcolorbox}
+}
+
+
+% sectionの再定義
+\makeatletter
+\renewcommand{\section}{%
+    \@ifstar{\customsectionstar}{\customsection}} % *付きと無しで分岐
+
+% 通常のセクションのカスタマイズ
+\newcommand{\customsection}[1]{%
+    \cleardoublepage % 右ページから開始
+    \newgeometry{top=80truemm, bottom=18truemm, left=23truemm, right=23truemm}
+    \thispagestyle{empty} % このページのページ番号を非表示
+    \setcounter{page}{0} % ページ番号リセット
+    \stepcounter{section} % セクション番号をインクリメント
+    \leftskip = 0pt%
+    \markboth{\protect\textcolor{white}{\thesection 章 #1}}{} % セクション名をヘッダーに設定
+    \begin{tcolorbox}[colback=gray!20, colframe=black, sharp corners, 
+                        top=5mm, left=0mm, bottom=5mm, right=0mm,
+                        boxrule=0pt, toprule=1.5pt, bottomrule=1.5pt, 
+                        width=\linewidth ] % 上下に1ptの罫線
+        \fontsize{34pt}{34pt}\selectfont\bfseries\gtfamily\centering \thesection 章 \hspace{1ex} #1
+    \end{tcolorbox}%
+    \clearpage
+    \restoregeometry
+}
+
+% *付きのセクションのカスタマイズ
+\newcommand{\customsectionstar}[1]{%
+    \cleardoublepage % 右ページから開始
+    \newgeometry{top=80truemm, bottom=18truemm, left=23truemm, right=23truemm}
+    \thispagestyle{empty} % このページのページ番号を非表示
+    \setcounter{page}{0} % ページ番号リセット
+    \leftskip = 0pt%
+    \markboth{\protect\textcolor{white}{#1}}{} % セクション名をヘッダーに設定
+    \begin{tcolorbox}[colback=gray!20, colframe=black, sharp corners, 
+                        top=5mm, left=0mm, bottom=5mm, right=0mm,
+                        boxrule=0pt, toprule=1.5pt, bottomrule=1.5pt, 
+                        width=\linewidth ]
+        \fontsize{34pt}{34pt}\selectfont\bfseries\gtfamily\centering #1
+    \end{tcolorbox}%
+    \clearpage
+    \restoregeometry
+}
+
+% subsectionの再定義：(1) 形式
+\renewcommand{\subsection}[1]{%
+    \leftskip = 0pt%
+    \refstepcounter{subsection}%
+    \noindent{\normalsize\bfseries (\arabic{subsection}) #1}%
+    \par\nobreak\vspace{0.5ex}%
+}
+
+
+% subsubsectionの再定義
+\renewcommand{\subsubsection}{%
+    \@ifstar{\customsubsubsectionstar}{\customsubsubsection}} % *付きと無しで分岐
+% a. 形式
+\newcommand{\customsubsubsection}[1]{%
+    \leftskip = 0pt%
+    \refstepcounter{subsubsection}%
+    \noindent{\normalsize\bfseries \alph{subsubsection}. #1}%
+    \par\nobreak\vspace{0.5ex}%
+    \leftskip = 2em%
+}
+% ■形式：*付
+\newcommand{\customsubsubsectionstar}[1]{%
+    \leftskip = 0pt%
+    \noindent{\normalsize\bfseries $\blacksquare$ \hspace{0em} #1}%
+    \par\nobreak\vspace{0.5ex}%
+    \leftskip = 1.5em%
+}
+\makeatother
+
+
+% ◯数：数字付きリスト用
+\renewcommand{\labelenumi}{\textcircled{\scriptsize \theenumi}}
+
+
+% enumerateの前後のスペースを調整
+\usepackage{enumitem}
+\setlist[enumerate]{
+    topsep      =0pt,      % 縦方向の余白（前後）
+    leftmargin  =2.5em,  % 左のインデント幅（デフォルトは2.5em程度）
+    labelindent =0em  % ラベルの位置を調整（必要に応じて）
+}
+
+
+% ◯段組み
+\usepackage{multicol}
+
+
+% レイアウト確認
+\usepackage{layout}
+
+
 
 \begin{document}
 
-\section{1st Section}
-aaaaaaaaaaaaaaaa
 
-\section{2nd Section}
-aaaaaaaaaaaa
+\newgeometry{top=82truemm, bottom=18truemm, left=42truemm, right=42truemm}
+\thispagestyle{empty} % このページのページ番号を非表示
+
+\centering
+\framebox[125.0mm]{
+    \begin{minipage}[c][69.0mm][c]{124.0mm} %Boxのサイズ(タテ×ヨコ)
+        \vspace*{10mm} %枠上端から1文字目上端までの距離
+        \makebox[124.0mm][c]{\Huge{\textbf{\textsf{自動カーバ}}}}   \\  [5.5mm]  %タイトル
+        \makebox[124.0mm][c]{\Huge{\textbf{\textsf{AC-R8型}}}}     \\  [12.0mm]    %機種
+        \makebox[124.0mm][c]{\Huge{\textbf{\textsf{取扱説明書}}}}   \\  [3.0mm] 
+        \makebox[124.0mm][c]{\Huge{\textbf{\textsf{パーツリスト}}}} \\  [5.0mm] 
+    \end{minipage}
+}
+
+\vspace{3.0truemm}
+\textbf{適応号機}\\
+\textbf{\texttt{ｘｘｘｘ号機以降}} %適応号機
+
+
+\centering
+\vspace{30.0truemm}
+\begin{minipage}[c][25.0mm][c]{110.0mm} %Boxのサイズ(タテ×ヨコ)
+    \renewcommand{\labelitemi}{$\ast$}
+    \begin{itemize}
+        \item ご使用前に必ずお読みください．
+        \item 本書は大切に保管し，必要なときにすぐに見られる場所に保管してください．
+        \item 将来の参照用として保存してください．
+    \end{itemize}
+\end{minipage}
+
+
+\centering
+\vspace{17.0truemm}
+\textbf{\texttt{発行日：2024年　〇月〇〇日}} \\ [0.0mm] %発行日
+\textbf{\texttt{第0.0版}}                  \\ [0.0mm] %版
+\textbf{\texttt{Book No. AAAAAAAAAAAAAA}}  \\ [10.0mm] %BookNo
+\huge{\textbf{\texttt{範多機械株式会社}}} %会社名
+\thispagestyle{empty} %ページ番号非表示
+\cleardoublepage %右ページから開始
+\restoregeometry %余白設定を戻す
+
+
 
 \end{document}
