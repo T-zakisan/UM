@@ -88,7 +88,7 @@
         \renewcommand{\footrulewidth}{0.0pt} % フッターに罫線を表示
     }
     \thispagestyle{tocstyle}
-    % \setcounter{tocdepth}{2}
+    \renewcommand{\contentsname}{\textcolor{white}{目次}}
 }
 %% 目次の表示設定
 \makeatletter
@@ -100,72 +100,152 @@
 \makeatother
 \usepackage{hyperref}  % リンク用のパッケージ
 % 目次のページ番号のカスタマイズ
-\renewcommand{\thepage}{
-    \ifnum\value{section}=0 S-\arabic{page} \else \arabic{section}-\arabic{page} \fi
-}  % ページ番号に章番号を追加
+\renewcommand{\thepage}{%
+    \ifnum\value{section}=-1 %
+        {}% 空の出力
+    \else
+        \ifnum\value{section}=0 %
+            S-\arabic{page}%
+        \else
+            \arabic{section}-\arabic{page}%
+        \fi
+    \fi
+}
+
 
 
 
 % sectionの再定義
-\makeatletter
-\renewcommand{\section}{%
-    \@ifstar{\customsectionstar}{\customsection}} % *付きと無しで分岐
-
-% 通常のセクションのカスタマイズ
-\newcommand{\customsection}[1]{%
+%% ごあいさつ用のsection
+\newcommand{\sectionA}[1]{%
+    \setcounter{section}{-1} % セクション番号をインクリメント
+    \section*{\centering \fontsize{18pt}{18pt}{\selectfont\bfseries #1}} % 本文中タイトルを中央揃え
+    \addcontentsline{toc}{section}{\textbf{#1}} % 目次にタイトル追加（ページ番号なし）
+}
+%% 目次用のセクション
+\newcommand{\sectionB}[1]{%
+    \cleardoublepage % 右ページから開始
+    \newgeometry{top=80truemm, bottom=18truemm, left=23truemm, right=23truemm}
+    \thispagestyle{empty} % このページのページ番号を非表示
+    \setcounter{page}{1} % ページ番号リセット
+    \setcounter{section}{-1} % セクション番号をインクリメント
+    \leftskip = 0pt%
+    \markboth{\protect\textcolor{white}{#1}}{} % 白いヘッダー
+    \markboth{\quad #1}{} % ヘッダーにセクション名をセット
+    \addcontentsline{toc}{section}{\textbf{#1}} % 目次にタイトル追加（ページ番号あり）
+    \begin{tcolorbox}[colback=gray!20, colframe=black, sharp corners, 
+                        top=5mm, left=0mm, bottom=5mm, right=0mm,
+                        boxrule=0pt, toprule=1.5pt, bottomrule=1.5pt, 
+                        width=\linewidth ] % 装飾付きボックス
+        \fontsize{34pt}{34pt}\selectfont\bfseries\gtfamily\centering #1
+    \end{tcolorbox}
+    \clearpage
+    \setcounter{page}{1} % ページ番号リセット
+    \restoregeometry
+}
+%% 安全・・・用のセクション
+\newcommand{\sectionC}[1]{%
+    \cleardoublepage % 右ページから開始
+    \newgeometry{top=80truemm, bottom=18truemm, left=23truemm, right=23truemm}
+    \thispagestyle{empty} % このページのページ番号を非表示
+    \setcounter{page}{1} % ページ番号リセット
+    \setcounter{section}{0} % セクション番号をインクリメント
+    \leftskip = 0pt%
+    \markboth{\protect\textcolor{white}{#1}}{} % 白いヘッダー
+    \markboth{\quad #1}{} % ヘッダーにセクション名をセット
+    \addcontentsline{toc}{section}{\textbf{#1}} % 目次にタイトル追加（ページ番号あり）
+    \begin{tcolorbox}[colback=gray!20, colframe=black, sharp corners, 
+                        top=5mm, left=0mm, bottom=5mm, right=0mm,
+                        boxrule=0pt, toprule=1.5pt, bottomrule=1.5pt, 
+                        width=\linewidth ] % 装飾付きボックス
+        \fontsize{34pt}{34pt}\selectfont\bfseries\gtfamily\centering #1
+    \end{tcolorbox}
+    \clearpage
+    \setcounter{page}{1} % ページ番号リセット
+    \restoregeometry
+}
+%% 普段使いのセクション
+\newcommand{\sectionD}[1]{%
     \cleardoublepage % 右ページから開始
     \newgeometry{top=80truemm, bottom=18truemm, left=23truemm, right=23truemm}
     \thispagestyle{empty} % このページのページ番号を非表示
     \setcounter{page}{1} % ページ番号リセット
     \stepcounter{section} % セクション番号をインクリメント
     \leftskip = 0pt%
-    \markboth{\protect\textcolor{white}{\thesection 章 #1}}{} % セクション名をヘッダーに設定
-    \markboth{\thesection 章 \quad #1}{} % 目次に反映するためにセクション名と番号をセット
+    \addcontentsline{toc}{section}{\textbf{\thesection 章\quad #1}} % 目次にタイトルとページ番号を追加
+    \markboth{\thesection 章 \quad #1}{} % ヘッダーにセクション番号と名前をセット
     \begin{tcolorbox}[colback=gray!20, colframe=black, sharp corners, 
                         top=5mm, left=0mm, bottom=5mm, right=0mm,
                         boxrule=0pt, toprule=1.5pt, bottomrule=1.5pt, 
-                        width=\linewidth ] % 上下に1ptの罫線
+                        width=\linewidth ] % 装飾付きボックス
         \fontsize{34pt}{34pt}\selectfont\bfseries\gtfamily\centering \thesection 章 \hspace{1ex} #1
-    \end{tcolorbox}%
-    \addcontentsline{toc}{section}{\textbf\thesection 章 \, #1} % 目次に追加、ページ番号なし
-    \clearpage
-    \setcounter{page}{1} % ページ番号リセット
-    \restoregeometry
-}
-
-% *付きのセクションのカスタマイズ
-\newcommand{\customsectionstar}[1]{%
-    \cleardoublepage % 右ページから開始
-    \newgeometry{top=80truemm, bottom=18truemm, left=23truemm, right=23truemm}
-    \thispagestyle{empty} % このページのページ番号を非表示
-    \setcounter{page}{1} % ページ番号リセット
-    \leftskip = 0pt%
-    \markboth{\protect\textcolor{white}{#1}}{} % セクション名をヘッダーに設定
-    \begin{tcolorbox}[colback=gray!20, colframe=black, sharp corners, 
-                        top=5mm, left=0mm, bottom=5mm, right=0mm,
-                        boxrule=0pt, toprule=1.5pt, bottomrule=1.5pt, 
-                        width=\linewidth ]
-        \fontsize{34pt}{34pt}\selectfont\bfseries\gtfamily\centering #1
-    \end{tcolorbox}%
-    \addtocontents{section}{\textbf #1}
-    \addcontentsline{toc}{section}{\textbf{#1} } % 目次に追加
+    \end{tcolorbox}
     \clearpage
     \setcounter{page}{1} % ページ番号リセット
     \restoregeometry
 }
 
 
-% ごあいさつ・整備と・・・用セクションの定義
-\newcommand{\sectionSP}[1]{%
-    \vspace*{3em}
-    \makebox[\textwidth]{% \textwidth 全体の幅を指定
-        \fontsize{18pt}{18pt}{\selectfont\bfseries #1}
-    }%
-    \addcontentsline{toc}{section}{\textbf{#1}}
-    % \phantomsection % 新しいリンク先を作成
-    % \addtocontents{toc}{\protect\contentsline{section}{\protect\textbf #1}{}}
+
+% \makeatletter
+% \renewcommand{\section}{%
+%     \@ifstar{\customsectionstar}{\customsection}} % *付きと無しで分岐
+
+% % 通常のセクションのカスタマイズ
+% \newcommand{\customsection}[1]{%
+%     \cleardoublepage % 右ページから開始
+%     \newgeometry{top=80truemm, bottom=18truemm, left=23truemm, right=23truemm}
+%     \thispagestyle{empty} % このページのページ番号を非表示
+%     \setcounter{page}{1} % ページ番号リセット
+%     \stepcounter{section} % セクション番号をインクリメント
+%     \leftskip = 0pt%
+%     \markboth{\protect\textcolor{white}{\thesection 章 #1}}{} % セクション名をヘッダーに設定
+%     \markboth{\thesection 章 \quad #1}{} % 目次に反映するためにセクション名と番号をセット
+%     \begin{tcolorbox}[colback=gray!20, colframe=black, sharp corners, 
+%                         top=5mm, left=0mm, bottom=5mm, right=0mm,
+%                         boxrule=0pt, toprule=1.5pt, bottomrule=1.5pt, 
+%                         width=\linewidth ] % 上下に1ptの罫線
+%         \fontsize{34pt}{34pt}\selectfont\bfseries\gtfamily\centering \thesection 章 \hspace{1ex} #1
+%     \end{tcolorbox}%
+%     \addcontentsline{toc}{section}{\textbf\thesection 章 \, #1} % 目次に追加、ページ番号なし
+%     \clearpage
+%     \setcounter{page}{1} % ページ番号リセット
+%     \restoregeometry
+% }
+
+% % *付きのセクションのカスタマイズ
+% \newcommand{\customsectionstar}[1]{%
+%     \cleardoublepage % 右ページから開始
+%     \newgeometry{top=80truemm, bottom=18truemm, left=23truemm, right=23truemm}
+%     \thispagestyle{empty} % このページのページ番号を非表示
+%     \setcounter{page}{1} % ページ番号リセット
+%     \leftskip = 0pt%
+%     \markboth{\protect\textcolor{white}{#1}}{} % セクション名をヘッダーに設定
+%     \begin{tcolorbox}[colback=gray!20, colframe=black, sharp corners, 
+%                         top=5mm, left=0mm, bottom=5mm, right=0mm,
+%                         boxrule=0pt, toprule=1.5pt, bottomrule=1.5pt, 
+%                         width=\linewidth ]
+%         \fontsize{34pt}{34pt}\selectfont\bfseries\gtfamily\centering #1
+%     \end{tcolorbox}%
+%     \addtocontents{section}{\textbf #1}
+%     \addcontentsline{toc}{section}{\textbf{#1} } % 目次に追加
+%     \clearpage
+%     \setcounter{page}{1} % ページ番号リセット
+%     \restoregeometry
+% }
+
+
+% % ごあいさつ・整備と・・・用セクションの定義
+% \newcommand{\sectionSP}[1]{%
+%     \vspace*{3em}
+%     \makebox[\textwidth]{% \textwidth 全体の幅を指定
+%         \fontsize{18pt}{18pt}{\selectfont\bfseries #1}
+%     }%
+%     \addcontentsline{toc}{section}{\textbf{#1}}
+%     % \phantomsection % 新しいリンク先を作成
+%     % \addtocontents{toc}{\protect\contentsline{section}{\protect\textbf #1}{}}
      
-}
+% }
 
 
 
