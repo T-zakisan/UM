@@ -1,17 +1,21 @@
 %
 % 2_greetings.tex ごあいさつ
 %
-\clearpage%
 
-\cleardoublepage %右ページから開始
 
+\newpage
+\null %なにもない
+\thispagestyle{empty} % このページのページ番号を非表示
+
+\cleardoublepage % 右ページから開始
+\newgeometry{top=30truemm, bottom=18truemm, left=23truemm, right=23truemm}
+\thispagestyle{empty} % このページのページ番号を非表示
 \setlength{\parindent}{1em}  % 必要ならば字下げを元に戻す
 \normalsize % フォントサイズをデフォルトに戻す
-\restoregeometry %余白設定を戻す
 
+\vspace*{-3em}
+\sectionSP{ごあいさつ}
 
-\part*{ごあいさつ}
-\addcontentsline{toc}{part}{ごあいさつ} 
 
 この度は，自動カーバをお買い上げいただきまして，まことにありがとうございます．
 
@@ -27,9 +31,8 @@
 
 
 
+\sectionSP{整備とサービスについて}
 
-\part*{整備とサービスについて}
-\addcontentsline{toc}{part}{整備とサービスについて}
 
 ご使用中の故障やその他，ご不明な点およびサービスに関するご用命は，弊社またはお買い上げいただきました販売店にお気軽にご相談ください．
 その際に，製品名・製品型式・機械番号・エンジン名称・エンジン番号を併せてご連絡ください．

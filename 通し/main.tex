@@ -40,22 +40,29 @@
 %\renewcommand{\kanjifamilydefault}{\gtdefault} % 和文フォントをゴシック体に
 
 
-
 % 1ページあたりの行数
 \newcommand{\linesparpage}[1]{%
     \setlength{\baselineskip}{\dimexpr \textheight / #1 \relax}%
 }
 
 
+% ページ番号関係の定義
+% \newcommand{\thesectionTOC}{
+%     \ifnum\value{\thesection}=0 S-\arabic{page} \else \arabic{\thesection}-\arabic{page} \fi
+% } % フッターのページ番号,目次右"セクション番号―ページ番号"
+% % \newcommand{\thesectionTOC}{\arabic{section}} % セクションタイトル，目次左""
+% \renewcommand{\thesection}{\arabic{section}} % セクションタイトル，目次左""
+
+
+
 % ページ番号の形式設定
 \pagestyle{fancy}
 \fancyhf{} % 全てのヘッダー・フッターをクリア
-\fancyfoot[C]{\bfseries\ttfamily\ifnum\value{section}=0 S-\thepage\else \thesection-\thepage \fi} % ページ番号
+% フッター部
+\fancyfoot[C]{\bfseries\ttfamily \thepage} % ページ番号
 \renewcommand{\headrulewidth}{0pt} % デフォルトのヘッダー罫線を非表示
 \renewcommand{\footrulewidth}{0.4pt} % フッターに罫線を表示
-
-
-% ヘッダー部にセクション名を表示
+% ヘッダー部
 \fancyhead[C]{%
     \begin{tcolorbox}[colback=gray!100, colframe=black, sharp corners, 
                         boxrule=0pt, toprule=0.5pt, bottomrule=0.5pt, 
@@ -63,6 +70,40 @@
         \centering\bfseries\ttfamily\textcolor{white}{\leftmark}
     \end{tcolorbox}
 }
+
+
+
+% 目次の設定
+%% 目次ページの設定
+\newcommand{\tocSPstyle}{
+    \fancypagestyle{tocstyle}{
+        \fancyhf{} % ヘッダーとフッターをリセット
+        \fancyhead[C]{%
+            \begin{tcolorbox}[colback=gray!100, colframe=black, sharp corners, 
+                                boxrule=0pt, toprule=0.5pt, bottomrule=0.5pt, 
+                                width=\linewidth, boxsep=0pt ]
+                \centering\bfseries\ttfamily\textcolor{white}{\leftmark}
+            \end{tcolorbox}
+        }
+        \renewcommand{\footrulewidth}{0.0pt} % フッターに罫線を表示
+    }
+    \thispagestyle{tocstyle}
+    % \setcounter{tocdepth}{2}
+}
+%% 目次の表示設定
+\makeatletter
+\renewcommand*{\l@section}{\@dottedtocline{1}{0pt}{11ex}}
+\renewcommand*{\l@subsection}{\@dottedtocline{1}{0pt}{11ex}}
+\makeatother
+\makeatletter
+    \renewcommand{\@pnumwidth}{3em}
+\makeatother
+\usepackage{hyperref}  % リンク用のパッケージ
+% 目次のページ番号のカスタマイズ
+\renewcommand{\thepage}{
+    \ifnum\value{section}=0 S-\arabic{page} \else \arabic{section}-\arabic{page} \fi
+}  % ページ番号に章番号を追加
+
 
 
 % sectionの再定義
@@ -75,17 +116,20 @@
     \cleardoublepage % 右ページから開始
     \newgeometry{top=80truemm, bottom=18truemm, left=23truemm, right=23truemm}
     \thispagestyle{empty} % このページのページ番号を非表示
-    \setcounter{page}{0} % ページ番号リセット
+    \setcounter{page}{1} % ページ番号リセット
     \stepcounter{section} % セクション番号をインクリメント
     \leftskip = 0pt%
     \markboth{\protect\textcolor{white}{\thesection 章 #1}}{} % セクション名をヘッダーに設定
+    \markboth{\thesection 章 \quad #1}{} % 目次に反映するためにセクション名と番号をセット
     \begin{tcolorbox}[colback=gray!20, colframe=black, sharp corners, 
                         top=5mm, left=0mm, bottom=5mm, right=0mm,
                         boxrule=0pt, toprule=1.5pt, bottomrule=1.5pt, 
                         width=\linewidth ] % 上下に1ptの罫線
         \fontsize{34pt}{34pt}\selectfont\bfseries\gtfamily\centering \thesection 章 \hspace{1ex} #1
     \end{tcolorbox}%
+    \addcontentsline{toc}{section}{\textbf\thesection 章 \, #1} % 目次に追加、ページ番号なし
     \clearpage
+    \setcounter{page}{1} % ページ番号リセット
     \restoregeometry
 }
 
@@ -94,7 +138,7 @@
     \cleardoublepage % 右ページから開始
     \newgeometry{top=80truemm, bottom=18truemm, left=23truemm, right=23truemm}
     \thispagestyle{empty} % このページのページ番号を非表示
-    \setcounter{page}{0} % ページ番号リセット
+    \setcounter{page}{1} % ページ番号リセット
     \leftskip = 0pt%
     \markboth{\protect\textcolor{white}{#1}}{} % セクション名をヘッダーに設定
     \begin{tcolorbox}[colback=gray!20, colframe=black, sharp corners, 
@@ -103,16 +147,35 @@
                         width=\linewidth ]
         \fontsize{34pt}{34pt}\selectfont\bfseries\gtfamily\centering #1
     \end{tcolorbox}%
+    \addtocontents{section}{\textbf #1}
+    \addcontentsline{toc}{section}{\textbf{#1} } % 目次に追加
     \clearpage
+    \setcounter{page}{1} % ページ番号リセット
     \restoregeometry
 }
+
+
+% ごあいさつ・整備と・・・用セクションの定義
+\newcommand{\sectionSP}[1]{%
+    \vspace*{3em}
+    \makebox[\textwidth]{% \textwidth 全体の幅を指定
+        \fontsize{18pt}{18pt}{\selectfont\bfseries #1}
+    }%
+    \addcontentsline{toc}{section}{\textbf{#1}}
+    % \phantomsection % 新しいリンク先を作成
+    % \addtocontents{toc}{\protect\contentsline{section}{\protect\textbf #1}{}}
+     
+}
+
+
 
 % subsectionの再定義：(1) 形式
 \renewcommand{\subsection}[1]{%
     \leftskip = 0pt%
-    \refstepcounter{subsection}%
+    % \refstepcounter{subsection}%
+    \stepcounter{subsection}
     \noindent{\normalsize\bfseries (\arabic{subsection}) #1}%
-    \par\nobreak\vspace{0.5ex}%
+    \addcontentsline{toc}{subsection}{(\arabic{subsection}) \, #1} % 目次に追加、ページ番号なし
 }
 
 
@@ -122,10 +185,12 @@
 % a. 形式
 \newcommand{\customsubsubsection}[1]{%
     \leftskip = 0pt%
-    \refstepcounter{subsubsection}%
+    % \refstepcounter{subsubsection}%
+    \stepcounter{subsection}
     \noindent{\normalsize\bfseries \alph{subsubsection}. #1}%
     \par\nobreak\vspace{0.5ex}%
     \leftskip = 2em%
+    \addcontentsline{toc}{subsubsection}{{\alph{subsubsection}. \, #1}} % 目次に追加、ページ番号なし
 }
 % ■形式：*付
 \newcommand{\customsubsubsectionstar}[1]{%
@@ -164,16 +229,6 @@
 % \setmainfont{"BIZUDGothic"} % フォントを統一
 
 
-% \usepackage{titlesec} % タイトル書式変更のため
-
-% \partの書式設定
-% \titleformat{\part}[block]
-%   {\normalfont\huge\bfseries\centering}  % フォントと中央寄せ
-%   {}{1em}{}  % パート番号なし、中央寄せに設定
-
-% \titlecontents{part}[0pt] % 目次設定
-%   {\normalfont\huge\bfseries\centering}{\contentslabel{2em}}{}{\titlerule*[.5pc]{.}\contentspage}
-
 
 
 \begin{document}
@@ -183,6 +238,7 @@
 \input{./2_greetings.tex}           % ごあいさつ，整備とサービスについて
 \input{./3_toc.tex}                 % もくじ
 \input{./4_safety-precautions.tex}  % 安全上の注意事項
+\input{./5_overview.tex}  % 安全上の注意事項
 
 
 \end{document}

@@ -2,9 +2,14 @@
 % 3_top.tex もくじ
 %
 
-\clearpage  % 改ページ：新しいページで目次
-\tableofcontents
 
-\clearpage  % 改ページ：新しいページからコンテンツ開始
+\newpage
+\null %なにもない
+\thispagestyle{empty} % このページのページ番号を非表示
+
+\cleardoublepage  % 改ページ：新しいページで目次
+\tableofcontents
+\tocSPstyle
+
 
 
