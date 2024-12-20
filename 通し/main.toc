@@ -2,6 +2,6 @@
 \contentsline {section}{\textbf {整備とサービスについて}}{{}}{section*.2}%
 \contentsline {section}{\textbf {目次}}{{}}{section*.2}%
 \contentsline {section}{\textbf {安全上の注意事項}}{S-1}{section*.3}%
-\contentsline {subsection}{(1) \, はじめに}{S-1}{section*.4}%
-\contentsline {section}{\textbf {1章\hskip 1em\relax 機械の概要}}{1-1}{section*.4}%
-\contentsline {subsection}{(1) \, 概要}{1-1}{section*.5}%
+\contentsline {subsection}{(1) \, はじめに}{S-1}{subsection.0.1}%
+\contentsline {section}{\textbf {1章\hskip 1em\relax 機械の概要}}{1-1}{subsection.0.1}%
+\contentsline {subsection}{(1) \, 概要}{1-1}{subsection.1.1}%

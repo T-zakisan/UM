@@ -1,4 +1,4 @@
-This is LuaHBTeX, Version 1.18.0 (TeX Live 2024)  (format=lualatex 2024.12.17)  20 DEC 2024 08:35
+This is LuaHBTeX, Version 1.18.0 (TeX Live 2024)  (format=lualatex 2024.12.17)  20 DEC 2024 09:05
  system commands enabled.
 **e:/取説TeX/UM/通し/main
 (e:/取説TeX/UM/通し/main.tex
@@ -863,34 +863,34 @@ Package: multicol 2023/03/30 v1.9f multicolumn formatting (FMi)
 ) (./main.aux)
 \openout1 = main.aux
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 314.
-LaTeX Font Info:    ... okay on input line 314.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 314.
-LaTeX Font Info:    ... okay on input line 314.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 314.
-LaTeX Font Info:    ... okay on input line 314.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 314.
-LaTeX Font Info:    ... okay on input line 314.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 314.
-LaTeX Font Info:    Trying to load font information for TS1+cmr on input line 314.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 258.
+LaTeX Font Info:    ... okay on input line 258.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 258.
+LaTeX Font Info:    ... okay on input line 258.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 258.
+LaTeX Font Info:    ... okay on input line 258.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 258.
+LaTeX Font Info:    ... okay on input line 258.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 258.
+LaTeX Font Info:    Trying to load font information for TS1+cmr on input line 258.
  (c:/texlive/2024/texmf-dist/tex/latex/base/ts1cmr.fd
 File: ts1cmr.fd 2023/04/13 v2.5m Standard LaTeX font definitions
 )
-LaTeX Font Info:    ... okay on input line 314.
-LaTeX Font Info:    Checking defaults for TU/lmr/m/n on input line 314.
-LaTeX Font Info:    ... okay on input line 314.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 314.
-LaTeX Font Info:    ... okay on input line 314.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 314.
-LaTeX Font Info:    ... okay on input line 314.
-LaTeX Font Info:    Checking defaults for JY3/mc/m/n on input line 314.
-LaTeX Font Info:    ... okay on input line 314.
-LaTeX Font Info:    Checking defaults for JT3/mc/m/n on input line 314.
-LaTeX Font Info:    ... okay on input line 314.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 314.
-LaTeX Font Info:    ... okay on input line 314.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 314.
-LaTeX Font Info:    ... okay on input line 314.
+LaTeX Font Info:    ... okay on input line 258.
+LaTeX Font Info:    Checking defaults for TU/lmr/m/n on input line 258.
+LaTeX Font Info:    ... okay on input line 258.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 258.
+LaTeX Font Info:    ... okay on input line 258.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 258.
+LaTeX Font Info:    ... okay on input line 258.
+LaTeX Font Info:    Checking defaults for JY3/mc/m/n on input line 258.
+LaTeX Font Info:    ... okay on input line 258.
+LaTeX Font Info:    Checking defaults for JT3/mc/m/n on input line 258.
+LaTeX Font Info:    ... okay on input line 258.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 258.
+LaTeX Font Info:    ... okay on input line 258.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 258.
+LaTeX Font Info:    ... okay on input line 258.
  (c:/texlive/2024/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
 \scratchcounter=\count330
@@ -944,7 +944,7 @@ File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Live
 * \@reversemarginfalse
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
-Package hyperref Info: Link coloring OFF on input line 314.
+Package hyperref Info: Link coloring OFF on input line 258.
 (./main.out) (./main.out)
 \@outlinefile=\write4
 
@@ -1187,13 +1187,27 @@ warning  (pdf backend): ignoring duplicate destination with the name 'page.'
 
 ]
 LaTeX Font Info:    Font shape `JT3/gt/m/n' will be
-(Font)              scaled to size 9.24713pt on input line 18.
+(Font)              scaled to size 9.24713pt on input line 17.
 LaTeX Font Info:    Font shape `JY3/gt/m/n' will be
-(Font)              scaled to size 9.24713pt on input line 18.
+(Font)              scaled to size 9.24713pt on input line 17.
 (load cache: extra_lmsans10-regular.luc) (./main.toc)
 \tf@toc=\write5
 
 \openout5 = main.toc
+
+
+Package hyperref Warning: Option `setpagesize' has already been used,
+(hyperref)                setting the option has no effect on input line 18.
+
+
+Package hyperref Warning: Option `bookmarks' has already been used,
+(hyperref)                setting the option has no effect on input line 18.
+
+Package hyperref Info: Option `bookmarksnumbered' set `true' on input line 18.
+
+Package hyperref Warning: Option `colorlinks' has already been used,
+(hyperref)                setting the option has no effect on input line 18.
+
 ) (./4_safety-precautions.tex
 warning  (pdf backend): ignoring duplicate destination with the name 'page.'
 [1
@@ -1237,21 +1251,7 @@ warning  (pdf backend): ignoring duplicate destination with the name 'page.S-1'
 [1
 
 
-]
-
-Package hyperref Warning: The anchor of a bookmark and its parent's must not
-(hyperref)                be the same. Added a new anchor on input line 7.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\leavevmode@ifvmode' on input line 7.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                \kern 1.82538pt
-(hyperref)                removed on input line 7.
-
-) (./5_overview.tex
+]) (./5_overview.tex
 warning  (pdf backend): ignoring duplicate destination with the name 'page.S-1'
 [1
 
@@ -1298,21 +1298,7 @@ Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 [1
 
 
-]
-
-Package hyperref Warning: The anchor of a bookmark and its parent's must not
-(hyperref)                be the same. Added a new anchor on input line 8.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\leavevmode@ifvmode' on input line 8.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                \kern 1.82538pt
-(hyperref)                removed on input line 8.
-
-)
+])
 warning  (pdf backend): ignoring duplicate destination with the name 'page.1-1'
 [1
 
@@ -1325,23 +1311,23 @@ LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-02-20>
  ***********
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: 89617A82775510881DEBFD00ACA90467;719.
+(rerunfilecheck)             Checksum: 229152E721BAC1D82DB1AECF38D0A13E;493.
 )
 
 Here is how much of LuaTeX's memory you used:
- 23204 strings out of 476447
+ 23203 strings out of 476447
  125244,1977958 words of node,token memory allocated
  1108 words of node memory still in use:
    10 hlist, 2 vlist, 5 rule, 2 glue, 4 kern, 1 glyph, 214 attribute, 60 glue_spec, 31 attribute_list, 2 write, 13 user_defined nodes
-   avail lists: 1:9,2:23515,3:209,4:240,5:112,6:41,7:2558,8:1,9:1240,10:11,11:9
- 44634 multiletter control sequences out of 65536+600000
+   avail lists: 1:9,2:23515,3:209,4:236,5:112,6:41,7:2558,8:1,9:1240,10:11,11:9
+ 44633 multiletter control sequences out of 65536+600000
  71 fonts using 64996839 bytes
  125i,15n,128p,1889b,860s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <c:/texlive/2024/texmf-dist/fonts/opentype/public/lm/lmroman12-bold.otf><c:/texlive/2024/texmf-dist/fonts/opentype/public/lm/lmroman10-bold.otf><c:/texlive/2024/texmf-dist/fonts/opentype/public/lm/lmroman10-regular.otf><c:/texlive/2024/texmf-dist/fonts/opentype/public/lm/lmmonolt10-bold.otf><c:/texlive/2024/texmf-dist/fonts/opentype/public/haranoaji/HaranoAjiMincho-Regular.otf><c:/texlive/2024/texmf-dist/fonts/opentype/public/lm/lmsans10-bold.otf><c:/texlive/2024/texmf-dist/fonts/opentype/public/haranoaji/HaranoAjiGothic-Medium.otf><c:/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb>
-Output written on main.pdf (10 pages, 83849 bytes).
+Output written on main.pdf (10 pages, 82494 bytes).
 
-PDF statistics: 134 PDF objects out of 1000 (max. 8388607)
- 99 compressed objects within 1 object stream
+PDF statistics: 128 PDF objects out of 1000 (max. 8388607)
+ 93 compressed objects within 1 object stream
  10 named destinations out of 1000 (max. 131072)
- 72 words of extra memory for PDF output out of 10000 (max. 100000000)
+ 56 words of extra memory for PDF output out of 10000 (max. 100000000)
 

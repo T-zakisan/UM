@@ -1,4 +1,3 @@
-
 \documentclass[11pt]{ltjsarticle}
 \usepackage{tcolorbox}
 \usepackage{fancyhdr}
@@ -29,7 +28,7 @@
 % デフォルトの余白設定
 \usepackage[top     =20truemm,
             bottom  =18truemm,
-            left    =23truemm, 
+            left    =23truemm,
             right   =23truemm]{geometry}
 \setlength{ \topmargin }    { -20mm }
 \setlength{ \headheight }   { 23mm }
@@ -44,14 +43,6 @@
 \newcommand{\linesparpage}[1]{%
     \setlength{\baselineskip}{\dimexpr \textheight / #1 \relax}%
 }
-
-
-% ページ番号関係の定義
-% \newcommand{\thesectionTOC}{
-%     \ifnum\value{\thesection}=0 S-\arabic{page} \else \arabic{\thesection}-\arabic{page} \fi
-% } % フッターのページ番号,目次右"セクション番号―ページ番号"
-% % \newcommand{\thesectionTOC}{\arabic{section}} % セクションタイトル，目次左""
-% \renewcommand{\thesection}{\arabic{section}} % セクションタイトル，目次左""
 
 
 
@@ -75,6 +66,7 @@
 
 % 目次の設定
 %% 目次ページの設定
+\usepackage{hyperref}
 \newcommand{\tocSPstyle}{
     \fancypagestyle{tocstyle}{
         \fancyhf{} % ヘッダーとフッターをリセット
@@ -89,6 +81,17 @@
     }
     \thispagestyle{tocstyle}
     \renewcommand{\contentsname}{\textcolor{white}{目次}}
+    \hypersetup{%
+        setpagesize=false,%
+        bookmarks=true,%
+        bookmarksdepth=section,%
+        bookmarksnumbered=true,%
+        colorlinks=false,%
+        pdftitle={},%
+        pdfsubject={},%
+        pdfauthor={},%
+        pdfkeywords={}
+    }
 }
 %% 目次の表示設定
 \makeatletter
@@ -98,7 +101,8 @@
 \makeatletter
     \renewcommand{\@pnumwidth}{3em}
 \makeatother
-\usepackage{hyperref}  % リンク用のパッケージ
+% \usepackage{hyperref}
+% \hypersetup{ pdfpagelabels=false }
 % 目次のページ番号のカスタマイズ
 \renewcommand{\thepage}{%
     \ifnum\value{section}=-1 %
@@ -132,13 +136,13 @@
     \leftskip = 0pt%
     \markboth{\protect\textcolor{white}{#1}}{} % 白いヘッダー
     \markboth{\quad #1}{} % ヘッダーにセクション名をセット
-    \addcontentsline{toc}{section}{\textbf{#1}} % 目次にタイトル追加（ページ番号あり）
-    \begin{tcolorbox}[colback=gray!20, colframe=black, sharp corners, 
+    \begin{tcolorbox}[colback=gray!20, colframe=black, sharp corners,
                         top=5mm, left=0mm, bottom=5mm, right=0mm,
-                        boxrule=0pt, toprule=1.5pt, bottomrule=1.5pt, 
+                        boxrule=0pt, toprule=1.5pt, bottomrule=1.5pt,
                         width=\linewidth ] % 装飾付きボックス
         \fontsize{34pt}{34pt}\selectfont\bfseries\gtfamily\centering #1
     \end{tcolorbox}
+    \addcontentsline{toc}{section}{\textbf{#1}} % 目次にタイトル追加（ページ番号あり）
     \clearpage
     \setcounter{page}{1} % ページ番号リセット
     \restoregeometry
@@ -154,9 +158,9 @@
     \markboth{\protect\textcolor{white}{#1}}{} % 白いヘッダー
     \markboth{\quad #1}{} % ヘッダーにセクション名をセット
     \addcontentsline{toc}{section}{\textbf{#1}} % 目次にタイトル追加（ページ番号あり）
-    \begin{tcolorbox}[colback=gray!20, colframe=black, sharp corners, 
+    \begin{tcolorbox}[colback=gray!20, colframe=black, sharp corners,
                         top=5mm, left=0mm, bottom=5mm, right=0mm,
-                        boxrule=0pt, toprule=1.5pt, bottomrule=1.5pt, 
+                        boxrule=0pt, toprule=1.5pt, bottomrule=1.5pt,
                         width=\linewidth ] % 装飾付きボックス
         \fontsize{34pt}{34pt}\selectfont\bfseries\gtfamily\centering #1
     \end{tcolorbox}
@@ -174,9 +178,9 @@
     \leftskip = 0pt%
     \addcontentsline{toc}{section}{\textbf{\thesection 章\quad #1}} % 目次にタイトルとページ番号を追加
     \markboth{\thesection 章 \quad #1}{} % ヘッダーにセクション番号と名前をセット
-    \begin{tcolorbox}[colback=gray!20, colframe=black, sharp corners, 
+    \begin{tcolorbox}[colback=gray!20, colframe=black, sharp corners,
                         top=5mm, left=0mm, bottom=5mm, right=0mm,
-                        boxrule=0pt, toprule=1.5pt, bottomrule=1.5pt, 
+                        boxrule=0pt, toprule=1.5pt, bottomrule=1.5pt,
                         width=\linewidth ] % 装飾付きボックス
         \fontsize{34pt}{34pt}\selectfont\bfseries\gtfamily\centering \thesection 章 \hspace{1ex} #1
     \end{tcolorbox}
@@ -187,73 +191,13 @@
 
 
 
-% \makeatletter
-% \renewcommand{\section}{%
-%     \@ifstar{\customsectionstar}{\customsection}} % *付きと無しで分岐
-
-% % 通常のセクションのカスタマイズ
-% \newcommand{\customsection}[1]{%
-%     \cleardoublepage % 右ページから開始
-%     \newgeometry{top=80truemm, bottom=18truemm, left=23truemm, right=23truemm}
-%     \thispagestyle{empty} % このページのページ番号を非表示
-%     \setcounter{page}{1} % ページ番号リセット
-%     \stepcounter{section} % セクション番号をインクリメント
-%     \leftskip = 0pt%
-%     \markboth{\protect\textcolor{white}{\thesection 章 #1}}{} % セクション名をヘッダーに設定
-%     \markboth{\thesection 章 \quad #1}{} % 目次に反映するためにセクション名と番号をセット
-%     \begin{tcolorbox}[colback=gray!20, colframe=black, sharp corners, 
-%                         top=5mm, left=0mm, bottom=5mm, right=0mm,
-%                         boxrule=0pt, toprule=1.5pt, bottomrule=1.5pt, 
-%                         width=\linewidth ] % 上下に1ptの罫線
-%         \fontsize{34pt}{34pt}\selectfont\bfseries\gtfamily\centering \thesection 章 \hspace{1ex} #1
-%     \end{tcolorbox}%
-%     \addcontentsline{toc}{section}{\textbf\thesection 章 \, #1} % 目次に追加、ページ番号なし
-%     \clearpage
-%     \setcounter{page}{1} % ページ番号リセット
-%     \restoregeometry
-% }
-
-% % *付きのセクションのカスタマイズ
-% \newcommand{\customsectionstar}[1]{%
-%     \cleardoublepage % 右ページから開始
-%     \newgeometry{top=80truemm, bottom=18truemm, left=23truemm, right=23truemm}
-%     \thispagestyle{empty} % このページのページ番号を非表示
-%     \setcounter{page}{1} % ページ番号リセット
-%     \leftskip = 0pt%
-%     \markboth{\protect\textcolor{white}{#1}}{} % セクション名をヘッダーに設定
-%     \begin{tcolorbox}[colback=gray!20, colframe=black, sharp corners, 
-%                         top=5mm, left=0mm, bottom=5mm, right=0mm,
-%                         boxrule=0pt, toprule=1.5pt, bottomrule=1.5pt, 
-%                         width=\linewidth ]
-%         \fontsize{34pt}{34pt}\selectfont\bfseries\gtfamily\centering #1
-%     \end{tcolorbox}%
-%     \addtocontents{section}{\textbf #1}
-%     \addcontentsline{toc}{section}{\textbf{#1} } % 目次に追加
-%     \clearpage
-%     \setcounter{page}{1} % ページ番号リセット
-%     \restoregeometry
-% }
-
-
-% % ごあいさつ・整備と・・・用セクションの定義
-% \newcommand{\sectionSP}[1]{%
-%     \vspace*{3em}
-%     \makebox[\textwidth]{% \textwidth 全体の幅を指定
-%         \fontsize{18pt}{18pt}{\selectfont\bfseries #1}
-%     }%
-%     \addcontentsline{toc}{section}{\textbf{#1}}
-%     % \phantomsection % 新しいリンク先を作成
-%     % \addtocontents{toc}{\protect\contentsline{section}{\protect\textbf #1}{}}
-     
-% }
-
 
 
 % subsectionの再定義：(1) 形式
 \renewcommand{\subsection}[1]{%
     \leftskip = 0pt%
-    % \refstepcounter{subsection}%
-    \stepcounter{subsection}
+    \refstepcounter{subsection}%
+    % \stepcounter{subsection}
     \noindent{\normalsize\bfseries (\arabic{subsection}) #1}%
     \addcontentsline{toc}{subsection}{(\arabic{subsection}) \, #1} % 目次に追加、ページ番号なし
 }
