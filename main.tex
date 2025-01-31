@@ -1,0 +1,245 @@
+﻿\documentclass[11pt]{ltjsarticle}
+\usepackage{titlesec} % タイトルのカスタマイズ用
+\usepackage{tcolorbox}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{xcolor} % 色指定用
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{latexsym}
+\usepackage{tocloft} % 目次カスタマイズ用
+\usepackage{etoolbox} % 目次ページ番号の制御
+\usepackage{lipsum} % ダミーテキスト用
+\usepackage{hyperref}
+
+
+% デフォルトの余白設定
+\usepackage[top     =20truemm,
+            bottom  =18truemm,
+            left    =23truemm,
+            right   =23truemm]{geometry}
+\setlength{ \topmargin }    { -20mm }
+\setlength{ \headheight }   {  23mm }
+\setlength{ \headsep }      { -8mm }
+
+
+
+
+% ページ番号の形式設定
+\renewcommand{\thepage}{
+\ifnum\value{section}>0
+\arabic{section}-\arabic{page}
+  \else
+    S-\arabic{page}
+  \fi
+}
+
+
+\newcounter{sectionpage}[section] % sectionごとにリセットされるカウンタ
+\pagestyle{fancy}
+\fancyhf{} % 全てのヘッダー・フッターをクリア
+\renewcommand{\headrulewidth}{0pt} % デフォルトのヘッダー罫線を非表示
+\renewcommand{\footrulewidth}{0.4pt} % フッターに罫線を表示
+%%ヘッダーの表記：章番号と章タイトル
+\fancyhead[C]{%
+  \begin{tcolorbox}[colback=gray!100, colframe=black, sharp corners, 
+                      boxrule=0pt, toprule=0.5pt, bottomrule=0.5pt, 
+                      width=\linewidth, boxsep=0pt ]
+\centering\bfseries\ttfamily\textcolor{white}{\ifnum\value{section}>0 \thesection 章\hspace{1em}\fi\leftmark}  \end{tcolorbox}
+}
+%%フッター部分の設定
+%%% 目次のページ番号のカスタマイズ
+\renewcommand{\thesectionpage}{
+\ifnum\value{section}=-1 
+    {}% 空の出力
+  \else
+\ifnum\value{section}=0 
+      S-\arabic{page}%
+    \else
+\arabic{section}-\arabic{page}
+    \fi
+  \fi
+}
+\fancyfoot[C]{\bfseries\ttfamily\thesectionpage} % ページ番号
+
+
+
+
+
+% sectionの再定義
+%% ごあいさつ用のsection
+\newcommand{\sectionA}[1]{
+  \thispagestyle{empty} % ページスタイルをemptyに設定
+  \begin{center}
+    {\fontsize{18pt}{18pt}\selectfont\bfseries ≪\hspace{0.5em}#1\hspace{0.5em}≫}
+  \end{center}
+} 
+
+% sectionB: 別ページ、章番号なし、ヘッダー・フッターなし、目次にページ数なし
+\newcommand{\sectionB}[1]{
+  \cleardoublepage % 改ページ
+  \newgeometry{top=80truemm, bottom=18truemm, left=23truemm, right=23truemm}
+  \thispagestyle{empty} % ページスタイルをemptyに設定
+  \markboth{\protect\textcolor{white}{#1}}{} % ここが重要：markbothはタイトルのみ
+  \begin{tcolorbox}[colback=gray!20, colframe=black, sharp corners,
+                      top=5mm, left=0mm, bottom=5mm, right=0mm,
+                      boxrule=0pt, toprule=1.5pt, bottomrule=1.5pt,
+                      width=\linewidth ] % 装飾付きボックス
+      \fontsize{34pt}{34pt}\selectfont\bfseries\gtfamily\centering #1
+  \end{tcolorbox}
+\addcontentsline{toc}{section}{#1} % 目次への追加（ページ数なし）
+  \newpage
+\setcounter{section}{-1} % ページ番号リセット
+  \setcounter{page}{1} % ページ番号リセット
+  \restoregeometry
+}
+
+% sectionC: 別ページ、章番号なし、ヘッダー・フッターあり、目次にページ数なし
+\newcommand{\sectionC}[1]{
+  \cleardoublepage % 改ページ
+  \newgeometry{top=80truemm, bottom=18truemm, left=23truemm, right=23truemm}
+  \thispagestyle{empty} % ページスタイルをemptyに設定
+  \setcounter{page}{0} % ページ番号リセット
+  \markboth{\protect\textcolor{white}{#1}}{} % 白いヘッダー
+  \begin{tcolorbox}[colback=gray!20, colframe=black, sharp corners,
+                      top=5mm, left=0mm, bottom=5mm, right=0mm,
+                      boxrule=0pt, toprule=1.5pt, bottomrule=1.5pt,
+                      width=\linewidth ] % 装飾付きボックス
+      \fontsize{34pt}{34pt}\selectfont\bfseries\gtfamily\centering #1
+  \end{tcolorbox}
+  \newpage
+\setcounter{section}{0} % ページ番号リセット
+  \setcounter{page}{1} % ページ番号リセット
+% \addcontentsline{toc}{section}{#1\hfill P=\thesectionpage} % 目次への追加（ページ数なし）
+\addcontentsline{toc}{section}{#1}% \hfill\thepage を削除
+\phantomsection % hyperrefのためのアンカーを設定
+  \restoregeometry
+}
+
+
+% sectionD: 別ページ、章番号あり、ヘッダー・フッターあり、目次にページ数あり
+\newcommand{\sectionD}[1]{
+  \cleardoublepage % 改ページ
+  \newgeometry{top=80truemm, bottom=18truemm, left=23truemm, right=23truemm}
+  \thispagestyle{empty} % ページスタイルをemptyに設定
+  \markboth{\protect\textcolor{white}{#1}}{} % 白いヘッダー
+\refstepcounter{section} % sectionカウンタを進める
+  \begin{tcolorbox}[colback=gray!20, colframe=black, sharp corners,
+                      top=5mm, left=0mm, bottom=5mm, right=0mm,
+                      boxrule=0pt, toprule=1.5pt, bottomrule=1.5pt,
+                      width=\linewidth ] % 装飾付きボックス
+\fontsize{34pt}{34pt}\selectfont\bfseries\gtfamily\centering \thesection 章 \hspace{1em}#1 % 本文での変更
+  \end{tcolorbox}
+  \newpage
+  \setcounter{page}{1} % ページ番号リセット
+% \addcontentsline{toc}{section}{\thesection 章\hspace{1em}#1\hfill P=\thesectionpage} % 目次への追加（ページ数あり）
+\addcontentsline{toc}{section}{\thesection 章\hspace{1em}#1} % 目次への追加（ページ数あり）
+\phantomsection % hyperrefのためのアンカーを設定
+  \restoregeometry
+}
+
+% 目次部分の修正
+\renewcommand{\cftsecpagefont}{\hfill\thesectionpage} % 目次のページ番号のフォント設定を修正
+% \renewcommand{\cftsecdotfill}{\cftdotfill{\cftsecdotsep}} % 目次の点線を修正
+
+
+%hyperref（リンク）の設定
+\hypersetup{%
+dvipdfmx,%
+ setpagesize=false,%
+ bookmarks=true,%しおりの作成
+bookmarksdepth=section,%しおりの深さ subsectionまで
+ bookmarksnumbered=true,%PDFのしおりに節番号も含めるか
+ colorlinks=false,%リンクのテキストに色をつけるかどうか
+ pdftitle={},%PDFのメタタイトル情報
+ pdfsubject={},%PDFのメタ主題情報。
+ pdfauthor={},%PDFのメタ著者情報。
+ pdfkeywords={},%PDFのメタキーワード情報。複数キーワードはセミコロンで区切る。
+ pdfcreator={}%PDFの作成者情報
+ }
+
+
+
+
+\begin{document}
+
+% ページ番号を非表示
+\pagenumbering{gobble}
+
+% はじめに
+\thispagestyle{empty} % このページのページ番号を非表示
+\cleardoublepage % 右ページから開始
+\sectionA{はじめに}
+\addcontentsline{toc}{section}{はじめに} % 目次にエントリを追加
+ここに「はじめに」の内容を書きます。
+
+% ご注意
+\hspace{2em}
+\sectionA{整備とサービスについて}
+\addcontentsline{toc}{section}{整備とサービスについて} % 目次にエントリを追加
+ここに「整備とサービスについて」の内容を書きます。
+
+
+
+% 目次を目次に追加し、タイトルを1回だけ表示
+\newpage
+\null %なにもない
+\thispagestyle{empty} % このページのページ番号を非表示
+
+\cleardoublepage  % 改ページ：新しいページで目次
+% \addcontentsline{toc}{section}{目次} % 「目次」を目次に追加
+\sectionB{目次}
+\tableofcontents
+\restoregeometry
+
+% ページ番号をリセットしてアラビア数字に
+\clearpage
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+
+% ページ番号をリセットしてアラビア数字に
+\clearpage
+
+
+% セクション1
+\sectionC{セクション1}
+ここにセクション1の内容を書きます。
+\newpage
+ここにセクション1の内容を書きます。
+\newpage
+ここにセクション1の内容を書きます。
+\newpage
+
+% \lipsum[1-3] % ダミーテキスト（不要なら削除）
+% \newpage
+% \lipsum[1-3] % ダミーテキスト（不要なら削除）
+
+
+% セクション2
+\newpage
+\sectionD{セクション2}
+ここにセクション2の内容を書きます。
+ここにセクション1の内容を書きます。
+\newpage
+ここにセクション1の内容を書きます。
+\newpage
+ここにセクション1の内容を書きます。
+% \newpage
+
+% \lipsum[4-6] % ダミーテキスト（不要なら削除）
+% \newpage
+% \lipsum[1-3] % ダミーテキスト（不要なら削除）
+
+\newpage
+\sectionD{セクション3}
+ここにセクション2の内容を書きます。
+ここにセクション1の内容を書きます。
+\newpage
+ここにセクション1の内容を書きます。
+\newpage
+ここにセクション1の内容を書きます。
+% \newpage
+
+\end{document}
