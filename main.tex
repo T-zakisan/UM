@@ -141,19 +141,22 @@
 \renewcommand{\contentsname}{} % 目次表記削除
 \usepackage{titletoc}
 %sectionの調整
-% \titlecontents{section}
-%   [0pt]% インデント
-%   {\bfseries \large}%項目の前に実行するコード
-%   {\thesection\quad}%ラベル (番号) の書式
-%   {\hfill\textup{P=}\thepage}%項目名とページ番号の間の詰め物とページ番号の書式
-%   {}%項目の後に実行するコード
+\titlecontents{section}
+  [0pt]% インデント
+  {\bfseries \ttfamily }%項目の前に実行するコード
+  {\thecontentslabel}%番号付き見出しに対するラベル書式
+  {{}}%番号なし見出しに対するラベル書式
+  {\hfill{\ttfamily P=\thecontentspage}}%目次の後に続く書式
+  {{}}%項目の後に実行するコード
+%subsectionの調整
+  \titlecontents{subsection}
+  [3em]% インデント
+  {\bfseries \ttfamily}%項目の前に実行するコード
+  {\thecontentslabel}%番号付き見出しに対するラベル書式
+  {}%番号なし見出しに対するラベル書式
+  {\hfill{\ttfamily P=\thecontentspage}}%目次の後に続く書式
+  {{}}%項目の後
 
-%   \titlecontents{subsection}
-%   [0pt]% インデント
-%   {\bfseries \large}%項目の前に実行するコード
-%   {\thesubsection\quad}%ラベル (番号) の書式
-%   {\hfill\textup{P=}\thepage}%項目名とページ番号の間の詰め物とページ番号の書式
-%   {}%項目の後に実行するコード
 
 
 
