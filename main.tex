@@ -152,7 +152,6 @@
   \end{center}
 }
 
-
 %通常subsubsection
 \renewcommand{\subsubsection}[1]{%
   \stepcounter{subsubsection}%
@@ -160,6 +159,13 @@
   \addcontentsline{toc}{subsubsection}{\ \alph{subsubsection}.\hspace{1em}#1}%目次に追加
   \par\noindent{\bfseries\ \alph{subsubsection}.\hspace{1em}#1\\}%
 }
+
+%通常paragraph
+\renewcommand{\paragraph}[1]{%
+  \par\noindent{\bfseries\ \blacksquare\hspace{1em}#1\\}%
+}
+
+
 
 
 
