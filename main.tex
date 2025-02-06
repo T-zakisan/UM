@@ -111,7 +111,7 @@
   \thispagestyle{empty} % 目次の見出しページスタイルをemptyに設定
   \pdfbookmark[1]{#1}{#1} % しおりに追加
   \phantomsection % hyperref のためのアンカー
-  \markboth{#1}{} % ヘッダーにタイトルを表示
+  \markboth{#1}{#1} % ヘッダーにタイトルを表示
   \begin{tcolorbox}[colback=gray!20, colframe=black, sharp corners,
       top=5mm, left=0mm, bottom=5mm, right=0mm,
       boxrule=0pt, toprule=1.5pt, bottomrule=1.5pt,
@@ -137,7 +137,7 @@
   % \ifstrequal{#1}{まえがき}
   %   {\setcounter{section}{0}}%
   %   {\refstepcounter{section} }  % 章番号をインクリメント
-  % \markboth{#1}{} % ヘッダーにタイトルを表示
+  % \markboth{#1}{#1} % ヘッダーにタイトルを表示
   % \begin{tcolorbox}[colback=gray!20, colframe=black, sharp corners,
   %     top=5mm, left=0mm, bottom=5mm, right=0mm,
   %     boxrule=0pt, toprule=1.5pt, bottomrule=1.5pt,
