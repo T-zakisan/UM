@@ -1,13 +1,31 @@
-\documentclass[notwoside, 11pt]{ltjsarticle}
+\documentclass[11pt, a4paper]{ltjsarticle}
+% \documentclass[twoside, 11pt]{ltjsarticle}%左右別レイアウト変更時のためのヤツ
 
 \usepackage{lipsum} % ダミーテキスト用
 
-\usepackage{titlesec} % タイトルのカスタマイズ用
 \usepackage{tcolorbox} %
-\usepackage{xcolor} % 色指定用
-\usepackage{tocloft} % 目次カスタマイズ用
-\usepackage{etoolbox} % 目次ページ番号の制御
-\usepackage{chappg}
+\usepackage{chappg} %目次のページ表記(x-x)で使用
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% しおりの設定：最初にloadした方がよいパッケージ
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{hyperref}
+\hypersetup{%
+  setpagesize=true,%
+  bookmarks=true,%しおりの作成
+  bookmarksdepth=subsubsection,%しおりの深さ subsubsectionまで
+  bookmarksnumbered=true,%PDFのしおりに節番号も含めるか
+  colorlinks=false,%リンクのテキストに色をつけるかどうか
+  pdfstartview={Fit}, %表示レイアウト
+  pdftitle={},%PDFのメタタイトル情報
+  pdfsubject={},%PDFのメタ主題情報。
+  pdfauthor={},%PDFのメタ著者情報。
+  pdfkeywords={},%PDFのメタキーワード情報。複数キーワードはセミコロンで区切る。
+  pdfcreator={}%PDFの作成者情報
+}
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -29,6 +47,7 @@
 % ページスタイルの設定
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \usepackage{fancyhdr}
+\usepackage{xstring}  %文字比較パッケージ
 \pagestyle{fancy}
 \fancyhf{} % 全てのヘッダー・フッターをクリア
 \renewcommand{\headrulewidth}{0pt} % デフォルトのヘッダー罫線を非表示
@@ -36,8 +55,8 @@
 % ヘッダーの表記：章番号と章タイトル
 \fancyhead[L]{} % ヘッダー左側：なし
 \fancyhead[C]{%
-  \begin{tcolorbox}[colback=gray!100, colframe=black, sharp corners, 
-                      boxrule=0pt, toprule=0.5pt, bottomrule=0.5pt, 
+  \begin{tcolorbox}[colback=gray!100, colframe=black, sharp corners,
+                      boxrule=0pt, toprule=0.5pt, bottomrule=0.5pt,
                       width=\linewidth, boxsep=0pt ]
     \centering\bfseries\ttfamily\textcolor{white}{\thesection 章\ \leftmark}
   \end{tcolorbox}
@@ -45,31 +64,28 @@
 \fancyhead[R]{} % ヘッダー右側：なし
 % フッター部分の設定
 \usepackage{etoolbox} % 目次ページ番号の制御
-\renewcommand{\thepage}{
-  \ifnum\value{section}=0
-    S-\arabic{page}
-  \else
-    \ifnum\value{section}>0
-      \thesection-\arabic{page}
-    \fi
-  \fi
-} % ページ番号の表示形式を変更
-\fancyfoot[L]{} % フッター左側：なし
+% \renewcommand{\thesection}{\thesection 章}
+\renewcommand{\thepage}{\thesection-\arabic{page}} % ページ番号の表示形式を変更
+
+
+
 \fancyfoot[C]{\bfseries\ttfamily\thepage} % ページ番号
 \fancyfoot[R]{} % フッター右側：なし
 %目次用のヘッダフッタ
 \fancypagestyle{StyleTOC}{
   \fancyhf{}            % 既存のヘッダー・フッター設定をクリア
   \fancyhead[C]{%
-    \begin{tcolorbox}[colback=gray!100, colframe=black, sharp corners, 
-                      boxrule=0pt, toprule=0.5pt, bottomrule=0.5pt, 
+    \begin{tcolorbox}[colback=gray!100, colframe=black, sharp corners,
+                      boxrule=0pt, toprule=0.5pt, bottomrule=0.5pt,
                       width=\linewidth, boxsep=0pt ]
-      \centering\bfseries\ttfamily\textcolor{white}{目\hspace{3em}次}
+      \IfEq{\leftmark}{保証証券}
+        {\centering\bfseries\ttfamily\textcolor{white}{\leftmark}}%その他
+        {\centering\bfseries\ttfamily\textcolor{white}{目\hspace{1.5em}次}}%安全上の注意事項
     \end{tcolorbox}
   }
   \fancyfoot[C]{} % ページ番号：なし
   \renewcommand{\headrulewidth}{0pt} % デフォルトのヘッダー罫線を非表示
-  \renewcommand{\footrulewidth}{0pt} % フッターに罫線を表示    
+  \renewcommand{\footrulewidth}{0pt} % フッターに罫線を表示
 }
 
 
@@ -88,97 +104,175 @@
   \setcounter{section}{-2}  % 章番号をリセット
   \addcontentsline{toc}{section}{#1} % ページ番号なし
 }
-
 %% 目次用のセクション:
 \newcommand{\sectionB}[1]{
   \cleardoublepage
   \newgeometry{top=80truemm, bottom=18truemm, left=23truemm, right=23truemm}
   \thispagestyle{empty} % 目次の見出しページスタイルをemptyに設定
+  \pdfbookmark[1]{#1}{#1} % しおりに追加
   \phantomsection % hyperref のためのアンカー
   \markboth{#1}{} % ヘッダーにタイトルを表示
   \begin{tcolorbox}[colback=gray!20, colframe=black, sharp corners,
       top=5mm, left=0mm, bottom=5mm, right=0mm,
       boxrule=0pt, toprule=1.5pt, bottomrule=1.5pt,
       width=\linewidth ]
-    \fontsize{34pt}{34pt}\selectfont\bfseries\gtfamily\centering #1
+    \ifstrequal{#1}{目次}
+      {\fontsize{34pt}{34pt}\selectfont\bfseries\gtfamily\centering 目\hspace{1em}次}
+      {\fontsize{34pt}{34pt}\selectfont\bfseries\gtfamily\centering #1}
   \end{tcolorbox}
-  \setcounter{section}{-1}  % 章番号をリセット
-  \addcontentsline{toc}{section}{#1} % ページ番号なし
+  % \setcounter{section}{-1}  % 章番号をリセット
+  % \addcontentsline{toc}{section}{#1} % ページ番号なし
   \newpage  % 改ページ
   \restoregeometry  % ページレイアウトを元に戻す
 }
-
 % 目次以降のセクション
-\newcommand{\sectionC}[1]{
-  \cleardoublepage % 改ページ
-  \newgeometry{top=80truemm, bottom=18truemm, left=23truemm, right=23truemm}
-  \thispagestyle{empty} % ページスタイルをemptyに設定
-  \phantomsection % hyperref のためのアンカー
-  \refstepcounter{section}  % 章番号をインクリメント
-  \markboth{#1}{} % ヘッダーにタイトルを表示
-  \begin{tcolorbox}[colback=gray!20, colframe=black, sharp corners,
-      top=5mm, left=0mm, bottom=5mm, right=0mm,
-      boxrule=0pt, toprule=1.5pt, bottomrule=1.5pt,
-      width=\linewidth ]
-    \ifstrequal{#1}{安全上の注意事項}
-    {\fontsize{34pt}{34pt}\selectfont\bfseries\gtfamily\centering #1}
-    {\fontsize{34pt}{34pt}\selectfont\bfseries\gtfamily\centering \thesection\ 章\ #1}
-  \end{tcolorbox}
-  \newpage  % 改ページ
-  \setcounter{page}{1} %
-  \restoregeometry  % ページレイアウトを元に戻す
-  \ifstrequal{#1}{安全上の注意事項}
-  {\addcontentsline{toc}{section}{#1}}% ページ番号を追加
-  {\addcontentsline{toc}{section}{\thesection\ 章\ #1}}% ページ番号を追加
+\renewcommand{\section}[1]{
+  \section*{#1} % tcolorbox, geometry などを全て削除し、最もシンプルな section* に
 }
+% \renewcommand{\section}[1]{%
+  % \cleardoublepage % 改ページ
+  % \newgeometry{top=80truemm, bottom=18truemm, left=23truemm, right=23truemm}
+  % \thispagestyle{empty} % ページスタイルをemptyに設定
+  % \phantomsection % hyperref のためのアンカー
+  % \ifstrequal{#1}{まえがき}
+  %   {\setcounter{section}{0}}%
+  %   {\refstepcounter{section} }  % 章番号をインクリメント
+  % \markboth{#1}{} % ヘッダーにタイトルを表示
+  % \begin{tcolorbox}[colback=gray!20, colframe=black, sharp corners,
+  %     top=5mm, left=0mm, bottom=5mm, right=0mm,
+  %     boxrule=0pt, toprule=1.5pt, bottomrule=1.5pt,
+  %     width=\linewidth ]
+  %   \fontsize{34pt}{34pt}\selectfont\bfseries\gtfamily\centering \thesection\ 章\ #1
+  % \end{tcolorbox}
+  % \newpage  % 改ページ
+  % % \setcounter{page}{1} %
+  % \restoregeometry  % ページレイアウトを元に戻す
+  % \addcontentsline{toc}{section}{\thesection\ 章\ #1}% ページ番号を追加
+% }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% subsectionの再定義：
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \usepackage{titlesec}
+% \titleformat{\section}% command
+%     [block]% shape
+%     {%
+%     \bfseries\normalsize
+%     }% format
+%     % {\thesubsection 章}% label
+%     {}% label
+%     {0.5em}% sep
+%     {%
+%       \cleardoublepage % 改ページ
+%       \newgeometry{top=80truemm, bottom=18truemm, left=23truemm, right=23truemm}
+%       \thispagestyle{empty} % ページスタイルをemptyに設定
+%       \phantomsection % hyperref のためのアンカー}% before-code
+%     }
+%     [%
+%       \newpage  % 改ページ
+%       \setcounter{page}{1} %
+%       \restoregeometry  % ページレイアウトを元に戻す
+%     ]% after-code
 
 
 
+
+\renewcommand{\thesubsection}{(\arabic{subsection})}  %subsection番号の再定義
+% \titleformat{\subsection}% command
+%     [block]% shape
+%     {\bfseries\normalsize}% format
+%     {\thesubsection}% label
+%     {0.5em}% sep
+%     {}% before-code
+%     [\vspace{-0.5em}]
+
+
+\renewcommand{\thesubsubsection}{\alph{subsubsection}}
+% \titleformat{\subsubsection}% command
+%     [block]% shape
+%     {\bfseries\normalsize}% format
+%     {{\thesubsubsection}.}% label
+%     {0.5em}% sep
+%     {\hspace{0.5em}}% before-code
+%     [%
+%       \vspace{-0.5em}%
+%     ]
+
+
+% \titleformat{\paragraph}% command
+%     [block]% shape
+%     {\bfseries\normalsize}% format
+%     {■ }% label
+%     {0pt}% sep
+%     {■ \hspace{0.5em}}% before-code
+%     [%
+%       \vspace{-1.0em}%
+%     ]% after-code
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % 目次部分の修正
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \renewcommand{\contentsname}{} % 目次表記削除
+\usepackage{tocloft} % 目次カスタマイズ用
+\usepackage{etoolbox} % 目次ページ番号の制御
 \usepackage{titletoc}
+\usepackage{ifthen}
 %sectionの調整
-\titlecontents{section}
-  [0pt]% インデント
-  {\bfseries \ttfamily }%項目の前に実行するコード
-  {\thecontentslabel}%番号付き見出しに対するラベル書式
-  {{}}%番号なし見出しに対するラベル書式
-  {\hfill{\ttfamily P=\thecontentspage}}%目次の後に続く書式
-  {{}}%項目の後に実行するコード
+% \titlecontents{section}
+%   [0pt]% インデント
+%   {\bfseries \ttfamily \large}%項目の前に実行するコード
+%   {\thecontentslabel}%番号付き見出しに対するラベル書式
+%   {{}}%番号なし見出しに対するラベル書式
+%   {\hspace{0.5em}\leaders\vrule height 0.7ex depth -0.69ex\hfill\hspace{0.2em}\thecontentspage}%目次の後に続く書式
+%   {}%項目の後に実行するコード
+
 %subsectionの調整
-  \titlecontents{subsection}
-  [3em]% インデント
-  {\bfseries \ttfamily}%項目の前に実行するコード
-  {\thecontentslabel}%番号付き見出しに対するラベル書式
-  {}%番号なし見出しに対するラベル書式
-  {\hfill{\ttfamily P=\thecontentspage}}%目次の後に続く書式
-  {{}}%項目の後
+\titlecontents{subsection}
+  [1em]% インデント
+  {\bfseries\ttfamily}%項目の前に実行するコード
+  {\thecontentslabel\hspace{0.5em}}%番号付き見出しに対するラベル書式
+  {■\hspace{0.5em}}%番号なし見出しに対するラベル書式
+  {\hspace{0.5em}\leaders\vrule height 0.7ex depth -0.69ex\hfill\hspace{0.2em}\thecontentspage}%目次の後に続く書式
+  {}%項目の後に実行するコード
+
+%subsubsectionの調整
+% \titlecontents{subsubsection}
+%   [1em]% インデント
+%   {\bfseries\ttfamily}%項目の前に実行するコード
+%   {\thecontentslabel\hspace{0.5em}}%番号付き見出しに対するラベル書式
+%   {■\hspace{0.5em}}%番号なし見出しに対するラベル書式
+%   {}%目次の後に続く書式
+%   {}%項目の後に実行するコード
+
 
 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% しおりの設定
+% ◯数：数字付きリスト用
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\usepackage{hyperref}
-\hypersetup{%
-  dvipdfmx,%
-  setpagesize=false,%
-  bookmarks=true,%しおりの作成
-  bookmarksdepth=subsection,%しおりの深さ subsectionまで
-  bookmarksnumbered=true,%PDFのしおりに節番号も含めるか
-  colorlinks=false,%リンクのテキストに色をつけるかどうか
-  pdfstartview={Fit}, %表示レイアウト
-  pdftitle={},%PDFのメタタイトル情報
-  pdfsubject={},%PDFのメタ主題情報。
-  pdfauthor={},%PDFのメタ著者情報。
-  pdfkeywords={},%PDFのメタキーワード情報。複数キーワードはセミコロンで区切る。
-  pdfcreator={}%PDFの作成者情報
+\renewcommand{\labelenumi}{\textcircled{\scriptsize \theenumi}}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% enumerateの前後のスペースを調整
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{enumitem}
+\setlist[enumerate]{
+    topsep      =0pt,   % 縦方向の余白（前後）
+    leftmargin  =2.5em,  % 左のインデント幅（デフォルトは2.5em程度）
+    labelindent =0em  % ラベルの位置を調整（必要に応じて）
 }
 
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% % ◯段組み：リスト表示で使用予定あり
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{multicol}
 
 
 
@@ -186,45 +280,92 @@
 
 \begin{document}
 
+\section{まえがき}
 
-\sectionA{ごあいさつ}
+\subsection*{ごあいさつ}
 テストページ 1
 
 
-\sectionA{整備とサービスについて}
+\subsection*{整備とサービスについて}
 テストページ 2
+
 
 
 \sectionB{目次}
 \tableofcontents
-\thispagestyle{StyleTOC} 
+\thispagestyle{StyleTOC} %目次用のヘッダ/フッタのスタイル：ここに置かないと動作しない
 
 
 
-\sectionC{安全上の注意事項}
+\section{安全上の注意事項}
+\subsection{test1}
+
+egegeaggeageragrargeegegeaggeageragrargeegegeaggeageragrargeegegeaggeageragrargeegegeaggeageragrargeegegeaggeageragrargeegegeaggeageragrargeegegeaggeageragrargeegegeaggeageragrargeegegeaggeageragrargeegegeaggeageragrargeegegeaggeageragrargeegegeaggeageragrargeegegeaggeageragrargeegegeaggeageragrargeegegeaggeageragrargeegegeaggeageragrargeegegeaggeageragrargeegegeaggeageragrargeegegeaggeageragrargeegegeaggeageragrargeegegeaggeageragrargeegegeaggeageragrargeegegeaggeageragrarge
+agagagreag
+
+
+\subsection{test1}
+\subsection{test1}
+\subsubsection{あり}
+\lipsum[1-1]
+
+\paragraph{なし}
+\lipsum[1-1]
+
+
+
+\lipsum[1-1]
+% \subsubsection{なし}
+\lipsum[1-1]
+% \subsubsection{なし}
+\lipsum[1-1]
+
+
+
+% \subsection{test2}
+% % \subsubsection*{あり}
+% \lipsum[1-1]
+% % \subsubsection*{あり}
+% \lipsum[1-1]
+% % \subsubsection*{あり}
+% \lipsum[1-1]
+
+
+
+
+% \subsection{test3}
+% \lipsum[1-1]
+% \subsection{test4}
+% \lipsum[1-1]
+
+% \newpage
+% \lipsum[1-3] % ダミーテキスト（不要なら削除）
+
+
+
+\section{機械の概要}
 テストページ 3
 \newpage
 \lipsum[1-3] % ダミーテキスト（不要なら削除）
 
 
-
-\sectionC{機械の概要}
+\section{主要諸元}
 テストページ 3
 \newpage
 \lipsum[1-3] % ダミーテキスト（不要なら削除）
 
 
-\sectionC{主要諸元}
-テストページ 3
-\newpage
-\lipsum[1-3] % ダミーテキスト（不要なら削除）
+\section{標準付属品}
+fwfewf
+% \subsection{test}
+% テストページ 3
+% \newpage
+% \lipsum[1-3] % ダミーテキスト（不要なら削除）
 
+\section{保証証券}
+% \thispagestyle{StyleTOC}
+gergege
 
-\sectionC{標準付属品}
-\subsection{test}
-テストページ 3
-\newpage
-\lipsum[1-3] % ダミーテキスト（不要なら削除）
 
 
 \end{document}
@@ -234,24 +375,20 @@
 
 % ■テキストベースであるTexでドキュメント作成をするメリット
 % （バイナリベースのドキュメント作成のデメリット）
-
 % 【管理運営上のメリット】
 %     ・プレーンテキストファイルのため，ファイル(版)管理に定評のがあるGitを利用できる
 %         ・過去のバージョンに戻すことができる
-%         ・フォークして特別仕様を作成することができる　　※テキストだから比較ツールが豊富に存在(オンライン　diff　で検索：オンラン版を使用するという意味ではない)
+%         ・フォークして特別仕様を作成することができる
+%            ※テキストだから比較ツールが豊富に存在(オンライン　diff　で検索：オンラン版を使用するという意味ではない)
 %         ・変更点のみを強調表示ができる
 %         ・だれがいつどこをなぜ※変更したかの表示ができる　※なぜ：変更時にメモを記述する必要あり
 %         ※理論上同時編集が可能 > 属人化回避
 %     ・編集ソフトのバージョンに依存しないため，PC管理が容易
 %     ・ファイル容量が軽量のため，ハードウェアコストを低く抑えることができる
-
-
 % 【編集時のメリット】
 %     ・ファイルが軽量なため，編集中にデータが飛んだり，破損したりしにくい．
 %     ・ファイルの編集が軽量なエディタで可能である一方で，入力支援やニスペット登録などを備えた高機能なエディタもある．
 %     ・テキストファイルのため，ファイル内検索，置換が容易　※VBAでとりあえず作成済み
-
-
 % 【TeXのメリット】
 %     ・書式と内容(文面)を分離することが可能で，内容に集中することができる
 %         1.最初に書式を共通ルールとして定める　※以降文面のみに集中できる
@@ -261,13 +398,10 @@
 %           ・図（プレーン，横並び，回り込み）
 %           ・表
 %           ・見出し(section，subsection，subsubsectoin)　※すぐに使われなくなりそうだが・・・
-
 %     ・目次（見出し，ページ数）とpdfのしおり（リンク）が自動生成される．
 %         ・ミスがなくなる
 %         ・作業工数がなくなる
-
 %     ・共通パーツの利用が容易
 %         ・変更時に適用しているすべてのドキュメントに反映できる
 %         ・共通利用するカテゴリを全機種，特定機種等の融通が効く　※ノウハウが必要
-
 
