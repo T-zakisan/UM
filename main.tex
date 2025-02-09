@@ -1,10 +1,18 @@
 \documentclass[11pt, a4paper]{ltjsarticle}
 % \documentclass[twoside, 11pt]{ltjsarticle}%左右別レイアウト変更時のためのヤツ
 
-\usepackage{lipsum} % ダミーテキスト用
 
+\usepackage{myValues}
+\usepackage{graphicx}
+\usepackage{xargs}
+\usepackage{lipsum} % ダミーテキスト用
 \usepackage{tcolorbox} %
 \usepackage{chappg} %目次のページ表記(x-x)で使用
+\usepackage{xstring}  %文字比較パッケージ
+\usepackage{tcolorbox}
+\usepackage{dcolumn}  % tableの表示位置を揃える
+\usepackage{amsmath} % 数式
+
 
 
 
@@ -47,7 +55,6 @@
 % ページスタイルの設定
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \usepackage{fancyhdr}
-\usepackage{xstring}  %文字比較パッケージ
 \pagestyle{fancy}
 \fancyhf{} % 全てのヘッダー・フッターをクリア
 \renewcommand{\headrulewidth}{0pt} % デフォルトのヘッダー罫線を非表示
@@ -59,7 +66,9 @@
   \begin{tcolorbox}[colback=gray!100, colframe=black, sharp corners,
                       boxrule=0pt, toprule=0.5pt, bottomrule=0.5pt,
                       width=\linewidth, boxsep=0pt ]
-    \centering\bfseries\ttfamily\textcolor{white}{\thesection 章\ \leftmark}
+    \IfEq{\mySetLang}{Jpn}
+      {\centering\bfseries\ttfamily\textcolor{white}{\thesection 章\ \leftmark}}
+      {\centering\bfseries\ttfamily\textcolor{white}{Chapter \thesection\hspace{1em} \leftmark}}
   \end{tcolorbox}
 }
 \fancyhead[R]{} % ヘッダー右側：なし
@@ -77,10 +86,11 @@
     \begin{tcolorbox}[colback=gray!100, colframe=black, sharp corners,
                       boxrule=0pt, toprule=0.5pt, bottomrule=0.5pt,
                       width=\linewidth, boxsep=0pt ]
-      \IfEq{\leftmark}{保証証券}
-        {\centering\bfseries\ttfamily\textcolor{white}{\leftmark}}%その他
-        {\centering\bfseries\ttfamily\textcolor{white}{目\hspace{1.5em}次}}%安全上の注意事項
-    \end{tcolorbox}
+      \leftmark%
+      \IfEq{\mySetLang}{Jpn}%
+        {\centering\bfseries\ttfamily\textcolor{white}{目\hspace{1.5em}次}}% 日本語版
+        {\centering\bfseries\ttfamily\textcolor{white}{Table of Contents}}% 英語版
+      \end{tcolorbox}
   }
   \fancyfoot[C]{} % ページ番号：なし
   \renewcommand{\headrulewidth}{0pt} % デフォルトのヘッダー罫線を非表示
@@ -94,41 +104,61 @@
 % sectionの再定義
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \setlength{\parindent}{0pt} % 全体字下げをなし
-\newlength{\myLEFTSKIP}
+\newlength{\myLEFTSKIP} % subsection,subsubsection,paragraphの初行位置(水平方向)のオフセット 
 \setlength{\myLEFTSKIP}{2em} % 2em分字下げ
-\newlength{\myVOFFSET}
-\setlength{\myVOFFSET}{-13pt} %
-\setcounter{section}{-1}
+\newlength{\myVOFFSET} % subsection,subsubsection,paragraphの初行位置(垂直方向)のオフセット
+\setlength{\myVOFFSET}{-13pt}
+\setcounter{section}{-1}  %セクションを0(まえがき)からスタートするための設定
+%% section再定義の本体
 \renewcommand{\section}[1]{
   \leftskip = 0em%
   \cleardoublepage
   \newgeometry{top=80truemm, bottom=18truemm, left=23truemm, right=23truemm}
   \thispagestyle{empty} % ページスタイルをemptyに設定
   \phantomsection % hyperref のためのアンカー
-  \markboth{#1}{#1} % ヘッダーにタイトルを表示
-  \ifstrequal{#1}{目次}
-    {\pdfbookmark[1]{目次}{toc}} % しおりに「目次」を追加
-    {\refstepcounter{section}}
+  
+  \IfEq{\mySetLang}{Jpn}
+    {%
+      \ifstrequal{#1}{目次}  
+        {\pdfbookmark[1]{目次}{toc}}  % しおりに「目次」を追加
+        {\refstepcounter{section}}    % セクション番号のインクリメント
+    }{%
+      \ifstrequal{#1}{Table of Contents}  
+        {\pdfbookmark[1]{Table of Contents}{toc}}
+        {\refstepcounter{section}}  % セクション番号のインクリメント
+    }
+    \markboth{#1}{#1} % ヘッダーにタイトルを表示
+  \StrSubstitute{#1}{\\}{}[\temp] % 改行を空白に置換
   \begin{tcolorbox}[colback=gray!20, colframe=black, sharp corners,
       top=5mm, left=0mm, bottom=5mm, right=0mm,
       boxrule=0pt, toprule=1.5pt, bottomrule=1.5pt,
       width=\linewidth ]
-    \ifstrequal{#1}{目次}
-      {\fontsize{34pt}{34pt}\selectfont\bfseries\gtfamily\centering 目\hspace{1em}次}
-      {\fontsize{34pt}{34pt}\selectfont\bfseries\gtfamily\centering \thesection 章\ #1
-        % \ifstrequal{#1}{まえがき}
-        %   {#1}
-        %   {\thesection 章\ #1}
-      }
-  \end{tcolorbox}
+      \IfEq{\mySetLang}{Jpn}
+        {% 日本語版
+          \ifstrequal{#1}{目次}
+            {\fontsize{34pt}{34pt}\selectfont\bfseries\gtfamily\centering 目\hspace{1em}次}
+            {\fontsize{34pt}{34pt}\selectfont\bfseries\gtfamily\centering \thesection 章\ #1}
+        }{% 英語版
+          \ifstrequal{#1}{Table of Contents}
+            {\fontsize{34pt}{34pt}\selectfont\bfseries\gtfamily\centering Table of Contents}
+            {\fontsize{34pt}{34pt}\selectfont\bfseries\gtfamily\centering Chapter \thesection\\#1}
+        }
+    \end{tcolorbox}
   \newpage  % 改ページ
   \ifstrequal{#1}{目次}
     {}
     {\setcounter{page}{1}} % 目次以外でページ番号を1から始める
   \restoregeometry  % ページレイアウトを元に戻す
-  \ifstrequal{#1}{目次}
-    {}
-    {\addcontentsline{toc}{section}{\thesection\ 章\ #1}}
+  \IfEq{\mySetLang}{Jpn}
+    {% 日本語版
+      \ifstrequal{#1}{目次}
+        {}
+        {\addcontentsline{toc}{section}{\thesection\ 章\ \temp}}
+    }{% 英語版
+      \ifstrequal{#1}{Table of Contents}
+        {}
+        {\addcontentsline{toc}{section}{Chapter \thesection\hspace{1.5em}\temp}}
+    }
 }
 
 %通常subsection
@@ -147,12 +177,13 @@
 \newcommand{\subsectionSP}[1]{%
   \leftskip = 0em%
   {\par\vspace{24pt}}
-  \begin{center}%
-    {\fontsize{18pt}{18pt}\selectfont\bfseries ≪\hspace{0.5em}#1\hspace{0.5em}≫}%
-  \end{center}
+  % \begin{center}%
+  %   {\fontsize{18pt}{18pt}\selectfont\bfseries ≪\hspace{0.5em}#1\hspace{0.5em}≫}%
+  % \end{center}
+  {\fontsize{18pt}{18pt}\selectfont\bfseries #1}%
   \par
-  \vspace{\myVOFFSET}
-  \leftskip = \myLEFTSKIP %全体を字下げ
+  % \vspace{\myVOFFSET}
+  % \leftskip = \myLEFTSKIP %全体を字下げ
 }
 
 %通常subsubsection
@@ -177,7 +208,7 @@
 }
 
 
- 
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -237,9 +268,70 @@
 
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 図の回り込み
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{wrapstuff}
+\newcommand{\myWrapFig}[3]{%
+  \begin{wrapstuff}%
+    [%
+      type = figure, r,
+      width   = #2,
+      leftsep = #3
+    ]%
+    \includegraphics[ width = #2 ]{#1} % width オプションを削除
+  \end{wrapstuff}
+}
+
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% % ◯段組み：リスト表示で使用予定あり
+% 危険，警告，注意，重要，アドバイスのコメント付き表示
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{xparse}
+\usepackage{expl3}    % expl3パッケージの読み込み
+\ExplSyntaxOn
+\NewDocumentCommand{\myWarningSymbol}{ O{} m }{
+  \tl_if_in:NnTF {危険,警告,注意,重要,アドバイス}{#1} % 第1引数が指定された5つの文字列のいずれかであることを確認し表示
+    {% 引数1が正しい場合
+      \begin{tcolorbox}[colframe=black, colback=white, boxrule=0.5pt, width=\textwidth]%, sharp corners]
+        % 1行2列に配置
+        \begin{minipage}[\textheight]{30mm}%左列
+          \centering
+          \includegraphics[width=\linewidth]{#1.png} % 画像を表示
+        \end{minipage}%
+
+        \begin{minipage}[\textheight]{\dimexpr\textwidth-30mm-1em}%右列
+          \seq_set_from_clist:Nn \l_tmpa_seq {#2} % 引数2をリストとして処理
+          \begin{itemize}[label=\textbullet, leftmargin=2em, itemsep=-0.5ex]
+            \seq_map_inline:Nn \l_tmpa_seq
+              { \item ##1 } % リストをitemizeとして表示
+          \end{itemize}
+        \end{minipage}
+
+      \end{tcolorbox}
+    }
+    {% 引数1が不正な場合
+      \textbf{不正な引数} % エラーメッセージ
+    } % 改行は不要
+}
+\ExplSyntaxOff
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 表の列設定
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{array} % 表
+\usepackage{xcolor} % 表
+\usepackage{tabularray}  % 表
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ◯段組み：リスト表示で使用予定あり
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \usepackage{multicol}
 
@@ -249,32 +341,57 @@
 
 \begin{document}
 
-\section{まえがき}
-
-\subsectionSP{ごあいさつ}
-テストページ 1
-
-
-\subsectionSP{整備とサービスについて}
-テストページ 2
+\IfEq{\mySetLang}{Jpn}%
+  {\section{まえがき}}%
+  {\section{Foreword}}%
 
 
-% \sectionB{目次}
-\section{目次}
+\IfEq{\mySetLang}{Jpn}%
+  {\subsectionSP{ごあいさつ}}%
+  {\subsectionSP{Greetings}}%
+
+  
+\myWarningSymbol[警告]{電源を切る,感電の危険あり，作業時は手袋を着用}
+
+\myWrapFig{./危険.png}{45mm}{10mm}
+
+\lipsum[1-1]
+
+
+
+
+\IfEq{\mySetLang}{Jpn}%
+  {\subsectionSP{整備とサービスについて}}%
+  {\subsectionSP{Maintenance and Service}}%
+
+
+
+
+
+% 目次（固定）
+\IfEq{\mySetLang}{Jpn}%
+  {\section{目次}}%
+  {\section{Table of Contents}}%
 \setcounter{tocdepth}{3}
 \tableofcontents
 \thispagestyle{StyleSP} %目次用のヘッダ/フッタのスタイル：ここに置かないと動作しない
 
 
-\section{０１２３４５６７８９０１}
-\section{hogehoge\\げｒげげｒげ}
-\section{安全上の注意事項}
+
+\IfEq{\mySetLang}{Jpn}%
+  {\section{安全上の注意事項}}%
+  {\section{Safety Precautions}}%
+
+
+
 \subsection{test1}
 \lipsum[1-1]
 
 
 \subsection{test2}
 \subsection{test3}
+\subsubsection{あり}
+\subsubsection{あり}
 \subsubsection{あり}
 \lipsum[1-1]
 
@@ -290,51 +407,329 @@
 \lipsum[1-1]
 
 
+\IfEq{\mySetLang}{Jpn}%
+  {\section{機械の概要}}%
+  {\section{Product Overview}}%
 
-
-% % \subsubsection*{あり}
-% \lipsum[1-1]
-% % \subsubsection*{あり}
-% \lipsum[1-1]
-% % \subsubsection*{あり}
-% \lipsum[1-1]
-
-
-
-
-% \subsection{test3}
-% \lipsum[1-1]
-% \subsection{test4}
-% \lipsum[1-1]
-
-% \newpage
-% \lipsum[1-3] % ダミーテキスト（不要なら削除）
-
-
-
-\section{機械の概要}
 テストページ 3
+
+
+
 
 \subsection{test2}
 \newpage
 \lipsum[1-3] % ダミーテキスト（不要なら削除）
 
 
-\section{主要諸元}
+
+\IfEq{\mySetLang}{Jpn}%
+  {\section{主要諸元}}%
+  {\section{Main Specifications}}%
+
 テストページ 3
 \newpage
 \lipsum[1-3] % ダミーテキスト（不要なら削除）
 
 
-\section{標準付属品}
-fwfewf
+\IfEq{\mySetLang}{Jpn}%
+  {\section{標準付属品}}%
+  {\section{Standard Accessories}}%
+
 % \subsection{test}
 % テストページ 3
 % \newpage
-% \lipsum[1-3] % ダミーテキスト（不要なら削除）
+\lipsum[1] % ダミーテキスト（不要なら削除）
 
-\section{保証証券}
-% \thispagestyle{StyleSP} %目次用のヘッダ/フッタのスタイル：ここに置かないと動作しない
+
+
+
+\IfEq{\mySetLang}{Jpn}%
+  {\section{各部の名称}}%
+  {\section{Nomenclature of parts}}%
+
+  テストページ 3
+\lipsum[1] % ダミーテキスト（不要なら削除）
+
+
+
+
+\IfEq{\mySetLang}{Jpn}%
+  {\section{運転操作と各装置の説明}}%
+  {\section{Operating instructions and explanations of each device}}%
+
+  テストページ 3
+\lipsum[1] % ダミーテキスト（不要なら削除）
+
+
+
+\IfEq{\mySetLang}{Jpn}%
+  {\section{始業点検}}%
+  {\section{Pre-operation inspection}}%
+
+  テストページ 3
+\lipsum[1] % ダミーテキスト（不要なら削除）
+
+
+
+
+\IfEq{\mySetLang}{Jpn}%
+  {\section{運搬取扱い}}%
+  {\section{Transportation and handling}}%
+
+  \lipsum[1] % ダミーテキスト（不要なら削除）
+
+
+
+
+
+\IfEq{\mySetLang}{Jpn}%
+  {\section{施工作業の概要}}%
+  {\section{Overview of construction work}}%
+
+  \lipsum[1] % ダミーテキスト（不要なら削除）
+
+
+
+
+\IfEq{\mySetLang}{Jpn}%
+  {\section{定期点検・整備}}%
+  {\section{Periodic inspection and maintenance}}%
+
+\subsection{点検整備時期}
+本表の点検整備時期は，一般的な稼働(約1,000時間/６ヶ月)を基準に設定しています．
+過酷な条件での使用など設定基準と著しく異なる場合は，早めの点検整備が必要です．
+
+\myWarningSymbol[重要]{%
+  200時間点検は，１ヶ月を超えない期間毎に異常の有無と損傷の有無をチェックして正常な状態にリフレッシュします．,
+  1\,000時間点検は半年，2\,000時間点検は１年を超えない期間毎に異常や故障箇所を正常な状態に補修し，次の半年・１年の作業に備えます．,
+  点検整備の記録は，実施の度に記入し，３年以上保管してください．
+}
+
+
+\newpage
+\subsubsection{点検整備時期の目安}
+
+点検整備時期は，稼働時間または，納車後経過時間のいずれか早い方で実施してください．
+
+\begin{table}[h]
+  \begin{tblr}{%
+      colspec = { r l },
+      columns = { wd = 30mm },
+      cells = { mode = text, font = {\ttfamily}  }, % 全セル
+      hline{2,Z} = { 0.08em }, % 罫線(水平)
+      row{even} = {bg = gray!20}, % 偶数行：背景色
+      row{1} = {bg = gray!50, font = {\bfseries} }, % 行：背景色，フォント
+    }
+    稼働時間 & 納車後経過 \\
+    50$\ \ $    & 約１週間 \\
+    200$\ \ $   & 約１ヶ月 \\
+    500$\ \ $   & 約３ヶ月 \\
+    1,000$\ \ $ & 約６ヶ月 \\
+    2,000$\ \ $ & 約１年 \\
+  \end{tblr}
+\end{table}
+
+
+
+
+\subsubsection{点検整備一覧表}
+\vspace{-1ex}
+\begin{description}
+  \item[◎] 納車後の初回点検を示します．
+  \item[●] 弊社推奨の点検整備時期を示します．
+\end{description}
+
+% ※エンジンについては，別冊エンジンの取扱説明書をご参照ください．
+\begin{table}[h]
+  \centering
+  \begin{tblr}{%
+      colspec = { X[2,l] X[7,l] X[1,c] X[1,c] X[1,c] X[3,l] },
+      cells = { mode = text, font = {\ttfamily}  }, % 全セル
+      hline{3,Z} = { 0.08em }, % 罫線(水平)
+      row{even} = {bg = gray!20}, % 偶数行：背景色
+      row{1,2} = {bg = gray!50, font = {\bfseries} }, % 行：背景色，フォント
+      cell{1}{1} = { r = 1, c = 2 }{ halign = l, font = {\ttfamily\bfseries} }, % セル結合
+      cell{1}{3} = { r = 1, c = 4 }{ halign = l, font = {\ttfamily\bfseries} }, % セル結合
+      cell{3-Z}{1} = { bg =  gray!20 }, % 項目：背景色
+    }
+    点検整備項目  & & 点検整備時期[時間毎] &     &     & \\
+                  &                                 & 50 & 200 & 500 & 備考 \\
+    エンジン  & 別冊取扱説明書参照 &  &  &  &  \\
+    \hline
+    電気装備  & 電気配線の破損・汚損・接続部の緩み  & ◎ & ● &    & \\
+              & 配線クランプの破損・脱落の有無      &    & ● &    & \\
+              & バッテリ液の液量レベル・漏れ        & ◎ & ● &    & \\
+              & バッテリの点検・補充電              &    & ● &    & \\
+              & バッテリターミナル部の接続状態      & ◎ &    & ● & \\
+              & バッテリ交換                        &    &    &    & 2年毎 \\
+    \hline
+    油圧装備  & 作動油の交換                          &    &    & ● & 初回100時間 \\
+              & サクションフィルタの点検・清掃        &    &    & ● & \\
+              & 各油圧ポンプの油漏れ                  &    &    & ● & \\
+              & 各油圧ポンプの作動状態・異音          &    & ● &    & \\
+              & リリーフバルブのリリーフ圧調整        &    &    &    & 点検整備時 \\
+              & 電磁弁他油圧機器の作動状態            &    & ● &    & \\
+              & 油圧シリンダの油漏れ                  &    & ● &    & \\
+              & 各油圧ホースの油漏れ・破損・取付状態  & ◎ & ● &    & \\
+              & 各油圧ホースの交換                    &    &    &    & 2年毎 \\
+    \hline
+    バーナ装置    & ガスホースのガス漏れ・破損・取付状態 & ◎ & ● & & \\
+                  & ガスホースの交換                     &    &    & & 2年毎 \\
+    \hline
+    その他 & ボルト・ナットの緩み & & & & 適時増締 \\
+
+  \end{tblr}
+\end{table}
+
+
+
+
+
+\newpage
+\subsubsection{給油}
+
+\myWarningSymbol[重要]{%
+  本機には，給油・給脂を必要とする箇所が随所にあります．点検整備一覧表とともに本表の設定基準に沿って，給油脂・交換を実施してください．,
+  使用油脂は，弊社が推奨する油脂をご使用ください．
+}
+
+\begin{table}[h]
+  \centering
+  \begin{tblr}{%
+      colspec = { X[3,l] X[1,c] X[5,l] X[1,c] X[1,c] X[1,c] X[2,c] },
+      cells = { mode = text, font = {\ttfamily}  }, % 全セル
+      hline{3,Z} = { 0.08em }, % 罫線(水平)
+      row{even} = {bg = gray!20}, % 偶数行：背景色
+      row{1,2} = {bg = gray!50, font = {\bfseries} }, % 行：背景色，フォント
+      cell{1}{6} = { r = 1, c = 2 }{ halign = c, font = {\ttfamily\bfseries} }, % セル結合
+    }
+    給油箇所  & 数 & 奨励油脂 & 容量 & 油量 & 交換時期[H] & \\
+              &    &          & [L]  & 点検 & 初回 & 2回目$\sim$ \\
+    燃料タンク     & 1 & 自動車用無鉛ガソリン                      & $\ $6.0 & 毎日 & $\-$  &   \\
+    クランクケース & 1 & エンジンオイル\par10W-30(API分類SE級以上) & $\ $1.0 & 毎日 & 25    & 50$\sim$100 \\
+    作動油タンク   & 1 & 作動油\par ISO VG-56                      &    30.0 & 毎日 & 100   & 500  \\
+  \end{tblr}
+\end{table}
+
+
+
+
+
+
+\subsubsection{給脂}
+
+\myWarningSymbol[アドバイス]{%
+  グリース給脂箇所には，緑色で\includegraphics{./アドバイス.png}の表示があります．
+}
+
+\begin{table}[h]
+  \centering
+  \begin{tblr}{%
+      colspec = { X[2,l] X[1,c] X[2,l] X[1,c] X[2,l] },
+      cells = { mode = text, font = {\ttfamily}  }, % 全セル
+      hline{2,Z} = { 0.08em }, % 罫線(水平)
+      row{odd} = {bg = gray!20}, % 偶数行：背景色
+      row{1} = {bg = gray!50, font = {\bfseries} }, % 行：背景色，フォント
+    }
+    給脂箇所 & 数 & 奨励油脂 & 給脂間隔 & 備考 \\
+    移動車輪軸受部 & 4 & グリース(JIS2号) & 100H &  \\    
+  \end{tblr}
+\end{table}
+
+
+
+
+\newpage
+\subsection{ボルトの締付トルクの目安}
+\begin{table}[h]
+  \centering
+  \begin{tblr}{%
+    cells = { mode = text, halign = c }, % 全セル
+    hline{3,Z} = { 0.08em }, % 罫線(水平)
+    row{even} = {bg = gray!20}, % 偶数行：背景色
+    column{2-4} = { font = {\ttfamily} }, % 列
+    row{1,2} = {bg = gray!50, font = {\bfseries} }, % 行：背景色，フォント
+    cell{1}{3} = { r = 1, c = 2 }{ halign = c, font = {\ttfamily\bfseries} }, % セル結合
+    column{2} = { wd = 35mm }, % 列幅
+    column{3,4} = { wd = 25mm }, % 列幅
+    cell{3-12}{1} = { bg =  gray!20 }, % 項目：背景色
+    cell{13-Z}{1} = { bg =  gray!20 }, % 項目：背景色
+  }
+    種類  & 呼び径$\times$ピッチ & 締付トルク(強度区分:10.9) & \\
+          & $\ [\mathrm{mm}] \times [\mathrm{mm}]\ $ & [$\mathrm{N\cdot m}$] & [$\mathrm{kg f\cdot m}$] \\
+    並目  & $\ $M$\ $8 $\times$ 1.25 & $\ $30.4      & $\ $3.10 \\
+          & M10 $\times$ 1.5         & $\ $60.2      & $\ $6.14 \\
+          & $\ $M12 $\times$ 1.75    &    105.0      &    10.71 \\
+          & M14 $\times$ 2.0         &    167.0      &    17.04 \\
+          & M16 $\times$ 2.0         &    260.6      &    26.59 \\
+          & M18 $\times$ 2.5         &    358.6      &    36.59 \\
+          & M20 $\times$ 2.5         &    508.4      &    51.88 \\
+          & M22 $\times$ 2.5         &    691.6      &    70.57 \\
+          & M24 $\times$ 3.0         &    879.0      &    89.69 \\
+          & M30 $\times$ 3.5         &    1746.1$\ $ &   178.17$\ $ \\
+    \hline
+    細目  & M$\ $8 $\times$ 1.0      & $\ $32.5      & $\ $3.32 \\
+          & $\ $M10 $\times$ 1.25    & $\ $63.5      & $\ $6.48 \\
+          & M12 $\times$ 1.5         &    109.7      &    11.19 \\
+          & M14 $\times$ 1.5         &    181.6      &    18.53 \\
+          & M16 $\times$ 1.5         &    277.2      &    28.29 \\
+          & M18 $\times$ 2.0         &    381.0      &    38.88 \\
+          & M20 $\times$ 2.0         &    535.4      &    54.63 \\
+          & M22 $\times$ 2.0         &    725.8      &    74.06 \\
+          & M24 $\times$ 2.0         &    956.2      &    97.57 \\
+          & M30 $\times$ 2.0         &   1932.9$\ $  &   197.23$\ $ \\
+  \end{tblr}
+\end{table}
+
+
+
+\newpage
+\subsection{ステンレスボルトの締付トルクの目安}
+\begin{table}[h]
+  \centering
+  \begin{tblr}{%
+    cells = { halign = c, mode = text }, % 全セル
+    hline{3,Z} = { 0.08em }, % 罫線(水平)
+    row{even} = {bg = gray!20}, % 偶数行：背景色
+    column{1-3} = { font = {\ttfamily} }, % 列
+    column{2,3} = { wd = 25mm }, % 列幅
+    row{1,2} = {bg = gray!50, font = {\bfseries} }, % 行：背景色，フォント
+    cell{1}{2} = { r = 1, c = 2 }{ halign = c, font = {\ttfamily\bfseries} }, % セル結合
+    column{1} = { wd = 40mm }, % 列幅
+  }
+    呼び径$\times$ピッチ & 締付トルク(強度区分:A2-70) & \\
+    $\ [\mathrm{mm}] \times [\mathrm{mm}]\ $ & [$\mathrm{N\cdot m}$] & [$\mathrm{kg f\cdot m}$] \\
+    $\ $M$\ $8 $\times$ 1.25  & $\ $15.8 & $\ $1.61 \\
+    M10 $\times$ 1.5          & $\ $31.3 & $\ $3.19 \\
+    $\ $M12 $\times$ 1.75     & $\ $54.6 & $\ $5.57 \\
+    M14 $\times$ 2.0          & $\ $86.9 & $\ $8.87 \\
+    M16 $\times$ 2.0          &    135.6 &    13.84 \\
+    M18 $\times$ 2.5          &    186.6 &    19.04 \\
+    M20 $\times$ 2.5          &    264.6 &    27.00 \\
+    M22 $\times$ 2.5          &    360.0 &    36.73 \\
+    M24 $\times$ 3.0          &    457.5 &    46.68 \\
+    M30 $\times$ 3.5          &    908.8 &    92.73 \\
+  \end{tblr}
+\end{table}
+
+
+
+
+
+
+
+\IfEq{\mySetLang}{Jpn}%
+  {\section{保管方法}}%
+  {\section{Storage method}}%
+
+\lipsum[1] % ダミーテキスト（不要なら削除）
+
+
+
+
+\IfEq{\mySetLang}{Jpn}%
+  {\section{保証証券}}%
+  {\section{Guarantee}}%
 
 gergege
 
