@@ -3,7 +3,7 @@
     <_name>レイヤーエクスポート(pdf)</_name>
     <id>org.inkscape.LayerNameToFilename</id>
     <effect>
-        <object-type>all</object-type>
+        <object-type>取説</object-type>
         <effects-menu>
             <submenu name="レイヤーエクスポート(pdf)"/>
         </effects-menu>
