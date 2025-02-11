@@ -16,6 +16,18 @@ class LayerNameToFileName(inkex.Effect):
         version = None
         output_layer_names = []
 
+
+
+        # バージョンアップするかダイアログを表示
+        if version is not None:
+            result = messagebox.askyesno("バージョンアップ", f"バージョンを{version + 1}に更新しますか？")
+
+            if result:
+                # バージョン番号をカウントアップ
+                version += 1
+
+
+
         # レイヤーをループ処理
         for layer in self.document.layers:
             if layer.visible:
@@ -30,21 +42,10 @@ class LayerNameToFileName(inkex.Effect):
                 if ":出力" in layer_name:
                     output_layer_names.append(layer_name)
 
-        # バージョンアップするかダイアログを表示
-        if version is not None:
-            result = messagebox.askyesno("バージョンアップ", f"バージョンを{version + 1}に更新しますか？")
-
-            if result:
-                # バージョン番号をカウントアップ
-                version += 1
-
-                # レイヤーをループ処理し、バージョン番号を更新
-                for layer in self.document.layers:
-                    if layer.visible:
-                        layer_name = layer.label
-                        match = re.search(r"バージョン：(\d+)", layer_name)
-                        if match:
-                            layer.label = layer_name.replace(f"バージョン：{match.group(1)}", f"バージョン：{version}")
+                #バージョン番号を更新
+                match = re.search(r"バージョン：(\d+)", layer_name)
+                if match:
+                　　layer.label = layer_name.replace(f"バージョン：{match.group(1)}", f"バージョン：{version}")
 
         # 出力レイヤーをループ処理
         for layer_name in output_layer_names:
