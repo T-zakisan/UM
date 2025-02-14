@@ -40,10 +40,10 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % デフォルトの余白設定
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\usepackage[top     =20truemm,
-            bottom  =18truemm,
-            left    =23truemm,
-            right   =23truemm]{geometry}
+\usepackage[top     =20.0truemm,
+            bottom  =18.0truemm,
+            left    =20.0truemm,
+            right   =20.0truemm]{geometry}
 \setlength{ \topmargin }    { -20mm }
 \setlength{ \headheight }   {  23mm }
 \setlength{ \headsep }      { -8mm }
@@ -67,7 +67,7 @@
   \begin{tcolorbox}[colback=gray!100, colframe=black, sharp corners,
                       boxrule=0pt, toprule=0.5pt, bottomrule=0.5pt,
                       width=\linewidth, boxsep=0pt ]
-    \IfEq{\mySetLang}{Jpn}
+    \IfEq{\myLanguege}{Jpn}
       {\centering\bfseries\ttfamily\textcolor{white}{\thesection 章\ \leftmark}}
       {\centering\bfseries\ttfamily\textcolor{white}{Chapter \thesection\hspace{1em} \leftmark}}
   \end{tcolorbox}
@@ -88,7 +88,7 @@
                       boxrule=0pt, toprule=0.5pt, bottomrule=0.5pt,
                       width=\linewidth, boxsep=0pt ]
       \leftmark%
-      \IfEq{\mySetLang}{Jpn}%
+      \IfEq{\myLanguege}{Jpn}%
         {\centering\bfseries\ttfamily\textcolor{white}{目\hspace{1.5em}次}}% 日本語版
         {\centering\bfseries\ttfamily\textcolor{white}{Table of Contents}}% 英語版
       \end{tcolorbox}
@@ -108,7 +108,7 @@
 \newlength{\myLEFTSKIP} % subsection,subsubsection,paragraphの初行位置(水平方向)のオフセット 
 \setlength{\myLEFTSKIP}{2.3em} % 2em分字下げ
 \newlength{\myVOFFSET} % subsection,subsubsection,paragraphの初行位置(垂直方向)のオフセット
-\setlength{\myVOFFSET}{-12pt}
+\setlength{\myVOFFSET}{-15pt}
 \setcounter{section}{-1}  %セクションを0(まえがき)からスタートするための設定
 %% section再定義の本体
 \renewcommand{\section}[1]{
@@ -117,14 +117,14 @@
   \newgeometry{top=80truemm, bottom=18truemm, left=23truemm, right=23truemm}
   \thispagestyle{empty} % ページスタイルをemptyに設定
   \phantomsection % hyperref のためのアンカー
-  
-  \IfEq{\mySetLang}{Jpn}
+
+  \IfEq{\myLanguege}{Jpn}
     {%
-      \ifstrequal{#1}{目次}  
+      \ifstrequal{#1}{目次}
         {\pdfbookmark[1]{目次}{toc}}  % しおりに「目次」を追加
         {\refstepcounter{section}}    % セクション番号のインクリメント
     }{%
-      \ifstrequal{#1}{Table of Contents}  
+      \ifstrequal{#1}{Table of Contents}
         {\pdfbookmark[1]{Table of Contents}{toc}}
         {\refstepcounter{section}}  % セクション番号のインクリメント
     }
@@ -134,7 +134,7 @@
       top=5mm, left=0mm, bottom=5mm, right=0mm,
       boxrule=0pt, toprule=1.5pt, bottomrule=1.5pt,
       width=\linewidth ]
-      \IfEq{\mySetLang}{Jpn}
+      \IfEq{\myLanguege}{Jpn}
         {% 日本語版
           \ifstrequal{#1}{目次}
             {\fontsize{34pt}{34pt}\selectfont\bfseries\gtfamily\centering 目\hspace{1em}次}
@@ -150,7 +150,7 @@
     {}
     {\setcounter{page}{1}} % 目次以外でページ番号を1から始める
   \restoregeometry  % ページレイアウトを元に戻す
-  \IfEq{\mySetLang}{Jpn}
+  \IfEq{\myLanguege}{Jpn}
     {% 日本語版
       \ifstrequal{#1}{目次}
         {}
@@ -291,44 +291,143 @@
 
 
 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% 危険，警告，注意，重要，アドバイスのコメント付き表示
+% 危険，警告，注意のコメント付き表示
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \ExplSyntaxOn
-\NewDocumentCommand{\myWarningSymbol}{ O{} m }{
-  \tl_if_in:NnTF {危険,警告,注意,重要,アドバイス}{#1} % 第1引数が指定された5つの文字列のいずれかであることを確認し表示
-    {% 引数1が正しい場合
-      \leftskip = 0mm
-      \vspace{-1ex}
-      \begin{tcolorbox}[colframe=black, colback=white, boxrule=0.5pt, width=\textwidth]%, sharp corners]
-
-        \begin{minipage}[\textheight]{30mm}%左列
-          \centering
-          \includegraphics[width=\linewidth]{#1.png} % 画像を表示
-        \end{minipage}%
-
-        \begin{minipage}[\textheight]{\dimexpr\textwidth-30mm-1em}%右列
-          \seq_set_split:Nnn \l_tmpa_seq { | } { #2 } % 引数2を|区切りでリストとして処理
-          \begin{itemize}[label=\textbullet, leftmargin=2em, itemsep=-0.5ex]
-            \seq_map_inline:Nn \l_tmpa_seq
-            { \item \tl_trim_spaces:n {##1} } % リストをitemizeとして表示、空白除去
-          \end{itemize}
-        \end{minipage}
-
-      \end{tcolorbox}
-    }
-    {% 引数1が不正な場合
-      \textbf{不正な引数} % エラーメッセージ
-    } % 改行は不要
+\NewDocumentCommand{\myWarningSymbolA}{ O{} m }{
+  \leftskip = 0mm
+  \vspace{0.8\myVOFFSET}
+  \begin{tcolorbox}[
+    colback=black, % 背景色を黒に設定
+    colframe=black, % 枠線を黒に設定
+    boxrule=0pt, % 枠線の太さを0に設定
+    arc=0pt, % 角を丸めない
+    % outer arc=0pt, % 外側の角を丸めない
+    width=\textwidth, % 横幅をテキスト幅に合わせる
+    top=0pt, % 上側の余白を0に設定
+    bottom=0pt, % 下側の余白を0に設定
+    left=0pt, % 左側の余白を0に設定
+    right=0pt, % 右側の余白を0に設定
+    halign=center, % 水平方向の中央揃え
+    valign=center % 垂直方向の中央揃え
+  ]%, sharp corners]
+    \begin{tcolorbox}[
+      colback=black, % 背景色を黒に設定
+      colframe=black, % 枠線を黒に設定
+      coltext=white,  % 文字
+      boxrule=0pt, % 枠線の太さを0に設定
+      arc=0pt, % 角を丸めない
+      % outer arc=0pt, % 外側の角を丸めない
+      width=\textwidth, % 横幅をテキスト幅に合わせる
+      top=5pt, % 上側の余白を0に設定
+      bottom=0pt, % 下側の余白を0に設定
+      left=0pt, % 左側の余白を0に設定
+      right=0pt, % 右側の余白を0に設定
+      halign=center, % 水平方向の中央揃え
+      valign=center % 垂直方向の中央揃え
+    ]%, sharp corners]
+      \centering
+      % \includegraphics[height=6mm]{../Fig/#1.pdf} % 画像を表示
+      \includegraphics[scale=1.0]{../Fig/警告記号_#1.pdf} % 画像を表示
+      \hspace{2em}
+      % 文字間にスペースを挿入
+      \seq_set_split:Nnn \l_tmpa_seq { } { #1 } % 1文字ずつ分割
+      \seq_map_inline:Nn \l_tmpa_seq { {\bfseries\huge ##1} \hspace{2em} }
+    \end{tcolorbox}
+    \begin{tcolorbox}[
+        colback=white, % 背景色を黒に設定
+        colframe=white, % 枠線を黒に設定
+        boxrule=0pt, % 枠線の太さを0に設定
+        arc=0pt, % 角を丸めない
+        % outer arc=0pt, % 外側の角を丸めない
+        width=\textwidth, % 横幅をテキスト幅に合わせる
+        top=0pt, % 上側の余白を0に設定
+        bottom=0pt, % 下側の余白を0に設定
+        left=0pt, % 左側の余白を0に設定
+        right=0pt, % 右側の余白を0に設定
+        halign=left, % 水平方向の中央揃え
+        valign=top % 垂直方向の中央揃え
+      ]%, sharp corners]
+      \vspace{10pt}
+      \seq_set_split:Nnn \l_tmpa_seq { | } { #2 } % 引数2を|区切りでリストとして処理
+      \begin{itemize}
+        \seq_map_inline:Nn \l_tmpa_seq%
+        { \item \tl_trim_spaces:n {##1} } % リストをitemizeとして表示、空白除去
+      \end{itemize}
+      \vspace{3pt}
+    \end{tcolorbox}
+  \end{tcolorbox}
 }
 \ExplSyntaxOff
+% \ExplSyntaxOn
+% \NewDocumentCommand{\myWarningSymbol}{ O{} m }{
+%   \leftskip = 0mm
+%   \vspace{-1ex}
+%   \begin{tcolorbox}[colframe=black, colback=white, boxrule=0.5pt, width=\textwidth]%, sharp corners]
+
+%     \begin{minipage}[\textheight]{30mm}%左列
+%       \centering
+%       \includegraphics[width=\linewidth]{../Fig/#1.pdf} % 画像を表示
+%     \end{minipage}%
+
+%     \begin{minipage}[\textheight]{\dimexpr\textwidth-30mm-1em}%右列
+%       \seq_set_split:Nnn \l_tmpa_seq { | } { #2 } % 引数2を|区切りでリストとして処理
+%       \begin{itemize}[label=\textbullet, leftmargin=2em, itemsep=-0.5ex]
+%         \seq_map_inline:Nn \l_tmpa_seq
+%         { \item \tl_trim_spaces:n {##1} } % リストをitemizeとして表示、空白除去
+%       \end{itemize}
+%     \end{minipage}
+
+%   \end{tcolorbox}
+% }
+% \ExplSyntaxOff
 
 
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 重要，アドバイスのコメント付き表示
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\ExplSyntaxOn
+\NewDocumentCommand{\myWarningSymbolB}{ O{} m }{
+  \leftskip = 0mm
+  \vspace{0.8\myVOFFSET}
+  \begin{tcolorbox}[
+        colback=white, % 背景色
+        colframe=black, % 枠線
+        title=\centering{\LARGE #1},% タイトル
+        colbacktitle=gray!100, % タイトル背景
+        fonttitle=\bfseries,
+        boxrule=1pt, % 枠線の太さを0に設定
+        arc=10pt, % 角を丸めない
+        % outer arc=0pt, % 外側の角を丸めない
+        width=\textwidth, % 横幅をテキスト幅に合わせる
+        top=1pt, % 上側の余白を0に設定
+        bottom=1pt, % 下側の余白を0に設定
+        left=1pt, % 左側の余白を0に設定
+        right=1pt, % 右側の余白を0に設定
+        halign=center, % 水平方向の中央揃え
+        valign=top, % 垂直方向の中央揃え
+      ]%, sharp corners]
+      \vspace{10pt}
+      \seq_set_split:Nnn \l_tmpa_seq { | } { #2 } % 引数2を|区切りでリストとして処理
+      \begin{itemize}
+        \seq_map_inline:Nn \l_tmpa_seq%
+        { \item \tl_trim_spaces:n {##1} } % リストをitemizeとして表示、空白除去
+      \end{itemize}
+      \vspace{3pt}
+  \end{tcolorbox}
+}
+\ExplSyntaxOff
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % 表の列設定
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{colortbl} % 表
 \usepackage{array} % 表
 \usepackage{xcolor} % 表
 \usepackage{tabularray}  % 表
@@ -342,729 +441,8 @@
 
 
 
-
-
 \begin{document}
 
-\IfEq{\mySetLang}{Jpn}%
-  {\section{まえがき}}%
-  {\section{Foreword}}%
-
-
-\IfEq{\mySetLang}{Jpn}%
-  {\subsectionSP{ごあいさつ}}%
-  {\subsectionSP{Greetings}}%
-
-  
-\myWarningSymbol[警告]{電源を切る|感電の危険あり，作業時は手袋を着用}
-
-\myWrapFig{./危険.png}{45mm}{10mm}
-
-\lipsum[1-1]
-
-
-
-
-\IfEq{\mySetLang}{Jpn}%
-  {\subsectionSP{整備とサービスについて}}%
-  {\subsectionSP{Maintenance and Service}}%
-
-
-
-
-
-% 目次（固定）
-\IfEq{\mySetLang}{Jpn}%
-  {\section{目次}}%
-  {\section{Table of Contents}}%
-\setcounter{tocdepth}{3}
-\vspace{2ex}
-\tableofcontents
-\thispagestyle{StyleSP} %目次用のヘッダ/フッタのスタイル：ここに置かないと動作しない
-
-
-
-\IfEq{\mySetLang}{Jpn}%
-  {\section{安全上の注意事項}}%
-  {\section{Safety Precautions}}%
-
-\subsection{はじめに}
-\subsection{安全警告の記号}
-
-
-\subsection{警告および絵文字について}
-「安全にご使用いただくために」や■■■の記号は，特に重要です．また，※印いも注意してお読みください．
-
-本書で使用している記号は，次のとおりです．これらの警告記号が持つ意味をよく理解し，その指示内容に従ってください．
-\begin{table}[h]
-  \centering
-  \begin{tblr}{%
-      colspec     = { X[c] X[l] },
-      cells       = { mode = text }, % 全セル
-      hline{2,Z}  = { 0.08em }, % 罫線(水平)
-      hline{3-Y}  = { 0.03em }, % 罫線(水平)
-      % row{odd}    = { bg = gray!20 }, % 偶数行：背景色
-      row{1}      = { bg = gray!50, font = {\bfseries}, halign = c }, % 行：背景色，フォント
-      column{1}   = { wd = 30mm, valign = h },
-      column{2}   = { },
-    }
-    警告記号 & 意味 \\
-    \includegraphics[ ]{./危険.png}       & 回避されなかった場合，死亡または重症を招く切迫した危険な状態を示します． \\
-    \includegraphics[ ]{./警告.png}       & 回避されなかった場合，死亡または重症を招く可能性がある危険な状態を示します． \\
-    \includegraphics[ ]{./注意.png}       & 回避されなかった場合，軽症または中程度の障害の可能性がある危険な状態を示します． \\
-    \includegraphics[ ]{./重要.png}       & 回避されなかった場合，物損事故の可能性がある状態を示します．\par 特に注意を促したり強調したい情報または手順や指示に従わないと，機器・装置が損傷するおそれがある状態を示します． \\
-    \includegraphics[ ]{./アドバイス.png} & 運転操作や点検整備などをするうえで，知ておいていただきたいことや知っておくと便利なことを示します． \\
-  \end{tblr}
-\end{table}
-
-
-\begin{table}[h]
-  \centering
-  \begin{tblr}{%
-      colspec     = { X[c] X[l] },
-      cells       = { mode = text }, % 全セル
-      hline{2,Z}  = { 0.08em }, % 罫線(水平)
-      % hline{3-Y}  = { 0.05em }, % 罫線(水平)
-      row{odd}    = { bg = gray!20 }, % 偶数行：背景色
-      row{1}      = { bg = gray!50, font = {\bfseries}, halign = c }, % 行：背景色，フォント
-      column{1}   = { wd = 30mm, valign = h },
-      column{2}   = { },
-    }
-    警告記号 & 意味 \\
-    \includegraphics[ ]{./危険.png}       & 回避されなかった場合，死亡または重症を招く切迫した危険な状態を示します． \\
-    \includegraphics[ ]{./警告.png}       & 回避されなかった場合，死亡または重症を招く可能性がある危険な状態を示します． \\
-    \includegraphics[ ]{./注意.png}       & 回避されなかった場合，軽症または中程度の障害の可能性がある危険な状態を示します． \\
-    \includegraphics[ ]{./重要.png}       & 回避されなかった場合，物損事故の可能性がある状態を示します．\par 特に注意を促したり強調したい情報または手順や指示に従わないと，機器・装置が損傷するおそれがある状態を示します． \\
-    \includegraphics[ ]{./アドバイス.png} & 運転操作や点検整備などをするうえで，知ておいていただきたいことや知っておくと便利なことを示します． \\
-  \end{tblr}
-\end{table}
-
-
-\subsection{安全標識の表示場所}
-
-\myWarningSymbol[注意]{%
-  安全標識は，いつもきれいにし，常に読める状態にしてください．|
-  安全標識が汚損・損傷・紛失で読めなく場合は，新しいラベルを取り寄せて添付してください．|
-  取り寄せた際に，同じものか本書で確認してください． }
-
-\subsubsection{安全標識・その他注意銘板貼付位置}
-
-
-
-\subsubsection{安全標識の詳細}
-
-■■■図とリストが同じ情報量で「詳細」としても良いのか？
-
-\begin{enumerate}
-  \item \myWrapFig{./危険.png}{40mm}{20mm}
-        危険\par
-        ガス漏れに注意．\par
-        引火，爆発のおそれあり．\par
-  \item \myWrapFig{./危険.png}{40mm}{20mm}
-        危険\par
-        ガス漏れに注意．\par
-        引火，爆発のおそれあり．\par
-  \item \myWrapFig{./危険.png}{40mm}{20mm}
-        危険\par
-        ガス漏れに注意．\par
-        引火，爆発のおそれあり．\par
-\end{enumerate}
-
-
-
-
-
-\subsection{安全にご使用いただくために}
-\subsubsection{基本的な注意事項}
-
-\myWarningSymbol[注意]{%
-  ご使用前に必ず取扱説明書をお読みください．}
-
-\mySqure{取扱説明書の熟読}{%
-運転員およびその他の関係者は，機械を運転および点検する前に取扱説明書をよく読み熟知してください．|
-「安全上の注意事項」以外についても安全には細心の注意をしてください．
-}
-
-\mySqure{取扱方法を説明}{%
-}
-
-
-\mySqure{主たる用途のみに使用}{%
-}
-
-
-\mySqure{体調調整}{%
-}
-
-
-\mySqure{担当者の決定}{%
-  本機の運転操作や取扱いは，本書を熟読し機械の構造や装置の知識を持つ熟練された方がご使用ください．|
-  下記条件に適合したオペレータのみが，機械を操作してください．|
-\begin{enumerate}
-  \item 18歳以上であること．
-  \item 負傷者の応急手当ての訓練を受けて，応急手当ができること．
-\end{enumerate}
-}
-
-\mySqure{作業内容の打合せ}{%
-}
-
-
-
-\subsubsection{運転時の注意}
-
-\mySqure{機械性能の限界把握}{%
-}
-
-
-\mySqure{運転前の注意}{%
-  \begin{enumerate}
-    \item 機械を硬い地盤で平坦な場所に停車してください．
-    \item 周囲に人がいないことを確認した後，エンジンを始動してください．
-    \item エンジン・作動油が充分に暖まった後，作用を開始してください．■■■
-  \end{enumerate}
-}
-
-
-
-\subsubsection{作業時の注意}
-
-
-\subsubsection{点検・整備時の注意}
-
-\mySqure{化学物質の取扱い}{%
-  化学物質に直接触れたり，廃棄したりすると，重大な損害および環境破壊につながります．|
-  機械に使用されている化学物質としては，作動油・エンジンオイル・ギアオイル・グリース・冷却水・塗料などがあります．|
-  安全データシート（SDS）には，化学物質の次のことを表示しています．|
-  \vspace{-12pt}
-  \begin{multicols}{2}
-    \begin{enumerate}[leftmargin=5.0em] %ここだけ特殊な数字付きリストのため，強制力のある設定実施
-      \item 化学品および会社情勢
-      \item 危険有害性の要約
-      \item 組成および成分情報
-      \item 応急処置
-      \item 火災時の処置
-      \item 漏出時の処置
-      \item 取扱いおよび保管上の注意
-      \item 曝露防止および保護措置
-      \item 物理的および科学的性質
-      \item 安定性および反応性
-      \item 有害性情報
-      \item 環境影響情報
-      \item 廃棄上の注意
-      \item 輸送上の注意
-      \item 適用法令
-      \item その他の情報
-    \end{enumerate}
-  \end{multicols}
-  \vspace{-12pt}
-  化学物質を取扱う前には，必ずSDSで確認し正しく扱ってください．|
-  SDSについては，お買い上げいただきました代理店にご相談ください．
-}
-
-
-
-\IfEq{\mySetLang}{Jpn}%
-  {\section{機械の概要}}%
-  {\section{Product Overview}}%
-
-テストページ 3
-
-
-
-
-\subsection{test2}
-\newpage
-\lipsum[1-3] % ダミーテキスト（不要なら削除）
-
-
-
-\IfEq{\mySetLang}{Jpn}%
-  {\section{主要諸元}}%
-  {\section{Main Specifications}}%
-
-\subsection{諸元表}
-\begin{table}[h]
-  \centering
-  \begin{tblr}{%
-      colspec     = { X[l] X[l] X[l] },
-      column{1}   = { wd = 30mm },
-      column{2}   = { wd = 30mm },
-      cells       = { mode = text }, % 全セル
-      hline{2,Z}  = { 0.08em }, % 罫線(水平)
-      row{odd}    = { bg = gray!20 }, % 偶数行：背景色
-      % column{1,2} = { bg = gray!20, font = {\bfseries} }, % 列：背景色，フォント
-      column{1,2} = { font = {\bfseries} }, % 列：背景色，フォント
-      row{1}      = { bg = gray!50, font = {\bfseries} }, % 行：背景色，フォント
-    }
-      項目名  &  &  値 \\
-      要目  & 全長           & 1,698 $\mathrm{mm}$ \\
-            & 全幅           & 671 $\mathrm{mm}$ \\
-            & 全高           & 1,032 $\mathrm{mm}$ \\
-            & 質量           & 約300 $\mathrm{kg}$ \\
-            & ホッパ容量     & 約0.05 $\mathrm{m^3}$ \\
-      \hline
-      性能  & 成形速度       & $1\sim3 \mathrm{m/min}$ \\
-            & 合材等送り能力 & 約$5 \mathrm{ton/h}$ \\
-      \hline
-      エンジン  & 型式          & 三菱メイキ GB300PE \\
-                & 連続定格出力  & $5.5 \mathrm{kW/3,600min^{-1}}$ \\
-                & 使用燃料      & 自動車用無鉛ガソリン  \\
-                & 燃料タンク    & $6.0 \mathrm{L}$  \\
-                & 始動方式      & セルモータ式 \\
-                & バッテリ      & $12 \mathrm{V(12V-55Ah)}$ \\
-      \hline
-      成形位置  &  &  左側  \\ 
-      \hline
-      作動油タンク容量 & & 約$30 \mathrm{L}$\\
-  \end{tblr}
-\end{table}
-  
-
-\subsection{寸法図}
-  
-
-
-
-
-\IfEq{\mySetLang}{Jpn}%
-  {\section{標準付属品}}%
-  {\section{Standard Accessories}}%
-
-\subsection{標準付属一覧表}
-下記の部品を標準付属品として装備しています．
-
-
-
-
-最もシンプルな設定では，インデントが反映されない．ただし，かならず用紙いっぱいの表幅にできる．また，１つの任意列の列幅を自動調整できるメリットがある．
-\begin{table}[h]
-  % \leftskip = \myLEFTSKIP
-  \begin{tblr}{%
-      colspec     = { X[c] X[l] X[c] X[l] },
-      column{1}   = { wd = 10mm, halign = c },
-      column{2}   = { wd = 60mm, halign = l },
-      column{3}   = { wd = 20mm, halign = c },
-      cells       = { mode = text }, % 全セル
-      hline{2,Z}  = { 0.08em }, % 罫線(水平)
-      row{odd}    = { bg = gray!20 }, % 偶数行：背景色
-      % column{1,2} = { bg = gray!20, font = {\bfseries} }, % 列：背景色，フォント
-      row{1}      = { bg = gray!50, font = {\bfseries} }, % 行：背景色，フォント
-    }
-        & 名称            & 数量  & 備考 \\
-      1 & 付属工具        & 1式   & \\
-      2 & プロパンバーナ  & 1式   & 2 $\mathrm{m}$ホース付 \\
-      3 & ボンベ台        & 1台   &  \\
-      4 & ダストプラグ    & 1個   & 油圧ホース用, 予備 \\
-      5 & ダストキャップ  & 1個   & 油圧ホース用, 予備 \\    
-      15 & ダストキャップ & 1個   & 油圧ホース用, 予備 \\    
-  \end{tblr}
-\end{table}
-
-
-
-
-インデントを調整すると，右端が揃わない（さらに全列幅をすべて設定する必要がある）
-\begin{table}[h]
-  \leftskip = \myLEFTSKIP
-  \begin{tblr}{%
-      % colspec     = { X[c] X[l] X[c] X[l] },
-      column{1}   = { wd = 10mm, halign = c },
-      column{2}   = { wd = 60mm, halign = l },
-      column{3}   = { wd = 20mm, halign = c },
-      column{4}   = { wd = 40mm, halign = l },
-      cells       = { mode = text }, % 全セル
-      hline{2,Z}  = { 0.08em }, % 罫線(水平)
-      row{odd}    = { bg = gray!20 }, % 偶数行：背景色
-      % column{1,2} = { bg = gray!20, font = {\bfseries} }, % 列：背景色，フォント
-      row{1}      = { bg = gray!50, font = {\bfseries} }, % 行：背景色，フォント
-    }
-        & 名称            & 数量  & 備考 \\
-      1 & 付属工具        & 1式   & \\
-      2 & プロパンバーナ  & 1式   & 2 $\mathrm{m}$ホース付 \\
-      3 & ボンベ台        & 1台   &  \\
-      4 & ダストプラグ    & 1個   & 油圧ホース用, 予備 \\
-      5 & ダストキャップ  & 1個   & 油圧ホース用, 予備 \\    
-      15 & ダストキャップ & 1個   & 油圧ホース用, 予備 \\    
-  \end{tblr}
-\end{table}
-
-
-備考幅を表幅を用紙サイズから各列幅を差し引いた場合（結論：単純にはできない）
-列幅は，項目の文字数に依存するため，tex内での数値処理を必要とする（可能）．
-だが，設定が煩雑になるため，管理の容易性の点を考慮すると，悩ましい．
-連番部や数量など想定できる部分を固定数値を設定したうえで，可変部が思い通りのレイアウトにならない場合は，texコードの列幅部分を手動調整することがもっとも容易な模様．
-\begin{table}[h]
-  \leftskip = \myLEFTSKIP
-  \begin{tblr}{%
-      % colspec     = { X[c] X[l] X[c] X[l] },
-      column{1}   = { wd = 10mm, halign = c },
-      column{2}   = { wd = 60mm, halign = l },
-      column{3}   = { wd = 20mm, halign = c },
-      column{4}   = { wd = (\linewidth-90mm), halign = l },
-      cells       = { mode = text }, % 全セル
-      hline{2,Z}  = { 0.08em }, % 罫線(水平)
-      row{odd}    = { bg = gray!20 }, % 偶数行：背景色
-      % column{1,2} = { bg = gray!20, font = {\bfseries} }, % 列：背景色，フォント
-      row{1}      = { bg = gray!50, font = {\bfseries} }, % 行：背景色，フォント
-    }
-        & 名称            & 数量  & 備考 \\
-      1 & 付属工具        & 1式   & \\
-      2 & プロパンバーナ  & 1式   & 2 $\mathrm{m}$ホース付 \\
-      3 & ボンベ台        & 1台   &  \\
-      4 & ダストプラグ    & 1個   & 油圧ホース用, 予備 \\
-      5 & ダストキャップ  & 1個   & 油圧ホース用, 予備 \\    
-      15 & ダストキャップ & 1個   & 油圧ホース用, 予備 \\    
-  \end{tblr}
-\end{table}
-
-
-
-
-\begin{table}[h]
-  \begin{tblr}{%
-      colspec     = { X[c] X[l] X[c] X[l] },
-      column{1}   = { wd = 10mm },
-      column{3}   = { wd = 20mm },
-      column{4}   = { wd = 40mm },
-      cells       = { mode = text }, % 全セル
-      hline{2,Z}  = { 0.08em }, % 罫線(水平)
-      row{odd}    = { bg = gray!20 }, % 偶数行：背景色
-      % column{1,2} = { bg = gray!20, font = {\bfseries} }, % 列：背景色，フォント
-      row{1}      = { bg = gray!50, font = {\bfseries} }, % 行：背景色，フォント
-    }
-        & 名称            & 数量  & 備考 \\
-      1 & 付属工具        & 1式   & \\
-      2 & プロパンバーナ  & 1式   & 2 $\mathrm{m}$ホース付 \\
-      3 & ボンベ台        & 1台   &  \\
-      4 & ダストプラグ    & 1個   & 油圧ホース用, 予備 \\
-      5 & ダストキャップ  & 1個   & 油圧ホース用, 予備 \\    
-  \end{tblr}
-\end{table}
-
-
-
-
-\subsection{付属工具}
-スパナ・レンチ等は，主にボルト・ナットの増し締めや部品の交換，アタッチメントの脱着時に使用知ます．\\
-付属工具は，点検・手入れをして保管してください．
-
-\leftskip = \myLEFTSKIP
-\begin{table}[h]
-  \begin{tblr}{%
-      % colspec     = { X[c] X[l] X[c] X[l] },
-      column{1}   = { wd = 10mm, halign = c },
-      column{2}   = { wd = 60mm, halign = l },
-      column{3}   = { wd = 20mm, halign = c },
-      column{4}   = { wd = 40mm, halign = l },
-      cells       = { mode = text }, % 全セル
-      hline{2,Z}  = { 0.08em }, % 罫線(水平)
-      row{odd}    = { bg = gray!20 }, % 偶数行：背景色
-      % column{1,2} = { bg = gray!20, font = {\bfseries} }, % 列：背景色，フォント
-      row{1}      = { bg = gray!50, font = {\bfseries} }, % 行：背景色，フォント
-    }
-        & 名称            & 数量  & 備考 \\
-      1 & 両口スパナ      & 1本   & 17×19 \\
-      2 & モンキーレンチ  & 1本   & 250 $\mathrm{mm}$ \\
-      3 & 十字ドライバ    & 1本   & エンジン用 \\
-      4 & ボックススパナ  & 1本   & エンジン用 \\
-  \end{tblr}
-\end{table}
-
-
-
-
-\IfEq{\mySetLang}{Jpn}%
-  {\section{各部の名称}}%
-  {\section{Nomenclature of parts}}%
-
-  テストページ 3
-\lipsum[1] % ダミーテキスト（不要なら削除）
-
-
-
-
-\IfEq{\mySetLang}{Jpn}%
-  {\section{運転操作と各装置の説明}}%
-  {\section{Operating instructions and explanations of each device}}%
-
-  テストページ 3
-\lipsum[1] % ダミーテキスト（不要なら削除）
-
-
-
-\IfEq{\mySetLang}{Jpn}%
-  {\section{始業点検}}%
-  {\section{Pre-operation inspection}}%
-
-  テストページ 3
-\lipsum[1] % ダミーテキスト（不要なら削除）
-
-
-
-
-\IfEq{\mySetLang}{Jpn}%
-  {\section{運搬取扱い}}%
-  {\section{Transportation and handling}}%
-
-  \lipsum[1] % ダミーテキスト（不要なら削除）
-
-
-
-
-
-\IfEq{\mySetLang}{Jpn}%
-  {\section{施工作業の概要}}%
-  {\section{Overview of construction work}}%
-
-  \lipsum[1] % ダミーテキスト（不要なら削除）
-
-
-
-
-\IfEq{\mySetLang}{Jpn}%
-  {\section{定期点検・整備}}%
-  {\section{Periodic inspection and maintenance}}%
-
-\subsection{点検整備時期}
-本表の点検整備時期は，一般的な稼働(約1,000時間/６ヶ月)を基準に設定しています．
-過酷な条件での使用など設定基準と著しく異なる場合は，早めの点検整備が必要です．
-
-
-\myWarningSymbol[重要]{%
-  200時間点検は，１ヶ月を超えない期間毎に異常の有無と損傷の有無をチェックして正常な状態にリフレッシュします．|
-  1\,000時間点検は半年，2\,000時間点検は１年を超えない期間毎に異常や故障箇所を正常な状態に補修し，次の半年・１年の作業に備えます．|
-  点検整備の記録は，実施の度に記入し，３年以上保管してください．
-}
-
-
-\newpage
-\subsubsection{点検整備時期の目安}
-
-点検整備時期は，稼働時間または，納車後経過時間のいずれか早い方で実施してください．
-
-\begin{table}[h]
-  \begin{tblr}{%
-      colspec     = { r l },
-      columns     = { wd = 30mm },
-      cells       = { mode = text, font = {\ttfamily}  }, % 全セル
-      hline{2,Z}  = { 0.08em }, % 罫線(水平)
-      row{even}   = {bg = gray!20}, % 偶数行：背景色
-      row{1}      = {bg = gray!50, font = {\bfseries} }, % 行：背景色，フォント
-    }
-    稼働時間 & 納車後経過 \\
-    50$\ \ $    & 約１週間 \\
-    200$\ \ $   & 約１ヶ月 \\
-    500$\ \ $   & 約３ヶ月 \\
-    1,000$\ \ $ & 約６ヶ月 \\
-    2,000$\ \ $ & 約１年 \\
-  \end{tblr}
-\end{table}
-
-
-
-
-\subsubsection{点検整備一覧表}
-\vspace{-1ex}
-\begin{description}
-  \item[◎] 納車後の初回点検を示します．
-  \item[●] 弊社推奨の点検整備時期を示します．
-\end{description}
-
-% ※エンジンについては，別冊エンジンの取扱説明書をご参照ください．
-\begin{table}[h]
-  \centering
-  \begin{tblr}{%
-      colspec       = { X[2,l] X[7,l] X[1,c] X[1,c] X[1,c] X[3,l] },
-      cells         = { mode = text, font = {\ttfamily}  }, % 全セル
-      hline{3,Z}    = { 0.08em }, % 罫線(水平)
-      row{even}     = {bg = gray!20}, % 偶数行：背景色
-      row{1,2}      = {bg = gray!50, font = {\bfseries} }, % 行：背景色，フォント
-      cell{1}{1}    = { r = 1, c = 2 }{ halign = l, font = {\ttfamily\bfseries} }, % セル結合
-      cell{1}{3}    = { r = 1, c = 4 }{ halign = l, font = {\ttfamily\bfseries} }, % セル結合
-      cell{3-Z}{1}  = { bg =  gray!20 }, % 項目：背景色
-    }
-    点検整備項目  & & 点検整備時期[時間毎] &     &     & \\
-                  &                                 & 50 & 200 & 500 & 備考 \\
-    エンジン  & 別冊取扱説明書参照 &  &  &  &  \\
-    \hline
-    電気装備  & 電気配線の破損・汚損・接続部の緩み  & ◎ & ● &    & \\
-              & 配線クランプの破損・脱落の有無      &    & ● &    & \\
-              & バッテリ液の液量レベル・漏れ        & ◎ & ● &    & \\
-              & バッテリの点検・補充電              &    & ● &    & \\
-              & バッテリターミナル部の接続状態      & ◎ &    & ● & \\
-              & バッテリ交換                        &    &    &    & 2年毎 \\
-    \hline
-    油圧装備  & 作動油の交換                          &    &    & ● & 初回100時間 \\
-              & サクションフィルタの点検・清掃        &    &    & ● & \\
-              & 各油圧ポンプの油漏れ                  &    &    & ● & \\
-              & 各油圧ポンプの作動状態・異音          &    & ● &    & \\
-              & リリーフバルブのリリーフ圧調整        &    &    &    & 点検整備時 \\
-              & 電磁弁他油圧機器の作動状態            &    & ● &    & \\
-              & 油圧シリンダの油漏れ                  &    & ● &    & \\
-              & 各油圧ホースの油漏れ・破損・取付状態  & ◎ & ● &    & \\
-              & 各油圧ホースの交換                    &    &    &    & 2年毎 \\
-    \hline
-    バーナ装置    & ガスホースのガス漏れ・破損・取付状態 & ◎ & ● & & \\
-                  & ガスホースの交換                     &    &    & & 2年毎 \\
-    \hline
-    その他 & ボルト・ナットの緩み & & & & 適時増締 \\
-
-  \end{tblr}
-\end{table}
-
-
-
-
-
-\newpage
-\subsubsection{給油}
-
-\myWarningSymbol[重要]{%
-  本機には，給油・給脂を必要とする箇所が随所にあります．点検整備一覧表とともに本表の設定基準に沿って，給油脂・交換を実施してください．|
-  使用油脂は，弊社が推奨する油脂をご使用ください．
-}
-
-\begin{table}[h]
-  \centering
-  \begin{tblr}{%
-      colspec = { X[3,l] X[1,c] X[5,l] X[1,c] X[1,c] X[1,c] X[2,c] },
-      cells = { mode = text, font = {\ttfamily}  }, % 全セル
-      hline{3,Z} = { 0.08em }, % 罫線(水平)
-      row{even} = {bg = gray!20}, % 偶数行：背景色
-      row{1,2} = {bg = gray!50, font = {\bfseries} }, % 行：背景色，フォント
-      cell{1}{6} = { r = 1, c = 2 }{ halign = c, font = {\ttfamily\bfseries} }, % セル結合
-    }
-    給油箇所  & 数 & 奨励油脂 & 容量 & 油量 & 交換時期[H] & \\
-              &    &          & [L]  & 点検 & 初回 & 2回目$\sim$ \\
-    燃料タンク     & 1 & 自動車用無鉛ガソリン                      & $\ $6.0 & 毎日 & $\-$  &   \\
-    クランクケース & 1 & エンジンオイル\par 10W-30(API分類SE級以上) & $\ $1.0 & 毎日 & 25    & 50$\sim$100 \\
-    作動油タンク   & 1 & 作動油\par ISO VG-56                      &    30.0 & 毎日 & 100   & 500  \\
-  \end{tblr}
-\end{table}
-
-
-
-
-
-
-\subsubsection{給脂}
-
-\myWarningSymbol[アドバイス]{%
-  グリース給脂箇所には，緑色で\includegraphics{./アドバイス.png}の表示があります．
-}
-
-\begin{table}[h]
-  \centering
-  \begin{tblr}{%
-      colspec = { X[2,l] X[1,c] X[2,l] X[1,c] X[2,l] },
-      cells = { mode = text, font = {\ttfamily}  }, % 全セル
-      hline{2,Z} = { 0.08em }, % 罫線(水平)
-      row{odd} = {bg = gray!20}, % 偶数行：背景色
-      row{1} = {bg = gray!50, font = {\bfseries} }, % 行：背景色，フォント
-    }
-    給脂箇所 & 数 & 奨励油脂 & 給脂間隔 & 備考 \\
-    移動車輪軸受部 & 4 & グリース(JIS2号) & 100H &  \\    
-  \end{tblr}
-\end{table}
-
-
-
-
-\newpage
-\subsection{ボルトの締付トルクの目安}
-\begin{table}[h]
-  \centering
-  \begin{tblr}{%
-    cells = { mode = text, halign = c }, % 全セル
-    hline{3,Z} = { 0.08em }, % 罫線(水平)
-    row{even} = {bg = gray!20}, % 偶数行：背景色
-    column{2-4} = { font = {\ttfamily} }, % 列
-    row{1,2} = {bg = gray!50, font = {\bfseries} }, % 行：背景色，フォント
-    cell{1}{3} = { r = 1, c = 2 }{ halign = c, font = {\ttfamily\bfseries} }, % セル結合
-    column{2} = { wd = 35mm }, % 列幅
-    column{3,4} = { wd = 25mm }, % 列幅
-    cell{3-12}{1} = { bg =  gray!20 }, % 項目：背景色
-    cell{13-Z}{1} = { bg =  gray!20 }, % 項目：背景色
-  }
-    種類  & 呼び径$\times$ピッチ & 締付トルク(強度区分:10.9) & \\
-          & $\ [\mathrm{mm}] \times [\mathrm{mm}]\ $ & [$\mathrm{N\cdot m}$] & [$\mathrm{kg f\cdot m}$] \\
-    並目  & $\ $M$\ $8 $\times$ 1.25 & $\ $30.4      & $\ $3.10 \\
-          & M10 $\times$ 1.5         & $\ $60.2      & $\ $6.14 \\
-          & $\ $M12 $\times$ 1.75    &    105.0      &    10.71 \\
-          & M14 $\times$ 2.0         &    167.0      &    17.04 \\
-          & M16 $\times$ 2.0         &    260.6      &    26.59 \\
-          & M18 $\times$ 2.5         &    358.6      &    36.59 \\
-          & M20 $\times$ 2.5         &    508.4      &    51.88 \\
-          & M22 $\times$ 2.5         &    691.6      &    70.57 \\
-          & M24 $\times$ 3.0         &    879.0      &    89.69 \\
-          & M30 $\times$ 3.5         &    1746.1$\ $ &   178.17$\ $ \\
-    \hline
-    細目  & M$\ $8 $\times$ 1.0      & $\ $32.5      & $\ $3.32 \\
-          & $\ $M10 $\times$ 1.25    & $\ $63.5      & $\ $6.48 \\
-          & M12 $\times$ 1.5         &    109.7      &    11.19 \\
-          & M14 $\times$ 1.5         &    181.6      &    18.53 \\
-          & M16 $\times$ 1.5         &    277.2      &    28.29 \\
-          & M18 $\times$ 2.0         &    381.0      &    38.88 \\
-          & M20 $\times$ 2.0         &    535.4      &    54.63 \\
-          & M22 $\times$ 2.0         &    725.8      &    74.06 \\
-          & M24 $\times$ 2.0         &    956.2      &    97.57 \\
-          & M30 $\times$ 2.0         &   1932.9$\ $  &   197.23$\ $ \\
-  \end{tblr}
-\end{table}
-
-
-
-\newpage
-\subsection{ステンレスボルトの締付トルクの目安}
-\begin{table}[h]
-  \centering
-  \begin{tblr}{%
-    cells = { halign = c, mode = text }, % 全セル
-    hline{3,Z} = { 0.08em }, % 罫線(水平)
-    row{even} = {bg = gray!20}, % 偶数行：背景色
-    column{1-3} = { font = {\ttfamily} }, % 列
-    column{2,3} = { wd = 25mm }, % 列幅
-    row{1,2} = {bg = gray!50, font = {\bfseries} }, % 行：背景色，フォント
-    cell{1}{2} = { r = 1, c = 2 }{ halign = c, font = {\ttfamily\bfseries} }, % セル結合
-    column{1} = { wd = 40mm }, % 列幅
-  }
-    呼び径$\times$ピッチ & 締付トルク(強度区分:A2-70) & \\
-    $\ [\mathrm{mm}] \times [\mathrm{mm}]\ $ & [$\mathrm{N\cdot m}$] & [$\mathrm{kg f\cdot m}$] \\
-    $\ $M$\ $8 $\times$ 1.25  & $\ $15.8 & $\ $1.61 \\
-    M10 $\times$ 1.5          & $\ $31.3 & $\ $3.19 \\
-    $\ $M12 $\times$ 1.75     & $\ $54.6 & $\ $5.57 \\
-    M14 $\times$ 2.0          & $\ $86.9 & $\ $8.87 \\
-    M16 $\times$ 2.0          &    135.6 &    13.84 \\
-    M18 $\times$ 2.5          &    186.6 &    19.04 \\
-    M20 $\times$ 2.5          &    264.6 &    27.00 \\
-    M22 $\times$ 2.5          &    360.0 &    36.73 \\
-    M24 $\times$ 3.0          &    457.5 &    46.68 \\
-    M30 $\times$ 3.5          &    908.8 &    92.73 \\
-  \end{tblr}
-\end{table}
-
-
-
-
-
-
-
-\IfEq{\mySetLang}{Jpn}%
-  {\section{保管方法}}%
-  {\section{Storage method}}%
-
-\lipsum[1] % ダミーテキスト（不要なら削除）
-
-
-
-
-\IfEq{\mySetLang}{Jpn}%
-  {\section{保証証券}}%
-  {\section{Guarantee}}%
-
-gergege
-
-
+\input{Documents.tex}
 
 \end{document}
