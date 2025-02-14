@@ -20,11 +20,27 @@ class ExportLayertoFileName( inkex.EffectExtension ):
         if self.options.radio == '1':
             VERSION = 1
 
-        # 元のSVGファイル名を取得
-        file_path = self.document.getroot().get("sodipodi:docname")
-        if not file_path:
-            inkex.errormsg("元のSVGファイル名が取得できませんでした。")
-            return
+
+        # 元のSVGファイルのフルパスを取得
+        svg_full_path = self.options.input_file  # Inkscapeが開いているSVGのフルパス
+        svg_dir = os.path.dirname(svg_full_path)  # 元のSVGファイルのディレクトリ
+        svg_file_name = os.path.basename(svg_full_path)  # ファイル名のみ
+        svg_base_name = os.path.splitext(svg_file_name)[0]  # 拡張子なしのファイル名
+
+
+        inkex.errormsg(f"file_name：{svg_full_path}")
+        inkex.errormsg(f"file_name：{svg_dir}")
+        inkex.errormsg(f"file_name：{svg_file_name}")
+        inkex.errormsg(f"file_name：{svg_base_name}")
+
+        inkex.errormsg(f"----------------------------")
+
+        # # 元のSVGファイル名のみを取得
+        # file_path = self.document.getroot().get("sodipodi:docname")
+        # if not file_path:
+        #     inkex.errormsg("元のSVGファイル名が取得できませんでした。")
+        #     return
+
 
         # 全レイヤーで繰り返し
         for layer in self.svg.xpath("//svg:g[@inkscape:groupmode='layer']", namespaces=inkex.NSS):
@@ -35,17 +51,20 @@ class ExportLayertoFileName( inkex.EffectExtension ):
             if match:
                 VERSION = int(match.group(1)) + VERSION
                 layer.set("inkscape:label", "バージョン：" + str( VERSION ) )
-            
+
             # 非表示に変更
             if "：出力" in layer_name:
                 layer.set("visibility", "hidden")
                 layer.set("style", "display:none")
-            
+
+        # **SVGを元の場所に保存**
+        with open(svg_full_path, "w", encoding="utf-8") as f:
+            f.write(inkex.etree.tostring(self.document.getroot(), encoding="unicode"))
 
         # 全レイヤーで繰り返し：ファイル出力
         for layer in self.svg.xpath("//svg:g[@inkscape:groupmode='layer']", namespaces=inkex.NSS):
             layer_name = layer.get("inkscape:label", "") # レイヤー名取得
-            
+
             # ：出力を含む場合：ファイル出力へ
             if "：出力" in layer_name:
 
@@ -54,21 +73,26 @@ class ExportLayertoFileName( inkex.EffectExtension ):
                 layer.set("style", "display:inline")  # 表示状態にする
 
                 # **SVGを保存**
-                with open(file_path, "w", encoding="utf-8") as f:
+                with open(svg_full_path, "w", encoding="utf-8") as f:
                     f.write(inkex.etree.tostring(self.document.getroot(), encoding="unicode"))
-                inkex.errormsg(f"出力：{file_path}")
 
                 # ファイル名生成
-                base_name = os.path.splitext(self.document.getroot().get("sodipodi:docname"))[0]
-                file_name = f"{base_name}_{layer_name.replace('：出力', '')}_{str(VERSION).zfill(2)}.pdf"
-                out_path = os.path.join(os.path.dirname(self.document.getroot().get("sodipodi:docname")), file_name)
+                svg_base_name =  f"{svg_base_name} & {layer_name.replace('：出力', '')}_{str(VERSION).zfill(2)}"
+                pdf_path = os.path.join(svg_dir, svg_base_name + ".pdf")
+
+                # base_name = os.path.splitext(self.document.getroot().get("sodipodi:docname"))[0]
+                # file_name = f"{base_name}_{layer_name.replace('：出力', '')}_{str(VERSION).zfill(2)}.pdf"
+                # out_path = os.path.join(os.path.dirname(self.document.getroot().get("sodipodi:docname")), file_name)
+                inkex.errormsg(f"base_name：{svg_base_name}")
+                inkex.errormsg(f"file_name：{pdf_path}")
+                inkex.errormsg(f"----------------------------")
 
                 # PDF出力 (subprocessでInkscapeを呼び出す)
-                try:
-                    subprocess.run(["inkscape", "--export-filename=" + out_path, self.svg.get("sodipodi:docname")], check=True)
-                    inkex.errormsg(f"出力：{out_path}")
-                except subprocess.CalledProcessError as e:
-                    inkex.errormsg(f"PDFエクスポート中にエラーが発生しました: {e}")
+                # try:
+                #     subprocess.run(["inkscape", "--export-filename=" + pdf_path, self.svg.get("sodipodi:docname")], check=True)
+                #     inkex.errormsg(f"出力：{pdf_path}")
+                # except subprocess.CalledProcessError as e:
+                #     inkex.errormsg(f"PDFエクスポート中にエラーが発生しました: {e}")
 
                 # 非表示状態にする
                 layer.set("visibility", "hidden")
