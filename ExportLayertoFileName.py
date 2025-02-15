@@ -2,6 +2,9 @@ import inkex
 import os
 import re
 import subprocess
+from urllib.parse import urlparse
+import tkinter as tk
+from tkinter import filedialog
 
 class ExportLayertoFileName( inkex.EffectExtension ):
 
@@ -18,29 +21,7 @@ class ExportLayertoFileName( inkex.EffectExtension ):
         # バージョン加算量
         VERSION = 0
         if self.options.radio == '1':
-            VERSION = 1
-
-
-        # 元のSVGファイルのフルパスを取得
-        svg_full_path = self.options.input_file  # Inkscapeが開いているSVGのフルパス
-        svg_dir = os.path.dirname(svg_full_path)  # 元のSVGファイルのディレクトリ
-        svg_file_name = os.path.basename(svg_full_path)  # ファイル名のみ
-        svg_base_name = os.path.splitext(svg_file_name)[0]  # 拡張子なしのファイル名
-
-
-        inkex.errormsg(f"file_name：{svg_full_path}")
-        inkex.errormsg(f"file_name：{svg_dir}")
-        inkex.errormsg(f"file_name：{svg_file_name}")
-        inkex.errormsg(f"file_name：{svg_base_name}")
-
-        inkex.errormsg(f"----------------------------")
-
-        # # 元のSVGファイル名のみを取得
-        # file_path = self.document.getroot().get("sodipodi:docname")
-        # if not file_path:
-        #     inkex.errormsg("元のSVGファイル名が取得できませんでした。")
-        #     return
-
+            VERSION = 1 # 増分（バージョン1って意味ではない）
 
         # 全レイヤーで繰り返し
         for layer in self.svg.xpath("//svg:g[@inkscape:groupmode='layer']", namespaces=inkex.NSS):
@@ -49,17 +30,28 @@ class ExportLayertoFileName( inkex.EffectExtension ):
             # バージョンアップ
             match = re.search(r"バージョン：(\d+)", layer_name)
             if match:
-                VERSION = int(match.group(1)) + VERSION
-                layer.set("inkscape:label", "バージョン：" + str( VERSION ) )
+                VERSION = int(match.group(1)) + VERSION # カウントアップ
+                layer.set("inkscape:label", "バージョン：" + str( VERSION ) ) 
 
             # 非表示に変更
             if "：出力" in layer_name:
                 layer.set("visibility", "hidden")
                 layer.set("style", "display:none")
 
-        # **SVGを元の場所に保存**
-        with open(svg_full_path, "w", encoding="utf-8") as f:
-            f.write(inkex.etree.tostring(self.document.getroot(), encoding="unicode"))
+
+        # 保存先フォルダの選択
+        root = tk.Tk()
+        root.withdraw()  # メインウィンドウを非表示にする
+        root.title("保存先フォルダの選択")  # タイトルを変更
+        folder_path = os.path.abspath(filedialog.askdirectory() ) + "\\"
+
+
+        # svgファイル名の取得
+        svg_full_path = self.document.getroot().get("sodipodi:docname")
+        if svg_full_path:
+            svg_full_path = os.path.abspath(svg_full_path) # 絶対パスに変換
+            svg_file_name = os.path.splitext(os.path.basename(svg_full_path))[0] # 拡張子なしファイル名
+
 
         # 全レイヤーで繰り返し：ファイル出力
         for layer in self.svg.xpath("//svg:g[@inkscape:groupmode='layer']", namespaces=inkex.NSS):
@@ -72,27 +64,20 @@ class ExportLayertoFileName( inkex.EffectExtension ):
                 layer.set("visibility", "visible")
                 layer.set("style", "display:inline")  # 表示状態にする
 
-                # **SVGを保存**
+                # 今の表示をSVGに反映
                 with open(svg_full_path, "w", encoding="utf-8") as f:
                     f.write(inkex.etree.tostring(self.document.getroot(), encoding="unicode"))
 
                 # ファイル名生成
-                svg_base_name =  f"{svg_base_name} & {layer_name.replace('：出力', '')}_{str(VERSION).zfill(2)}"
-                pdf_path = os.path.join(svg_dir, svg_base_name + ".pdf")
-
-                # base_name = os.path.splitext(self.document.getroot().get("sodipodi:docname"))[0]
-                # file_name = f"{base_name}_{layer_name.replace('：出力', '')}_{str(VERSION).zfill(2)}.pdf"
-                # out_path = os.path.join(os.path.dirname(self.document.getroot().get("sodipodi:docname")), file_name)
-                inkex.errormsg(f"base_name：{svg_base_name}")
-                inkex.errormsg(f"file_name：{pdf_path}")
-                inkex.errormsg(f"----------------------------")
+                svg_base_name =  f"{svg_file_name}{layer_name.replace('：出力', '')}_{str(VERSION).zfill(2)}" # バージョン追加
+                pdf_path = os.path.join( folder_path, svg_base_name + ".pdf") # 拡張子追加
 
                 # PDF出力 (subprocessでInkscapeを呼び出す)
-                # try:
-                #     subprocess.run(["inkscape", "--export-filename=" + pdf_path, self.svg.get("sodipodi:docname")], check=True)
-                #     inkex.errormsg(f"出力：{pdf_path}")
-                # except subprocess.CalledProcessError as e:
-                #     inkex.errormsg(f"PDFエクスポート中にエラーが発生しました: {e}")
+                try:
+                    subprocess.run(["inkscape", "--export-filename=" + pdf_path, self.svg.get("sodipodi:docname")], check=True)
+                    inkex.errormsg(f"出力：{pdf_path}") # ないとそれはそれで不安なため表示
+                except subprocess.CalledProcessError as e:
+                    inkex.errormsg(f"PDFエクスポート中にエラーが発生しました: {e}")
 
                 # 非表示状態にする
                 layer.set("visibility", "hidden")
