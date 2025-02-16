@@ -125,13 +125,13 @@ def create_table_code(sheet):
           if ll[0] is None: # セル値：なし
             myStr += f" & " # 空白表示
           else: # セル値：あり
-            if not( row[0].value is None): # 行背景色：あり
-              print( ll[0] )
-              if "|" in ll[0]:
-                myStr += str( ll[0].replace("|", "\\hline") )
-              else: 
-                myStr += f"\\textbf{{{ll[0]}}} & " # 太文字
+            
+            print( ll[0] )
+            if "|" in ll[0]:
+              ll[0] = ll[0].replace("|", "\\hline")
 
+            if not( row[0].value is None): # 行背景色：あり
+              myStr += f"\\textbf{{{ll[0]}}} & " # 太文字
             else:# 行背景色：なし
               myStr += f"{ll[0]} & " # そのまま表示
         
