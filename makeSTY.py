@@ -11,7 +11,8 @@ import utils
 def create_sty_and_tex_files(excel_file_path):
 
   try:
-    workbook = openpyxl.load_workbook(excel_file_path, keep_vba=True)
+    # workbook = openpyxl.load_workbook(excel_file_path, read_only=True)
+    workbook = openpyxl.load_workbook(excel_file_path)
     sheet = workbook["ReadMe"]
 
     for sheet_index, sheet_name in enumerate(workbook.sheetnames):
@@ -26,7 +27,8 @@ def create_sty_and_tex_files(excel_file_path):
       elif sheet_index == 3:  # 4番目のシート
         makeTable.create_table_code(sheet)  # 関数を呼び出す
 
-    workbook.save(excel_file_path)
+    # workbook.save(excel_file_path)
+    workbook.close()
 
   except FileNotFoundError:
     print(f"エラー: ファイル '{excel_file_path}' が見つかりません。")
