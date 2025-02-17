@@ -10,12 +10,12 @@
 \usepackage{chappg} %目次のページ表記(x-x)で使用
 \usepackage{xstring}  %文字比較パッケージ
 \usepackage{tcolorbox}
-\usepackage{dcolumn}  % tableの表示位置を揃える
 \usepackage{amsmath} % 数式
 \usepackage{xparse} % 限りない引数
 \usepackage{expl3} % スクリプト用
-
-
+\usepackage{calc} % 四則計算とか
+\usepackage[utf8]{inputenc}
+\usepackage{luatexja-fontspec}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % しおりの設定：最初にloadした方がよいパッケージ
@@ -67,7 +67,7 @@
   \begin{tcolorbox}[colback=gray!100, colframe=black, sharp corners,
                       boxrule=0pt, toprule=0.5pt, bottomrule=0.5pt,
                       width=\linewidth, boxsep=0pt ]
-    \IfEq{\myLanguege}{Jpn}
+    \IfEq{\mySetLang}{Jpn}
       {\centering\bfseries\ttfamily\textcolor{white}{\thesection 章\ \leftmark}}
       {\centering\bfseries\ttfamily\textcolor{white}{Chapter \thesection\hspace{1em} \leftmark}}
   \end{tcolorbox}
@@ -88,7 +88,7 @@
                       boxrule=0pt, toprule=0.5pt, bottomrule=0.5pt,
                       width=\linewidth, boxsep=0pt ]
       \leftmark%
-      \IfEq{\myLanguege}{Jpn}%
+      \IfEq{\mySetLang}{Jpn}%
         {\centering\bfseries\ttfamily\textcolor{white}{目\hspace{1.5em}次}}% 日本語版
         {\centering\bfseries\ttfamily\textcolor{white}{Table of Contents}}% 英語版
       \end{tcolorbox}
@@ -118,7 +118,7 @@
   \thispagestyle{empty} % ページスタイルをemptyに設定
   \phantomsection % hyperref のためのアンカー
 
-  \IfEq{\myLanguege}{Jpn}
+  \IfEq{\mySetLang}{Jpn}
     {%
       \ifstrequal{#1}{目次}
         {\pdfbookmark[1]{目次}{toc}}  % しおりに「目次」を追加
@@ -134,7 +134,7 @@
       top=5mm, left=0mm, bottom=5mm, right=0mm,
       boxrule=0pt, toprule=1.5pt, bottomrule=1.5pt,
       width=\linewidth ]
-      \IfEq{\myLanguege}{Jpn}
+      \IfEq{\mySetLang}{Jpn}
         {% 日本語版
           \ifstrequal{#1}{目次}
             {\fontsize{34pt}{34pt}\selectfont\bfseries\gtfamily\centering 目\hspace{1em}次}
@@ -150,7 +150,7 @@
     {}
     {\setcounter{page}{1}} % 目次以外でページ番号を1から始める
   \restoregeometry  % ページレイアウトを元に戻す
-  \IfEq{\myLanguege}{Jpn}
+  \IfEq{\mySetLang}{Jpn}
     {% 日本語版
       \ifstrequal{#1}{目次}
         {}
@@ -293,109 +293,79 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% 危険，警告，注意のコメント付き表示
+% 危険，警告，注意，重要，アドバイスのコメント付き表示
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \ExplSyntaxOn
-\NewDocumentCommand{\myWarningSymbolA}{ O{} m }{
-  \leftskip = 0mm
-  \vspace{0.8\myVOFFSET}
-  \begin{tcolorbox}[
-    colback=black, % 背景色を黒に設定
-    colframe=black, % 枠線を黒に設定
-    boxrule=0pt, % 枠線の太さを0に設定
-    arc=0pt, % 角を丸めない
-    % outer arc=0pt, % 外側の角を丸めない
-    width=\textwidth, % 横幅をテキスト幅に合わせる
-    top=0pt, % 上側の余白を0に設定
-    bottom=0pt, % 下側の余白を0に設定
-    left=0pt, % 左側の余白を0に設定
-    right=0pt, % 右側の余白を0に設定
-    halign=center, % 水平方向の中央揃え
-    valign=center % 垂直方向の中央揃え
-  ]%, sharp corners]
+\NewDocumentCommand{\myWarningSymbol}{ O{} m }{
+  \tl_if_in:NnTF {危険,警告,注意}{#1} % 第1引数が指定された3つの文字列のいずれかであることを確認し表示
+  {% 引数1が正しい場合
+    \leftskip = 0mm
     \begin{tcolorbox}[
       colback=black, % 背景色を黒に設定
       colframe=black, % 枠線を黒に設定
-      coltext=white,  % 文字
       boxrule=0pt, % 枠線の太さを0に設定
       arc=0pt, % 角を丸めない
       % outer arc=0pt, % 外側の角を丸めない
       width=\textwidth, % 横幅をテキスト幅に合わせる
-      top=5pt, % 上側の余白を0に設定
+      top=0pt, % 上側の余白を0に設定
       bottom=0pt, % 下側の余白を0に設定
       left=0pt, % 左側の余白を0に設定
       right=0pt, % 右側の余白を0に設定
       halign=center, % 水平方向の中央揃え
       valign=center % 垂直方向の中央揃え
-    ]%, sharp corners]
-      \centering
-      % \includegraphics[height=6mm]{../Fig/#1.pdf} % 画像を表示
-      \includegraphics[scale=1.0]{../Fig/警告記号_#1.pdf} % 画像を表示
-      \hspace{2em}
-      % 文字間にスペースを挿入
-      \seq_set_split:Nnn \l_tmpa_seq { } { #1 } % 1文字ずつ分割
-      \seq_map_inline:Nn \l_tmpa_seq { {\bfseries\huge ##1} \hspace{2em} }
-    \end{tcolorbox}
-    \begin{tcolorbox}[
-        colback=white, % 背景色を黒に設定
-        colframe=white, % 枠線を黒に設定
+    ]
+      \begin{tcolorbox}[
+        colback=black, % 背景色を黒に設定
+        colframe=black, % 枠線を黒に設定
+        coltext=white,  % 文字
         boxrule=0pt, % 枠線の太さを0に設定
         arc=0pt, % 角を丸めない
         % outer arc=0pt, % 外側の角を丸めない
         width=\textwidth, % 横幅をテキスト幅に合わせる
-        top=0pt, % 上側の余白を0に設定
+        top=2pt, % 上側の余白を0に設定
         bottom=0pt, % 下側の余白を0に設定
         left=0pt, % 左側の余白を0に設定
         right=0pt, % 右側の余白を0に設定
-        halign=left, % 水平方向の中央揃え
-        valign=top % 垂直方向の中央揃え
-      ]%, sharp corners]
-      \vspace{10pt}
-      \seq_set_split:Nnn \l_tmpa_seq { | } { #2 } % 引数2を|区切りでリストとして処理
-      \begin{itemize}
-        \seq_map_inline:Nn \l_tmpa_seq%
-        { \item \tl_trim_spaces:n {##1} } % リストをitemizeとして表示、空白除去
-      \end{itemize}
-      \vspace{3pt}
+        halign=center, % 水平方向の中央揃え
+        valign=center % 垂直方向の中央揃え
+      ]
+        \centering
+        \raisebox{-0.5ex}{\includegraphics[scale=1.0]{../Fig/警告記号.pdf} }% 画像を表示
+        \hspace{2em}
+        % 文字間にスペースを挿入
+        \seq_set_split:Nnn \l_tmpa_seq { } { #1 } % 1文字ずつ分割
+        \seq_map_inline:Nn \l_tmpa_seq { {\bfseries\huge ##1} \hspace{2em} }
+
+      \end{tcolorbox}
+      \begin{tcolorbox}[
+          colback=white, % 背景色を黒に設定
+          colframe=white, % 枠線を黒に設定
+          boxrule=0pt, % 枠線の太さを0に設定
+          arc=0pt, % 角を丸めない
+          % outer arc=0pt, % 外側の角を丸めない
+          width=\textwidth, % 横幅をテキスト幅に合わせる
+          top=0pt, % 上側の余白を0に設定
+          bottom=0pt, % 下側の余白を0に設定
+          left=0pt, % 左側の余白を0に設定
+          right=0pt, % 右側の余白を0に設定
+          halign=left, % 水平方向の中央揃え
+          valign=top % 垂直方向の中央揃え
+        ]%, sharp corners]
+        \vspace{10pt}
+        \seq_set_split:Nnn \l_tmpa_seq { | } { #2 } % 引数2を|区切りでリストとして処理
+        \begin{itemize}
+          \seq_map_inline:Nn \l_tmpa_seq%
+          { \item \tl_trim_spaces:n {##1} } % リストをitemizeとして表示、空白除去
+        \end{itemize}
+        \vspace{3pt}
+      \end{tcolorbox}
     \end{tcolorbox}
-  \end{tcolorbox}
-}
-\ExplSyntaxOff
-% \ExplSyntaxOn
-% \NewDocumentCommand{\myWarningSymbol}{ O{} m }{
-%   \leftskip = 0mm
-%   \vspace{-1ex}
-%   \begin{tcolorbox}[colframe=black, colback=white, boxrule=0.5pt, width=\textwidth]%, sharp corners]
-
-%     \begin{minipage}[\textheight]{30mm}%左列
-%       \centering
-%       \includegraphics[width=\linewidth]{../Fig/#1.pdf} % 画像を表示
-%     \end{minipage}%
-
-%     \begin{minipage}[\textheight]{\dimexpr\textwidth-30mm-1em}%右列
-%       \seq_set_split:Nnn \l_tmpa_seq { | } { #2 } % 引数2を|区切りでリストとして処理
-%       \begin{itemize}[label=\textbullet, leftmargin=2em, itemsep=-0.5ex]
-%         \seq_map_inline:Nn \l_tmpa_seq
-%         { \item \tl_trim_spaces:n {##1} } % リストをitemizeとして表示、空白除去
-%       \end{itemize}
-%     \end{minipage}
-
-%   \end{tcolorbox}
-% }
-% \ExplSyntaxOff
-
-
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% 重要，アドバイスのコメント付き表示
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\ExplSyntaxOn
-\NewDocumentCommand{\myWarningSymbolB}{ O{} m }{
-  \leftskip = 0mm
-  \vspace{0.8\myVOFFSET}
-  \begin{tcolorbox}[
+  }
+  {
+    \tl_if_in:NnTF {重要,アドバイス}{#1} % 第1引数が指定された2つの文字列のいずれかであることを確認し表示
+    {% 引数1が正しい場合
+      \leftskip = 0mm
+      \begin{tcolorbox}[
         colback=white, % 背景色
         colframe=black, % 枠線
         title=\centering{\LARGE #1},% タイトル
@@ -411,17 +381,49 @@
         right=1pt, % 右側の余白を0に設定
         halign=center, % 水平方向の中央揃え
         valign=top, % 垂直方向の中央揃え
-      ]%, sharp corners]
-      \vspace{10pt}
-      \seq_set_split:Nnn \l_tmpa_seq { | } { #2 } % 引数2を|区切りでリストとして処理
-      \begin{itemize}
-        \seq_map_inline:Nn \l_tmpa_seq%
-        { \item \tl_trim_spaces:n {##1} } % リストをitemizeとして表示、空白除去
-      \end{itemize}
-      \vspace{3pt}
-  \end{tcolorbox}
+      ]%
+        \vspace{10pt}
+        \seq_set_split:Nnn \l_tmpa_seq { | } { #2 } % 引数2を|区切りでリストとして処理
+        \begin{itemize}
+          \seq_map_inline:Nn \l_tmpa_seq%
+          { \item \tl_trim_spaces:n {##1} } % リストをitemizeとして表示、空白除去
+        \end{itemize}
+        \vspace{3pt}
+      \end{tcolorbox}
+    }
+  }
 }
 \ExplSyntaxOff
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% % 危険，警告，注意，重要，アドバイスを文章中で使うやつ
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\tcbset{
+  myWarning/.style={
+    on line, % インライン
+    boxsep=0pt, % 枠の余白を調整
+    arc=0pt, % 角丸（0にすると四角）
+    colframe=black, % 枠の色
+    colback=black, % 背景色（gray!20 は薄いグレー）
+    colupper=white, % 文字色
+    fontupper=\bfseries % 太文字
+  },
+  myImportant/.style={
+    on line, % インライン
+    boxsep=0pt, % 枠の余白を調整
+    arc=5pt, % 角丸（0にすると四角）
+    colframe=black, % 枠の色
+    colback=gray, % 背景色
+    colupper=white, % 文字色
+    fontupper=\bfseries % 太文字
+  }
+}
+
+
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -431,6 +433,11 @@
 \usepackage{array} % 表
 \usepackage{xcolor} % 表
 \usepackage{tabularray}  % 表
+\usepackage{longtable}  % 改ページ時に自動ヘッダ挿入
+\usepackage{tabularx}
+\usepackage{dcolumn}  % tableの表示位置を揃える
+\newlength{\myTabelLeft}  % 表の*列幅算出用
+
 
 
 
@@ -443,6 +450,10 @@
 
 \begin{document}
 
-\input{Documents.tex}
+
+% \input{Documents.tex}
+% \input{test.tex}
+\input{hogehoge.tex}
+
 
 \end{document}
