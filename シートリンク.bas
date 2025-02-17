@@ -1,59 +1,74 @@
-Attribute VB_Name = "ƒV[ƒgƒŠƒ“ƒN"
-'¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡
-Public Function ƒV[ƒgƒŠƒ“ƒN(Sh As Object, target As Range) As Boolean
-  ƒV[ƒgƒŠƒ“ƒN = False
+'â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– 
+Public Function ã‚·ãƒ¼ãƒˆãƒªãƒ³ã‚¯(Sh As Object, target As Range) As Boolean
+  ã‚·ãƒ¼ãƒˆãƒªãƒ³ã‚¯ = False
   Dim NumSheet As Long: NumSheet = 0
-  If Sh.Name = "•\ƒŠƒXƒg" Then
-    NumSheet = •\ƒŠƒXƒg(Sh, target)
+  If Sh.Name = "è¡¨ãƒªã‚¹ãƒˆ" Then
+    NumSheet = è¡¨ãƒªã‚¹ãƒˆ(Sh, target)
   Else
-    NumSheet = •\(Sh, target)
+    NumSheet = è¡¨(Sh, target)
   End If
 
   
-  '‘ÎÛƒV[ƒg‚ÌƒAƒNƒeƒBƒx[ƒg
+  'å¯¾è±¡ã‚·ãƒ¼ãƒˆã®ã‚¢ã‚¯ãƒ†ã‚£ãƒ™ãƒ¼ãƒˆ
   If NumSheet > 0 Then
-    ThisWorkbook.Worksheets(NumSheet).Activate
-    ƒV[ƒgƒŠƒ“ƒN = True
+    
+    With ThisWorkbook.Worksheets(NumSheet)
+      If .Visible = xlSheetVeryHidden Or _
+         .Visible = xlSheetHidden Then
+      
+        .Visible = xlSheetVisible 'è¡¨ç¤º
+      End If
+      .Activate 'ã‚·ãƒ¼ãƒˆã¸ç§»å‹•
+    End With
+    
+    
+    If Sh.Name <> "è¡¨ãƒªã‚¹ãƒˆ" And Sh.Visible = xlSheetVisible Then
+          Sh.Visible = xlSheetHiddenVisible 'è¡¨ç¤º
+    End If
+    
+    ã‚·ãƒ¼ãƒˆãƒªãƒ³ã‚¯ = True
   End If
   
 End Function
 
 
 
-'¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡
-Private Function •\ƒŠƒXƒg(Sh As Object, target As Range) As Integer
-  ' ‘¦I—¹
-  •\ƒŠƒXƒg = -1
-  If target.Value = "" Then Exit Function 'WƒNƒŠƒbƒN‚µ‚½êŠ‚ª"•¶š‚ª‚È‚¢‚Æê‡
-  If target.Row = 1 Then Exit Function    '1s–Ú(€–Ú)‚Ìê‡
-  If target.Column > Range("C1").Column Then Exit Function    '1s–Ú(€–Ú)‚Ìê‡
+'â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– 
+Private Function è¡¨ãƒªã‚¹ãƒˆ(Sh As Object, target As Range) As Integer
+  ' å³çµ‚äº†
+  è¡¨ãƒªã‚¹ãƒˆ = -1
+  If target.Value = "" Then Exit Function 'Wã‚¯ãƒªãƒƒã‚¯ã—ãŸå ´æ‰€ãŒ"æ–‡å­—ãŒãªã„ã¨å ´åˆ
+  If target.Row = 1 Then Exit Function    '1è¡Œç›®(é …ç›®)ã®å ´åˆ
+  If target.Column > Range("C1").Column Then Exit Function    '1è¡Œç›®(é …ç›®)ã®å ´åˆ
   
 
-  •\ƒŠƒXƒg = target.Row + 2
+  è¡¨ãƒªã‚¹ãƒˆ = target.Row + 2
 End Function
 
 
 
 
 
-'¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡
-Private Function •\(Sh As Object, target As Range) As Integer
+'â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– 
+Private Function è¡¨(Sh As Object, target As Range) As Integer
 
-  ' ‘¦I—¹F1s–Ú‚Ì1—ñ–Úiƒpƒ^ƒ“jˆÈŠO
-    •\ = -1
-    If target.Row <> 1 Then Exit Function   '1s–ÚˆÈŠO‚Ìê‡
-    If target.Column = 1 Then Exit Function '1—ñ–Ú‚Ìê‡
+  ' å³çµ‚äº†ï¼š1è¡Œç›®ã®1åˆ—ç›®ï¼ˆãƒ‘ã‚¿ãƒ³ï¼‰ä»¥å¤–
+    è¡¨ = -1
+    If target.Row <> 1 Then Exit Function   '1è¡Œç›®ä»¥å¤–ã®å ´åˆ
+    If target.Column = 1 Then Exit Function '1åˆ—ç›®ã®å ´åˆ
   
     Dim NumList As Long: NumList = 0
     Dim ii As Long
     For ii = 1 To ThisWorkbook.Worksheets.Count
       
-      If ThisWorkbook.Worksheets(ii).Name = "•\ƒŠƒXƒg" Then
-        NumList = ii ' [•\ƒŠƒXƒg]‚ÌƒV[ƒg”Ô†
+      If ThisWorkbook.Worksheets(ii).Name = "è¡¨ãƒªã‚¹ãƒˆ" Then
+        NumList = ii ' [è¡¨ãƒªã‚¹ãƒˆ]ã®ã‚·ãƒ¼ãƒˆç•ªå·
       End If
       
       If ThisWorkbook.Worksheets(ii).Name = Sh.Name Then
-        •\ = NumList ' [•\ƒŠƒXƒg]‚ÌƒV[ƒg”Ô†
+        è¡¨ = NumList ' [è¡¨ãƒªã‚¹ãƒˆ]ã®ã‚·ãƒ¼ãƒˆç•ªå·
+        
+        
         Exit For
       End If
     Next
