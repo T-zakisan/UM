@@ -12,6 +12,7 @@ Public Function シートリンク(Sh As Object, target As Range) As Boolean
   '対象シートのアクティベート
   If NumSheet > 0 Then
     
+　　' 対象シートを表示
     With ThisWorkbook.Worksheets(NumSheet)
       If .Visible = xlSheetVeryHidden Or _
          .Visible = xlSheetHidden Then
@@ -21,10 +22,14 @@ Public Function シートリンク(Sh As Object, target As Range) As Boolean
       .Activate 'シートへ移動
     End With
     
-    
-    If Sh.Name <> "表リスト" And Sh.Visible = xlSheetVisible Then
-          Sh.Visible = xlSheetHiddenVisible '表示
-    End If
+    ' 表リスト以外は表示
+    For ii = 1 To ThisWorkbook.Worksheets.Count
+      with ThisWorkbook.Worksheets(ii)
+        If .Visible = xlSheetVisible Then
+          .Visible = xlSheetHiddenVisible '表示
+        End If
+      end with
+    next ii
     
     シートリンク = True
   End If
