@@ -14,20 +14,14 @@ Public Function シートリンク(Sh As Object, target As Range) As Boolean
     
 　　' 対象シートを表示
     With ThisWorkbook.Worksheets(NumSheet)
-      If .Visible = xlSheetVeryHidden Or _
-         .Visible = xlSheetHidden Then
-      
-        .Visible = xlSheetVisible '表示
-      End If
+      .Visible = xlSheetVisible '表示
       .Activate 'シートへ移動
     End With
     
-    ' 表リスト以外は表示
-    For ii = 1 To ThisWorkbook.Worksheets.Count
+    ' 表リスト以降は非表示
+    For ii = 4 To ThisWorkbook.Worksheets.Count
       with ThisWorkbook.Worksheets(ii)
-        If .Visible = xlSheetVisible Then
-          .Visible = xlSheetHiddenVisible '表示
-        End If
+        .Visible = xlSheetHiddenVisible '非表示
       end with
     next ii
     
