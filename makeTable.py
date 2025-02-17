@@ -3,7 +3,6 @@
 #   Excelの表をTeX(longtable)形式に変換
 #   2025.02.17
 #   <issu>
-#    - |で\hlineが未実装
 #    - 関数で小分け（ヘッダ，リスト＆フッタ）程度に小分けにしたいかな
 ##############################################################
 
@@ -93,10 +92,20 @@ def create_table_code(sheet):
       count_row += 1 # 行カウンタの加算
       flag_merge = False # 結合フラグ
       flag_header = False # ヘッダ用フラグ
-      for ii, cell in enumerate( row[1:] ): # 各行の列で繰り返し(列Bスタート)
+      flag_hline = "" # 罫線用フラグ（文字列）
+      for ii, cell in enumerate( row[0:] ): # 各行の列で繰り返し(列Aスタート)
         
+        # 罫線チェック
+        if ii == 0:
+          if cell.value == "太線":
+            flag_hline = "\\hline \\hline"
+          elif cell.value == "細線":
+            flag_hline = "\\hline"
+          else:
+            flag_hline = ""
+
         # 行指定の背景色
-        if ii == 0: # 列B @ Excel
+        if ii == 1: # 列A @ Excel
           if cell.value is None: # 列Bの値が空白の場合
             if ( count_row % 2 ) == 0: # 偶奇数判定
               myStr += f"\\rowcolor{{gray!10}}\t" # 偶数行
@@ -109,7 +118,7 @@ def create_table_code(sheet):
                 flag_header = True # 
 
         # 結合チェック
-        if (ii > 0) and (ii<len(row)): # 不要項目除去
+        if (ii > 1) and (ii<len(row)): # 不要項目除去
           flag_merge = False # 結合フラグ
           for jj in range( len(list) ): # 既存リストで繰り返し
             if cell.value == list[jj][0] and not(list[jj][0] is None): # 結合判定
@@ -125,16 +134,11 @@ def create_table_code(sheet):
           if ll[0] is None: # セル値：なし
             myStr += f" & " # 空白表示
           else: # セル値：あり
-            
-            print( ll[0] )
-            if "|" in ll[0]:
-              ll[0] = ll[0].replace("|", "\\hline")
-
-            if not( row[0].value is None): # 行背景色：あり
+            if not( row[1].value is None): # 行背景色：あり
               myStr += f"\\textbf{{{ll[0]}}} & " # 太文字
             else:# 行背景色：なし
               myStr += f"{ll[0]} & " # そのまま表示
-        
+
         else: # セル結合あり
           if ii == 0: # 列C
             align = "l" # B列：左寄＆太文字
@@ -144,8 +148,10 @@ def create_table_code(sheet):
             align = "c" # 中央寄せ
             myStr += f"\\multicolumn{{{ll[1]}}}{{{align}}}{{{ll[0]}}} & " # セル値
 
-      myStr = myStr[:-2]  # 最後の&除去
-      myStr += f"\\\\ \n" # 改行
+
+      myStr = myStr[:-2] + f"\\\\ {flag_hline}\n" # 最後の&除去と改行
+      flag_hline = ""
+
       if flag_header == True:
         flag_header = False
         tmp = myStr
