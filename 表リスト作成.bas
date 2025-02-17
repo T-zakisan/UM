@@ -1,35 +1,34 @@
-Attribute VB_Name = "•\ƒŠƒXƒgì¬"
-Public Sub •\ƒŠƒXƒgì¬(dumy As String)
+Public Sub è¡¨ãƒªã‚¹ãƒˆä½œæˆ(dumy As String)
   
   Dim wb As Workbook: Set wb = ThisWorkbook
   
-  '‰Šú‰»
-  With wb.Worksheets("•\ƒŠƒXƒg")
+  'åˆæœŸåŒ–
+  With wb.Worksheets("è¡¨ãƒªã‚¹ãƒˆ")
     .Range("A:B") = ""
     .Cells.Borders.LineStyle = xlLineStyleNone
     .Cells.Interior.Color = RGB(255, 255, 255)
     .Range("A1:B1").Interior.Color = RGB(217, 217, 217)
-    .Cells(1, "A") = "ƒV[ƒg–¼"
-    .Cells(1, "B") = "ƒtƒ@ƒCƒ‹–¼(.tex)"
+    .Cells(1, "A") = "ã‚·ãƒ¼ãƒˆå"
+    .Cells(1, "B") = "ãƒ•ã‚¡ã‚¤ãƒ«å(.tex)"
   End With
   
 
-  '•\ƒ^ƒCƒgƒ‹Cƒ^ƒCƒv‚Ì“Ç‚İ‚İ
+  'è¡¨ã‚¿ã‚¤ãƒˆãƒ«ï¼Œã‚¿ã‚¤ãƒ—ã®èª­ã¿è¾¼ã¿
   Dim ii As Long, jj As Long
   For ii = 1 To wb.Worksheets.Count
     If ii > 3 Then
       
-      With wb.Worksheets("•\ƒŠƒXƒg")
-        '’læ“¾FƒV[ƒg–¼
-        .Cells(ii, "A").Offset(-2, 0).Value = wb.Worksheets(ii).Name 'ƒV[ƒg–¼
-        '’læ“¾Fƒtƒ@ƒCƒ‹–¼
-        .Cells(ii, "B").Offset(-2, 0).Value = wb.Worksheets(ii).Range("A2").Value 'ƒtƒ@ƒCƒ‹–¼
+      With wb.Worksheets("è¡¨ãƒªã‚¹ãƒˆ")
+        'å€¤å–å¾—ï¼šã‚·ãƒ¼ãƒˆå
+        .Cells(ii, "A").Offset(-2, 0).Value = wb.Worksheets(ii).Name 'ã‚·ãƒ¼ãƒˆå
+        'å€¤å–å¾—ï¼šãƒ•ã‚¡ã‚¤ãƒ«å
+        .Cells(ii, "B").Offset(-2, 0).Value = wb.Worksheets(ii).Range("A2").Value 'ãƒ•ã‚¡ã‚¤ãƒ«å
       
-        'Œrü
-        .Range("A1:B1").Offset(ii - 3, 0).Borders(xlEdgeBottom).LineStyle = xlDash  '”jü
-        .Range("A1:B1").Offset(ii - 3, 0).Borders(xlEdgeBottom).Weight = xlHairline '‹É×
+        'ç½«ç·š
+        .Range("A1:B1").Offset(ii - 3, 0).Borders(xlEdgeBottom).LineStyle = xlDash  'ç ´ç·š
+        .Range("A1:B1").Offset(ii - 3, 0).Borders(xlEdgeBottom).Weight = xlHairline 'æ¥µç´°
         
-        'ƒV[ƒg–¼‚ğƒpƒ^ƒ“Ÿs‚É”½‰f
+        'ã‚·ãƒ¼ãƒˆåã‚’ãƒ‘ã‚¿ãƒ³æ¬¡è¡Œã«åæ˜ 
         wb.Worksheets(ii).Range("A1").Value = wb.Worksheets(ii).Name
         wb.Worksheets(ii).Range("A1").Font.Bold = ture
         wb.Worksheets(ii).Range("A1").Font.Size = 14
@@ -37,27 +36,27 @@ Public Sub •\ƒŠƒXƒgì¬(dumy As String)
       End With
     
 
-'      'ƒpƒ^ƒ“‚²‚Æ‚ÉF•ª‚¯
-'      With wb.Worksheets("•\ƒŠƒXƒg").Cells(ii, "A").Offset(-2, 0)
+'      'ãƒ‘ã‚¿ãƒ³ã”ã¨ã«è‰²åˆ†ã‘ã€€æ¨™æº–åŒ–ã®ãŸã‚ä¸è¦
+'      With wb.Worksheets("è¡¨ãƒªã‚¹ãƒˆ").Cells(ii, "A").Offset(-2, 0)
 '        If .Value = "a" Then
-'          .Interior.Color = RGB(255, 243, 204) '‰©
+'          .Interior.Color = RGB(255, 243, 204) 'é»„
 '        ElseIf .Value = "b" Then
-'          .Interior.Color = RGB(237, 237, 237) 'ŠD
+'          .Interior.Color = RGB(237, 237, 237) 'ç°
 '        ElseIf .Value = "c" Then
-'          .Interior.Color = RGB(221, 235, 247) 'Â
+'          .Interior.Color = RGB(221, 235, 247) 'é’
 '        ElseIf .Value = "d" Then
-'          .Interior.Color = RGB(252, 228, 214) 'Ô
+'          .Interior.Color = RGB(252, 228, 214) 'èµ¤
 '        ElseIf .Value = "e" Then
-'          .Interior.Color = RGB(226, 239, 218) '—Î
+'          .Interior.Color = RGB(226, 239, 218) 'ç·‘
 '        ElseIf .Value = "f" Then
-'          .Interior.Color = RGB(255, 221, 255) '“
+'          .Interior.Color = RGB(255, 221, 255) 'æ¡ƒ
 '        End If
 '      End With
       
     End If
   Next ii
   
-  wb.Worksheets("•\ƒŠƒXƒg").Columns("A:B").AutoFit '—ñ•©“®’²®
+  wb.Worksheets("è¡¨ãƒªã‚¹ãƒˆ").Columns("A:B").AutoFit 'åˆ—å¹…è‡ªå‹•èª¿æ•´
   
   
   Set wb = Nothing
