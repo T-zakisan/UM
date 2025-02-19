@@ -1,11 +1,11 @@
-﻿%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % HANTA.sty
 %   開発中のプリアンブルで、安定版時には*.styとして、利用する
 %   2025.02.18
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-\usepackage{myValues}
+% \usepackage{myValues}
 \usepackage{graphicx}
 \usepackage{xargs}
 \usepackage{lipsum} % ダミーテキスト用
@@ -19,6 +19,9 @@
 \usepackage{calc} % 四則計算とか
 \usepackage[utf8]{inputenc}
 \usepackage{luatexja-fontspec}
+\usepackage{luatexja-preset} % LuaLaTeX用の日本語フォント設定
+\usepackage{fontspec}         % 等幅フォント用 
+\setmonojfont{BIZ UDPGothic}  % 等幅フォント用
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -449,7 +452,7 @@
                           detect-inline-family=math, 
                           math-rm=\ttfamily, 
                           text-rm=\ttfamily}} % 表フォント：等幅
-\setlength{\arrayrulewidth}{0.1mm} % 全体の縦線を 1mm にする
+\setlength{\arrayrulewidth}{0.1mm} % 全体の縦線を 1mm にする※最適化済み
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
