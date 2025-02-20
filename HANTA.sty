@@ -1,11 +1,10 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % HANTA.sty
 %   開発中のプリアンブルで、安定版時には*.styとして、利用する
-%   2025.02.18
+%   2025.02.20
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-% \usepackage{myValues}
 \usepackage{graphicx}
 \usepackage{xargs}
 \usepackage{lipsum} % ダミーテキスト用
@@ -18,10 +17,11 @@
 \usepackage{expl3} % スクリプト用
 \usepackage{calc} % 四則計算とか
 \usepackage[utf8]{inputenc}
+\usepackage{luatexja}
 \usepackage{luatexja-fontspec}
 \usepackage{luatexja-preset} % LuaLaTeX用の日本語フォント設定
 \usepackage{fontspec}         % 等幅フォント用 
-\setmonojfont{BIZ UDPGothic}  % 等幅フォント用
+\setmonofont{IPA Gothic} % 等幅フォント用
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -74,7 +74,7 @@
   \begin{tcolorbox}[colback=gray!100, colframe=black, sharp corners,
                       boxrule=0pt, toprule=0.5pt, bottomrule=0.5pt,
                       width=\linewidth, boxsep=0pt ]
-    \IfEq{\myLanguage}{Jpn}
+    \IfEq{\変数{表示言語}}{Jpn}
       {\centering\bfseries\ttfamily\textcolor{white}{\thesection 章\ \leftmark}}
       {\centering\bfseries\ttfamily\textcolor{white}{Chapter \thesection\hspace{1em} \leftmark}}
   \end{tcolorbox}
@@ -95,7 +95,7 @@
                       boxrule=0pt, toprule=0.5pt, bottomrule=0.5pt,
                       width=\linewidth, boxsep=0pt ]
       \leftmark%
-      \IfEq{\myLanguage}{Jpn}%
+      \IfEq{\変数{表示言語}}{Jpn}%
         {\centering\bfseries\ttfamily\textcolor{white}{目\hspace{1.5em}次}}% 日本語版
         {\centering\bfseries\ttfamily\textcolor{white}{Table of Contents}}% 英語版
       \end{tcolorbox}
@@ -125,7 +125,7 @@
   \thispagestyle{empty} % ページスタイルをemptyに設定
   \phantomsection % hyperref のためのアンカー
 
-  \IfEq{\myLanguage}{Jpn}
+  \IfEq{\変数{表示言語}}{Jpn}
     {%
       \ifstrequal{#1}{目次}
         {\pdfbookmark[1]{目次}{toc}}  % しおりに「目次」を追加
@@ -141,7 +141,7 @@
       top=5mm, left=0mm, bottom=5mm, right=0mm,
       boxrule=0pt, toprule=1.5pt, bottomrule=1.5pt,
       width=\linewidth ]
-      \IfEq{\myLanguage}{Jpn}
+      \IfEq{\変数{表示言語}}{Jpn}
         {% 日本語版
           \ifstrequal{#1}{目次}
             {\fontsize{34pt}{34pt}\selectfont\bfseries\gtfamily\centering 目\hspace{1em}次}
@@ -157,7 +157,7 @@
     {}
     {\setcounter{page}{1}} % 目次以外でページ番号を1から始める
   \restoregeometry  % ページレイアウトを元に戻す
-  \IfEq{\myLanguage}{Jpn}
+  \IfEq{\変数{表示言語}}{Jpn}
     {% 日本語版
       \ifstrequal{#1}{目次}
         {}
@@ -465,17 +465,5 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % コマンドの定義チェックからの表示
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-makeatletter
-\newcommand{\IfDefineCmd}[2]{%
-  \@ifundefined{#1}{%未定義コマンドの処理
-    ■■■ 未定義：#1 ■■■
-  }{%
-    \edef\tempval{\csname #1\endcsname}% 変数の値を取得
-    \def\Yes{Yes} % 定義コマンドの値判別（Yes）
-    \ifx\tempval\Yes
-      #2 % 定義値がYes
-    \else
-    \fi
-  }%
-}
-\makeatother
+\NewExpandableDocumentCommand{\変数}{m}{\csname 変数:#1\endcsname}
+\NewDocumentCommand{\変数設定}{mm}{\global\expandafter\def\csname 変数:#1\endcsname{#2}}
