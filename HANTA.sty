@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % HANTA.sty
 %   開発中のプリアンブルで、安定版時には*.styとして、利用する
-%   2025.02.20
+%   2025.02.25
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -286,15 +286,15 @@
 % 図の回り込み
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \usepackage{wrapstuff}
-\newcommand{\myWrapFig}[3]{%
+\NewDocumentCommand{\回込図}{mmm}{%
   \begin{wrapstuff}%
     [%
       type = figure, r,
-      width   = #2,
+      width = #2,
       leftsep = #3
     ]%
-    \includegraphics[ width = #2 ]{#1} % width オプションを削除
-  \end{wrapstuff}
+    \includegraphics[width = #2]{#1}
+  \end{wrapstuff}%
 }
 
 
@@ -305,7 +305,7 @@
 % 危険，警告，注意，重要，アドバイスのコメント付き表示
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \ExplSyntaxOn
-\NewDocumentCommand{\myWarningSymbol}{ O{} m }{
+\NewDocumentCommand{\注意書}{ O{} m }{
   \tl_if_in:NnTF {危険,警告,注意}{#1} % 第1引数が指定された3つの文字列のいずれかであることを確認し表示
   {% 引数1が正しい場合
     \leftskip = 0mm
@@ -339,7 +339,8 @@
         valign=center % 垂直方向の中央揃え
       ]
         \centering
-        \raisebox{-0.5ex}{\includegraphics[scale=1.0]{../Fig/警告記号.pdf} }% 画像を表示
+        % \raisebox{-0.5ex}{\includegraphics[scale=1.0]{../図/警告記号_01.pdf} }% 画像を表示
+        \raisebox{-0.5ex}{\includegraphics[scale=1.0]{./図/警告記号_01.pdf} }% 画像を表示
         \hspace{2em}
         % 文字間にスペースを挿入
         \seq_set_split:Nnn \l_tmpa_seq { } { #1 } % 1文字ずつ分割
@@ -408,11 +409,14 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% % 危険，警告，注意，重要，アドバイスを文章中で使うやつ
+% 危険，警告，注意，重要，アドバイスを文章中で使うやつ
+% \tcbox[警告]{ 危険 | 警告 | 注意 }
+% \tcbox[重要]{ 重要 | アドバイス }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \tcbset{
-  myWarning/.style={
-    on line, % インライン
+  % myWarning/.style={
+  警告/.style={
+      on line, % インライン
     boxsep=0pt, % 枠の余白を調整
     arc=0pt, % 角丸（0にすると四角）
     colframe=black, % 枠の色
@@ -420,8 +424,9 @@
     colupper=white, % 文字色
     fontupper=\bfseries % 太文字
   },
-  myImportant/.style={
-    on line, % インライン
+  % myImportant/.style={
+  重要/.style={
+      on line, % インライン
     boxsep=0pt, % 枠の余白を調整
     arc=5pt, % 角丸（0にすると四角）
     colframe=black, % 枠の色
@@ -432,6 +437,30 @@
 }
 
 
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 安全上の注意事項_b.安全標識の詳細
+% \安全標識詳細[危険]{ 画像幅 | ファイル名 }{ 表示文字1 | 表示文字2 | 表示文字3 }
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\ExplSyntaxOn
+\NewDocumentCommand{\安全標識詳細}{ O{} m m }{
+  \group_begin:
+    % \回込図 コマンドの呼び出し
+    \seq_set_split:Nnn \l_tmpa_seq { | } { #2 }    % 第1引数（サイズとファイル名）を分割
+    \seq_pop_left:NN \l_tmpa_seq \l_tmpa_tlA  % 画像の幅設定
+    \seq_pop_left:NN \l_tmpa_seq \l_tmpa_tlB  % 画像ファイル名　※安全上の注意事項_は不要
+    % \回込図{\PATH■共通/図/安全上の注意事項_\tl_use:N \l_tmpa_tlB.pdf}
+    \回込図{図/\tl_use:N \l_tmpa_tlB.pdf} % 動作確認用
+          {\tl_use:N \l_tmpa_tlA}
+          {5mm}
+    \item \tl_set:Nn \l_tmpa_tl { #1 }% オプション引数（危険 | 警告 | 注意）を出力
+    \seq_set_split:Nnn \l_tmpb_seq { | } { #3 }    % 第2引数（表示文字列リスト）を分割して出力
+    \seq_map_inline:Nn \l_tmpb_seq { ##1\@par }
+  \group_end:
+}
+\ExplSyntaxOff
 
 
 
