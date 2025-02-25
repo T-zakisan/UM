@@ -28,15 +28,30 @@ def Compile_tex():
     with open( folder_path / "設定全体.sty", "r", encoding="utf-8") as ff:
         for line in ff:
             if  line[1:12] == "NewDocument" :
-                line = line.rstrip()  # 読み込んだ行の末尾には改行文字があるので削除
-                line = line.replace("\\NewDocumentCommand","")
-                line = line[:line.find("%")]
-                print(line)
+                line = line.rstrip()  # 改行削除
+
+                line = line.replace("\\NewDocumentCommand","") # 先頭文字を削除
+                line = line[:line.find("%")] # コメント文以降を削除
+
+                line = line[line.find("{"):line.rfind("}")] # 主要部抽出
+                if line[:line.find("}")] == "\\機種":
+                    machine_type = line[line.find("{"):]
+                if line[:line.find("}")] == "\\型式":
+                    machine_model = line[line.find("{"):]           
+                if line[:line.find("}")] == "\\BookNo":
+                    book_no = line[line.find("{"):]           
+
+         if machine_type is None or \
+            machine_model is None or \
+            book_no is None:
+             
+             break
+        
 
 
 
     # 出力ファイル名（拡張子なしで指定）
-    output_pdf = folder_path / "output"
+    output_pdf = folder_path / machine_type "_" machine_model "_" book_no
 
 
     # LuaLaTeX のオプション設定（共通）
@@ -45,7 +60,7 @@ def Compile_tex():
         "-interaction=batchmode",  # ログを最小限に抑える
         "-halt-on-error",          # エラー発生時に即停止
         "-file-line-error",        # エラーメッセージにファイル名と行番号を含める
-        "-jobname=output",   # 出力ファイル名を指定
+        f"-jobname={output_pdf}",   # 出力ファイル名を指定
         f"-output-directory={folder_path}",     # 出力フォルダ（カレントディレクトリ）
         f"{tex_file}"
     ]
