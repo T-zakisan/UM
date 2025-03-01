@@ -1,9 +1,9 @@
 #####################################################################################
 # makeTeX.py
+# [ 2025.03.03 ]
 #  ExcelファイルからTeX関係の各種ファイルを出力
-#   - TeXコマンド(変数として、文章制御等に利用)を***ファイルとして出力
+#   - TeXコマンド(変数として、文章制御等に利用)を***.styファイルとして出力
 #   - 各種表を*.texファイルとして出力
-# [ 2025.02.26 ]
 #####################################################################################
 
 import os
@@ -11,8 +11,9 @@ import glob
 import tkinter as tk            # ダイアログ
 from tkinter import filedialog  # ダイアログ
 import openpyxl                 # Excel操作
-import pathlib
-
+import pathlib                  # パスの処理
+import mojimoji                 # 全角半角
+import datetime                 # 日付表記の変更
 
 #####################################################################################
 # create_sty_and_tex_files
@@ -83,41 +84,85 @@ def create_variable_definitions( sheet, base_path ):
 
   # 相対パスのstyファイル(設定パス.sty)出力処理
   output_file_path = f"{base_path}\\設定全体.sty"
-  with open(output_file_path, 'w', encoding='utf-8') as f:
+  with open(output_file_path, 'w', encoding='utf-8') as ff:
 
+    # ファイルコメント
     myStr = f"%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n" \
             f"% ファイル名：{os.path.basename(output_file_path)}\n" \
-            f"% 内　　　容：■共通への相対パス（変数・表生成.xlsmを完成のこと！）\n" \
+            f"% 内　　　容：日本語名コマンド用コマンド\n" \
+            f"%           ：■共通への相対パス（変数・表生成.xlsmを完成のこと！）\n" \
+            f"%           ：本文制御用コマンド定義\n" \
             f"%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n\n"
-    f.write( myStr )
+    ff.write( myStr )
 
-    for idx, row in enumerate( sheet.iter_rows(min_row=1, max_row=1 )):
+    # 日本語コマンド定義
+    myStr = f"%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n" \
+            f"% コマンドの定義チェックからの表示\n" \
+            f"%  (これだけ例外的にHANTA.styから独立)\n" \
+            f"%  通常の変数（コマンド）と同じように展開され、使える\n" \
+            f"%  未定義の変数は未表示\n" \
+            f"%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n" \
+            f"\usepackage{{xparse}} % 限りない引数\n" \
+            f"\usepackage{{expl3}} % スクリプト用\n" \
+            f"\NewExpandableDocumentCommand{{\変数}}{{m}}{{\csname 変数:#1\endcsname}}\n" \
+            f"\NewDocumentCommand{{\変数設定}}{{mm}}{{\global\expandafter\def\csname 変数:#1\endcsname{{#2}}}}\n\n"
+    ff.write( myStr )
+
+    myStr = "" # 文字列用変数をリセット
+    flag = False # 表示言語用のフラグリセット
+    for idx, row in enumerate( sheet.iter_rows(min_row=1)):
       col_a_value = row[0].value  # [列A]変数名
       col_b_value = row[1].value  # [列B]設定値
       col_c_value = row[2].value  # [列C]備考
-      relative_path = base_path.replace( col_b_value.replace("/■共通",""), "" ) # 差分
-      dir_depth = relative_path.split("/")  # /区切り
-      relative_path = "../" * (len(dir_depth) -1)# 相対パス生成
-      f.write(f"\\newcommand{{\\PATH}}{{{relative_path}}} % 共通パーツにアクセスするためのパス \n")
+
+      # １行目：パス
+      if idx == 1 :
+        relative_path = base_path.replace( col_b_value.replace("/■共通",""), "" ) # 差分
+        dir_depth = relative_path.split("/")  # /区切り
+        relative_path = "../" * (len(dir_depth) -1)# 相対パス生成
+        myStr += f"\\変数設定{{\\■共通パス}}{{{relative_path}}} % 共通パーツにアクセスするためのパス \n\n"
+
+      # ３行目以降 & 文字色が赤
+      myStr += f"% 主に，表紙 ＆ PDFの文書プロパティ\n"
+      if idx >= 3 and row[0].font.color.rgb == "FF0070C0" : #"FFC00000"
+
+        col_b_value = mojimoji.han_to_han( col_b_value ) # 基本的には半角表記
+        # 表示言語による機種名の全角/半角切り替え
+        ## 表示言語の行でフラグセット 
+        if (col_a_value == "表示言語") and (col_b_value == "Jpn") :
+          flag = True
+        ## 表示言語による機種名の表示切り替え
+        if (flag == True) and (col_a_value == "機種名") :
+          col_b_value = mojimoji.han_to_zen( col_b_value ) # 日本語表記[Jpn]：全角化
+        ## 表示言語による日付の表示切り替え
+        if col_a_value == "表示言語" :
+          date_object = datetime.strptime(str(col_b_value), '%Y-%m-%d %H:%M:%S') # 日付データをdatetimeオブジェクトに変換
+          if flag == True :
+            col_b_value = date_object.strftime('%Y年 %-m月 %-d日') # 日本語表記に変換
+          else :
+            col_b_value = date_object.strftime('%B.%d.%Y') # 英表記に変換
+        myStr += f"\\変数設定{{{col_a_value}}}{{{col_b_value}}} % {col_c_value }\n"
+    ff.write( myStr ) # テキスト書き込み
+
 
 
   # 自作変数のstyファイル(設定変数.sty)出力処理
   output_file_path = f"{base_path}\\設定変数.sty"
-  with open(output_file_path, 'w', encoding='utf-8') as f:
+  with open(output_file_path, 'w', encoding='utf-8') as ff:
 
     # コメント部分
     myStr = f"%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n" \
             f"% ファイル名：{os.path.basename(output_file_path)}\n" \
             f"% 内　　　容：自作変数の設定(TeX制御含む、変数・表生成.xlsmを完成のこと！）\n" \
             f"%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n\n"
-    f.write( myStr )
+    ff.write( myStr )
 
     for idx, row in enumerate( sheet.iter_rows(min_row=3) ):
       col_a_value = row[0].value  # [列A]変数名
       col_b_value = row[1].value  # [列B]設定値
       col_c_value = row[2].value  # [列C]備考
-      if (col_a_value is not None) and (col_b_value is not None):
-        f.write(f"\\変数設定{{{col_a_value}}}{{{col_b_value}}} % {col_c_value }\n")
+      if (col_a_value is not None) and (col_b_value is not None) and row[0].font.color.rgb != "FF0070C0":
+        ff.write(f"\\変数設定{{{col_a_value}}}{{{col_b_value}}} % {col_c_value }\n")
 
 
 
