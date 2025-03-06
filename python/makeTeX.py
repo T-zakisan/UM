@@ -1,6 +1,6 @@
 #####################################################################################
 # makeTeX.py
-# [ 2025.03.03 ]
+# [ 2025.03.06 ]
 #  ExcelファイルからTeX関係の各種ファイルを出力
 #   - TeXコマンド(変数として、文章制御等に利用)を***.styファイルとして出力
 #   - 各種表を*.texファイルとして出力
@@ -14,6 +14,7 @@ import openpyxl                 # Excel操作
 import pathlib                  # パスの処理
 import mojimoji                 # 全角半角
 import datetime                 # 日付表記の変更
+
 
 #####################################################################################
 # create_sty_and_tex_files
@@ -44,15 +45,24 @@ def create_sty_and_tex_files(excel_file_path):
 
       # 変数設定ファイル出力
       if "変数" in sheet_name:
-        create_variable_definitions(sheet, os.path.dirname(excel_file_path))  # 関数を呼び出す
+        lang = create_variable(sheet, os.path.dirname(excel_file_path))  # 関数を呼び出す
 
-      elif "安全上の…b" in sheet_name:
-        create_variable_definitions(sheet, os.path.dirname(excel_file_path))  # 関数を呼び出す
+      ## elif "安全上の…b" in sheet_name:
+      ##   create_variable_definitions(sheet, os.path.dirname(excel_file_path))  # 関数を呼び出す
 
       # 各表ファイル出力
-      elif sheet_index >= 4:  # 5番目以降のシート
-      # elif sheet_index == 4:  # 5番目のシート
+      elif sheet_index >= 5:  # 6番目(0スタート)以降のシート
         create_table_code(sheet, os.path.dirname(excel_file_path) )  # 関数を呼び出す
+
+
+    # [版]を後から追記したいので、もうひとサイクル！
+    for sheet_index, sheet_name in enumerate(workbook.sheetnames):
+      sheet = workbook[sheet_name]
+
+      # 変数設定ファイル出力
+      if "版" in sheet_name:
+        create_version(sheet, os.path.dirname(excel_file_path), lang )  # 関数を呼び出す
+
 
     # workbook.save(excel_file_path)
     workbook.close()
@@ -69,12 +79,64 @@ def create_sty_and_tex_files(excel_file_path):
 
 
 #####################################################################################
-# create_variable_definitions
+# create_version
+#  - Excelのシート[版]から版関係のコマンド(変数)を作成
+# [引数] sheet      シートオブジェクト
+# [引数] base_path  Excelファイルの親パス
+#####################################################################################
+def create_version( sheet, base_path, lang ):
+  output_file_path = f"{base_path}\\設定全体.sty"
+  with open(output_file_path, 'a', encoding='utf-8') as ff:
+
+    myStr = "" # 文字列用変数をリセット
+    col_a_value = ""
+    col_b_value = ""
+
+
+    ############################################################
+    # 版と発行日を全件取得：表紙（裏）にリスト表示
+    for idx, row in enumerate( sheet.iter_rows(min_row=2)):
+      col_a_value += f"{str(row[0].value)}| "   # [列A]変数名
+
+
+      ## 表示言語による日付の表示切り替え
+      date_object = datetime.datetime.strptime(str(row[1].value), '%Y-%m-%d %H:%M:%S') # 日付データをdatetimeオブジェクトに変換
+      if lang:  # 日本語表記
+        col_b_value += f"{date_object.year}年 {int(date_object.strftime('%m'))}月 {int(date_object.strftime('%d'))}日| "
+      else:  # 英語表記
+        col_b_value += f"{date_object.strftime('%B')} {int(date_object.strftime('%d'))}, {date_object.year}| "
+
+    col_a_value = col_a_value[0:-2] # 版
+    col_b_value = col_b_value[0:-2] # 日付
+    # 版履歴を表示させない(2025.03現在)
+    myStr += f"\\変数設定{{版S}}{{{col_a_value}}} % 版の履歴(未使用：2025.03)\n"
+    myStr += f"\\変数設定{{発行日S}}{{{col_b_value}}} % 発行日の履歴(未使用：2025.03)\n"
+    ff.write( myStr ) # テキスト書き込み
+    myStr = ""
+
+
+    # 版と発行日の最新項目を取得
+    col_a_value = col_a_value.split("| ") # (| )で区切り、リスト化
+    col_a_value = col_a_value[-1] # 最終行取得：最新情報
+    if col_a_value != "初":
+      col_a_value = f"第{col_a_value}"
+
+    myStr += f"\\変数設定{{版}}{{{col_a_value}}} % 版\n"
+    col_b_value = col_b_value.split("| ") # (| )で区切り、リスト化
+    col_b_value = col_b_value[-1] # 最終行取得：最新情報
+    myStr += f"\\変数設定{{発行日}}{{{col_b_value}}} % 発行日\n"
+    ff.write( myStr ) # テキスト書き込み
+
+
+
+
+#####################################################################################
+# create_variable
 #  - ExcelのシートからTeXコマンドの定義文をstyファイルで出力
 # [引数] sheet      シートオブジェクト
 # [引数] base_path  Excelファイルの親パス
 #####################################################################################
-def create_variable_definitions( sheet, base_path ):
+def create_variable( sheet, base_path ):
 
   # セル[A3]が空白なら終了：■共通フォルダ対策
   value = sheet.cell(3,1).value
@@ -102,46 +164,100 @@ def create_variable_definitions( sheet, base_path ):
             f"%  通常の変数（コマンド）と同じように展開され、使える\n" \
             f"%  未定義の変数は未表示\n" \
             f"%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n" \
-            f"\usepackage{{xparse}} % 限りない引数\n" \
-            f"\usepackage{{expl3}} % スクリプト用\n" \
-            f"\NewExpandableDocumentCommand{{\変数}}{{m}}{{\csname 変数:#1\endcsname}}\n" \
-            f"\NewDocumentCommand{{\変数設定}}{{mm}}{{\global\expandafter\def\csname 変数:#1\endcsname{{#2}}}}\n\n"
+            f"\\usepackage{{xparse}} % 限りない引数\n" \
+            f"\\usepackage{{expl3}} % スクリプト用\n" \
+            f"\\NewExpandableDocumentCommand{{\\変数}}{{m}}{{\\csname 変数:#1\\endcsname}}\n" \
+            f"\\NewDocumentCommand{{\\変数設定}}{{mm}}{{\\global\\expandafter\\def\\csname 変数:#1\\endcsname{{#2}}}}\n\n"
     ff.write( myStr )
 
     myStr = "" # 文字列用変数をリセット
-    flag = False # 表示言語用のフラグリセット
+    flag_lang = False # 表示言語用のフラグリセット
+    flag_end = False
     for idx, row in enumerate( sheet.iter_rows(min_row=1)):
       col_a_value = row[0].value  # [列A]変数名
       col_b_value = row[1].value  # [列B]設定値
       col_c_value = row[2].value  # [列C]備考
 
       # １行目：パス
-      if idx == 1 :
-        relative_path = base_path.replace( col_b_value.replace("/■共通",""), "" ) # 差分
-        dir_depth = relative_path.split("/")  # /区切り
-        relative_path = "../" * (len(dir_depth) -1)# 相対パス生成
-        myStr += f"\\変数設定{{\\■共通パス}}{{{relative_path}}} % 共通パーツにアクセスするためのパス \n\n"
+      if idx == 0 :
+        col_b_value = col_b_value.replace( "/", "\\" )
+        relative_path = base_path.replace( col_b_value.replace("■共通",""), "" ) # 差分
+        dir_depth = relative_path.split("\\")  # /区切り
+        relative_path = "../" * (len(dir_depth))# 相対パス生成
+        myStr += f"\\変数設定{{■共通パス}}{{{relative_path}■共通}} % 共通パーツにアクセスするためのパス \n\n"
+        myStr += f"% 主に，表紙 ＆ PDFの文書プロパティ\n"
 
-      # ３行目以降 & 文字色が赤
-      myStr += f"% 主に，表紙 ＆ PDFの文書プロパティ\n"
-      if idx >= 3 and row[0].font.color.rgb == "FF0070C0" : #"FFC00000"
-
-        col_b_value = mojimoji.han_to_han( col_b_value ) # 基本的には半角表記
+      # ３行目以降 & 文字色が青
+      if idx >= 2 and row[0].font.color.rgb == "FF0070C0" : # 色縛り：青
         # 表示言語による機種名の全角/半角切り替え
-        ## 表示言語の行でフラグセット 
+        ## 表示言語の行でフラグセット
         if (col_a_value == "表示言語") and (col_b_value == "Jpn") :
-          flag = True
-        ## 表示言語による機種名の表示切り替え
-        if (flag == True) and (col_a_value == "機種名") :
-          col_b_value = mojimoji.han_to_zen( col_b_value ) # 日本語表記[Jpn]：全角化
-        ## 表示言語による日付の表示切り替え
-        if col_a_value == "表示言語" :
-          date_object = datetime.strptime(str(col_b_value), '%Y-%m-%d %H:%M:%S') # 日付データをdatetimeオブジェクトに変換
-          if flag == True :
-            col_b_value = date_object.strftime('%Y年 %-m月 %-d日') # 日本語表記に変換
-          else :
-            col_b_value = date_object.strftime('%B.%d.%Y') # 英表記に変換
-        myStr += f"\\変数設定{{{col_a_value}}}{{{col_b_value}}} % {col_c_value }\n"
+          flag_lang  = True
+
+        ##################################################
+        ## 表示言語による機種名の全/半角切り替え
+        if flag_lang  == True:
+          if  col_a_value == "機種名" or \
+              col_a_value == "機種" :
+            col_b_value = mojimoji.han_to_zen( col_b_value ) # 日本語表記[Jpn]：全角化
+        else:
+          pass
+          # col_b_value = mojimoji.han_to_zen( col_b_value ) # 基本的には半角表記
+
+        ##################################################
+        if col_a_value != "号機":
+          # 号機以外の青文字
+          myStr += f"\\変数設定{{{col_a_value}}}{{{col_b_value}}} % {col_c_value }\n"
+        else:
+          # 号機
+          if row[0].offset(1,0).value == "号機": # 次行の列Aの値が号機か確認
+            # 次行も号機：表形式で表示させるためのデータ生成
+            ## 号機の範囲取得
+            result = {} # 表用データ格納用
+            types = [] # 号機一時格納配列
+            num = 0 # "号機"の行数カウント
+            while 1 : # 無限ループ
+              if row[0].offset(num,0).value == "号機": # 号機縛り
+                types.append( row[1].offset(num,0).value ) # 型式号機
+                num += 1
+              else:
+                break # "号機"でない行となったら終了
+            for type in types: # 取得した号機sで繰り返し
+              print( type.find("；") )
+              if type.find("；") == -1:
+                result.setdefault("辞書",[]).append(type) # ；区切以降を辞書登録
+              else:
+                result.setdefault(type[:type.find("；")],[]).append(type[type.find("；")+1:]) # ；区切以降を辞書登録
+
+            flag_end = True # 終了フラグ
+          else:
+            # 次行号機ではない
+            myStr += f"\\変数設定{{{col_a_value}}}{{{col_b_value}以降}} % {col_c_value }\n"
+
+      if flag_end == True:
+        break
+
+
+    if flag_end == True:
+      # 号機を表形式表示するためのデータ整形
+      keys_str = ', '.join(result.keys()) # キーを結合
+      values_str = ''
+      for ii in range( max(map(len, result.values())) ):
+        temp_values = []
+        for key in result:
+          if ii < len(result[key]):
+            temp_values.append(result[key][ii])
+          else:
+            temp_values.append('')
+        values_str += ','.join(temp_values) + ' ;'
+      result_str = keys_str + ' ;' + values_str
+      if result_str.find("辞書") != -1: # 複数行、小型用ではない場合
+        result_str = f"{result_str[result_str.find(";")+1:-1].replace(";","・")}以降"
+        myStr += f"\\変数設定{{号機}}{{{result_str}}} % 複数号機\n"
+      elif  result_str.find("辞書") != -1: # 複数行、小型(;区切り)の場合
+        myStr += f"\\変数設定{{号機s}}{{{result_str}}} % 複数号機\n"
+
+    myStr += f"\n\n% 版/発行日\n"
     ff.write( myStr ) # テキスト書き込み
 
 
@@ -161,9 +277,10 @@ def create_variable_definitions( sheet, base_path ):
       col_a_value = row[0].value  # [列A]変数名
       col_b_value = row[1].value  # [列B]設定値
       col_c_value = row[2].value  # [列C]備考
-      if (col_a_value is not None) and (col_b_value is not None) and row[0].font.color.rgb != "FF0070C0":
+      if (col_a_value is not None) and (col_b_value is not None) and row[0].font.color.rgb != "FF0070C0": # 色縛：青以外
         ff.write(f"\\変数設定{{{col_a_value}}}{{{col_b_value}}} % {col_c_value }\n")
 
+  return flag_lang  # 表示言語フラグ
 
 
 
@@ -285,13 +402,12 @@ def create_table_code(sheet, base_path):
           NumRule += 1 # 罫線数を加算
         myStr = f"{myStr}{tmp} "
 
-
     myStr += "}\n"
 
     tmp = f"\\setlength{{\\myTableWidth}}{{\\dimexpr 166mm - {myLength}mm - {indent} - {NumRule}\\arrayrulewidth }}\n"
     f.write( tmp ) # テキス出力
     f.write( myStr )
-    
+
     # print( f"{NumColumn} : {sheet['A1'].value}" )
 ##########################################################
     # リスト＆環境の締め部
@@ -421,4 +537,3 @@ if __name__ == "__main__":
       print("処理中にエラー発生！")
   else:
     print("ファイルが選択されませんでした。")
-
