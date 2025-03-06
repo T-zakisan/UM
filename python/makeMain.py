@@ -1,6 +1,6 @@
 #####################################################################################
 # makeMain.py
-# [ 2025.03.03 ]
+# [ 2025.03.06 ]
 #  main.texをフォルダの内容、設定変数.styから生成
 #  ■issue
 #####################################################################################
@@ -39,7 +39,7 @@ def make_main():
 
 
   # 設定変数.sty をテキスト解析し，出力ファイル名生成
-  with open( folder_path / "設定変数.sty", "r", encoding="utf-8") as ff:
+  with open( folder_path / "設定全体.sty", "r", encoding="utf-8") as ff:
     for line in ff:
       if line is not None and line[0] != "%":
         line = line.rstrip()  # 改行削除
@@ -66,17 +66,19 @@ def make_main():
   # main.tex　前半固定部
   with open(tex_file, 'w', encoding='utf-8') as ff:
     myStr = f"%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n" \
-            f"% {machine_type}_{machine_model}_{book_no}\n" \
+            f"% 機　種：{machine_type}\n" \
+            f"% 型　式：{machine_model}\n" \
+            f"% BookNo：{book_no}\n" \
             f"%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n" \
             f"\\documentclass[11pt, a4paper]{{ltjsarticle}}\n\n" \
             f"\\usepackage{{設定全体}}          % 設定全体.sty\n" \
-            f"\\usepackage{{\\■共通/HANTA}} % 共通書式設定\n" \
+            f"\\usepackage{{\\変数{{■共通パス}}/HANTA}} % 共通書式設定\n" \
             f"\\usepackage{{設定変数}}          % 設定変数.sty\n\n\n" \
             f"\\begin{{document}}\n\n" \
-            f"\\input{{\\■共通/00_表紙.tex}}\n" \
-            f"\\input{{\\■共通/10_まえがき.tex}}\n" \
-            f"\\input{{\\■共通/20_目次.tex}}\n" \
-            f"\\input{{\\■共通/30_安全上の注意事項.tex}}\n" \
+            f"\\input{{\\変数{{■共通パス}}/00_表紙.tex}}\n" \
+            f"\\input{{\\変数{{■共通パス}}/10_まえがき.tex}}\n" \
+            f"\\input{{\\変数{{■共通パス}}/20_目次.tex}}\n" \
+            f"\\input{{\\変数{{■共通パス}}/30_安全上の注意事項.tex}}\n" \
             f"%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n\n"
     ff.write( myStr )
 
@@ -92,7 +94,7 @@ def make_main():
 
   # main.tex　後半占め
     myStr = f"\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n" \
-            f"\\input{{\\■共通/99_裏表紙.tex}}\n\n" \
+            f"\\input{{\\変数{{■共通パス}}/99_裏表紙.tex}}\n\n" \
             f"\\end{{document}}\n\n"
     ff.write( myStr )
 
