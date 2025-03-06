@@ -6,6 +6,7 @@
 
 
 \usepackage{graphicx}
+\usepackage{adjustbox} % 画像の中央配置
 \usepackage{xargs}
 \usepackage{lipsum} % ダミーテキスト用
 \usepackage{tcolorbox} %
@@ -13,15 +14,16 @@
 \usepackage{xstring}  %文字比較パッケージ
 \usepackage{tcolorbox}
 \usepackage{amsmath} % 数式
-\usepackage{xparse} % 限りない引数
-\usepackage{expl3} % スクリプト用
+
 \usepackage{calc} % 四則計算とか
 \usepackage[utf8]{inputenc}
 \usepackage{luatexja}
 \usepackage{luatexja-fontspec}
 \usepackage{luatexja-preset} % LuaLaTeX用の日本語フォント設定
-\usepackage{fontspec}         % 等幅フォント用 
+\usepackage{fontspec}         % 等幅フォント用
 \setmonofont{IPA Gothic} % 等幅フォント用
+\usepackage{microtype}  % 文字幅の調整＠表紙
+\usepackage{xhfill} % 水平線
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -35,9 +37,9 @@
   bookmarksnumbered=true,%
   colorlinks=false,%リンクのテキストに色をつけるかどうか
   pdfstartview={Fit}, %表示レイアウト
-  pdftitle={},%PDFのメタタイトル情報
+  pdftitle={取扱説明書：\変数{機械名}(\変数{機種})},%PDFのメタタイトル情報
   pdfsubject={},%PDFのメタ主題情報。
-  pdfauthor={},%PDFのメタ著者情報。
+  pdfauthor={範多機械株式会社},%PDFのメタ著者情報。
   pdfkeywords={},%PDFのメタキーワード情報。複数キーワードはセミコロンで区切る。
   pdfcreator={}%PDFの作成者情報
 }
@@ -221,7 +223,7 @@
   \par
   \leftskip = \myLEFTSKIP %全体を字下げ
   % \leftskip = 2.3em %全体を字下げ
-  \vspace{1.5\myVOFFSET}
+  \vspace{1.2\myVOFFSET}
   \seq_set_split:Nnn \l_mySqure_items_seq { | } { #2 } % Split by |
   \seq_map_inline:Nn \l_mySqure_items_seq { \tl_trim_spaces:n {##1} \par } % Trim spaces and escape #
   \vspace{12pt}
@@ -292,11 +294,14 @@
     [%
       type = figure, r,
       width = #2,
-      leftsep = #3
+      leftsep = #3,
     ]%
     \includegraphics[width = #2]{#1}
+    \vspace{0.25#3} % 画像下の回り込みを強化
   \end{wrapstuff}%
 }
+
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -338,7 +343,7 @@
         valign=center % 垂直方向の中央揃え
       ]
         \centering
-        \raisebox{-0.5ex}{\includegraphics[height=20pt]{\PATH■共通/図/安全警告記号_片方_01.pdf} }% 画像を表示
+        \raisebox{-0.5ex}{\includegraphics[height=20pt]{\変数{■共通パス}/図/安全警告記号_片方_01.pdf} }% 画像を表示
         \hspace{2em}
         % 文字間にスペースを挿入
         \seq_set_split:Nnn \l_tmpa_seq { } { #1 } % 1文字ずつ分割
@@ -415,6 +420,7 @@
       on line, % インライン
     boxsep=0pt, % 枠の余白を調整
     arc=0pt, % 角丸（0にすると四角）
+    sharp corners, % 角を完全に四角にする
     colframe=black, % 枠の色
     colback=black, % 背景色（gray!20 は薄いグレー）
     colupper=white, % 文字色
@@ -435,7 +441,9 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % 安全上の注意事項_b.安全標識の詳細
-% \安全標識詳細[危険]{ 画像幅 | ファイル名 }{ 表示文字1 | 表示文字2 | 表示文字3 }
+% \begin{enumerate}
+%  \安全標識詳細[危険]{ 画像幅 | ファイル名 }{ 表示文字1 | 表示文字2 | 表示文字3 }
+% \end{enumerate}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \ExplSyntaxOn
 \NewDocumentCommand{\安全標識詳細}{ O{} m m }{
@@ -444,13 +452,14 @@
     \seq_set_split:Nnn \l_tmpa_seq { | } { #2 }    % 第1引数（サイズとファイル名）を分割
     \seq_pop_left:NN \l_tmpa_seq \l_tmpa_tlA  % 画像の幅設定
     \seq_pop_left:NN \l_tmpa_seq \l_tmpa_tlB  % 画像ファイル名　※安全上の注意事項_は不要
-    % \回込図{\PATH■共通/図/安全上の注意事項_\tl_use:N \l_tmpa_tlB.pdf}
-    \回込図{図/\tl_use:N \l_tmpa_tlB.pdf} % 動作確認用
+    \回込図{\変数{■共通パス}/図/安全上の注意点_\tl_use:N \l_tmpa_tlB.pdf}
           {\tl_use:N \l_tmpa_tlA}
           {5mm}
-    \item \tl_set:Nn \l_tmpa_tl { #1 }% オプション引数（危険 | 警告 | 注意）を出力
+    % \item \tl_set:Nn \l_tmpa_tl { #1\par }% オプション引数（危険 | 警告 | 注意）を出力
+    \item #1\par
     \seq_set_split:Nnn \l_tmpb_seq { | } { #3 }    % 第2引数（表示文字列リスト）を分割して出力
     \seq_map_inline:Nn \l_tmpb_seq { ##1\@par }
+    \vspace{-5mm}
   \group_end:
 }
 \ExplSyntaxOff
@@ -469,9 +478,9 @@
 \usepackage{siunitx}
 \newlength{\myTabelLeft}  % 表の字下げ：列幅算出用
 \newlength{\myTableWidth} % 表幅*列幅算出用
-\AtBeginDocument{\sisetup{detect-family, 
-                          detect-inline-family=math, 
-                          math-rm=\ttfamily, 
+\AtBeginDocument{\sisetup{detect-family,
+                          detect-inline-family=math,
+                          math-rm=\ttfamily,
                           text-rm=\ttfamily}} % 表フォント：等幅
 \setlength{\arrayrulewidth}{0.1mm} % 全体の縦線を 1mm にする※最適化済み
 
@@ -483,10 +492,22 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% コマンドの定義チェックからの表示
-%  通常の変数（コマンド）と同じように展開され、使える
-%  未定義の変数は未表示
+% 表紙の背景画像
+% 表紙文字のアウトライン
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\NewExpandableDocumentCommand{\変数}{m}{\csname 変数:#1\endcsname}
-\NewDocumentCommand{\変数設定}{mm}{\global\expandafter\def\csname 変数:#1\endcsname{#2}}
+\usepackage{background} % 背景画像
+\usepackage{contour}
+\newcommand{\outlinedtext}[3][3pt]{%
+  \contourlength{#1}% 擬似的なアウトラインの太さ
+  \contour{#2}{#3}% アウトラインの設定{色}{テキスト}
+}
 
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 表紙の号機：小型等の複数サイズ用のヤツ
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\NewDocumentCommand{\安全標識詳細}{ O{} m m }{
+
+}
