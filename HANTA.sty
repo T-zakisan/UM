@@ -120,7 +120,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \setlength{\parindent}{0pt} % 全体字下げをなし
 \newlength{\myLEFTSKIP} % subsection,subsubsection,paragraphの初行位置(水平方向)のオフセット 
-\setlength{\myLEFTSKIP}{2.3em} % 2em分字下げ
+\setlength{\myLEFTSKIP}{2.0em} % 2em分字下げ
 \newlength{\myVOFFSET} % subsection,subsubsection,paragraphの初行位置(垂直方向)のオフセット
 \setlength{\myVOFFSET}{-15pt}
 \setcounter{section}{-1}  %セクションを0(まえがき)からスタートするための設定
@@ -181,8 +181,8 @@
   \leftskip = 0em%
   \stepcounter{subsection}%
   \phantomsection % hyperref のためのアンカー
-  \addcontentsline{toc}{subsection}{(\arabic{subsection})\hspace{1em}#1}  %目次に追加
-  \par\noindent{\bfseries(\arabic{subsection})\hspace{0.8em}#1\\}%
+  \addcontentsline{toc}{subsection}{(\arabic{subsection})\hspace{1.0em}#1}  %目次に追加
+  \par\noindent{\bfseries(\arabic{subsection})\hspace{0.7em}#1\\}%
   \par
   \vspace{\myVOFFSET}
   \leftskip = \myLEFTSKIP %全体を字下げ
@@ -209,7 +209,7 @@
   \stepcounter{subsubsection}%
   \phantomsection % hyperref のためのアンカー
   \addcontentsline{toc}{subsubsection}{\ \alph{subsubsection}.\hspace{0.5em}#1}%目次に追加
-  \par\noindent{\bfseries\ \alph{subsubsection}.\hspace{1.0em}#1\\}%
+  \par\noindent{\bfseries\ \alph{subsubsection}.\hspace{0.7em}#1\\}%
   \par
   \vspace{\myVOFFSET}
   \leftskip = \myLEFTSKIP %全体を字下げ
@@ -219,7 +219,7 @@
 \ExplSyntaxOn
 \NewDocumentCommand{\角}{m +m}{%
   \leftskip = 0em%
-  \par\noindent{\bfseries\ ■\hspace{1.0em}#1\\}%
+  \par\noindent{\bfseries\ ■\hspace{0.7em}#1\\}%
   \par
   \leftskip = \myLEFTSKIP %全体を字下げ
   % \leftskip = 2.3em %全体を字下げ
@@ -279,12 +279,12 @@
 \usepackage{enumitem}
 \setlist[enumerate]{
     topsep      =0pt,   % 縦方向の余白（前後）
-    leftmargin  =2.3em,  % 左のインデント幅（デフォルトは2.5em程度）
+    leftmargin  =2.0em,  % 左のインデント幅（デフォルトは2.5em程度）
     labelindent =0em  % ラベルの位置を調整（必要に応じて）
 }
 \setlist[itemize]{
     topsep      =0pt,   % 縦方向の余白（前後）
-    leftmargin  =2.3em,  % 左のインデント幅（デフォルトは2.5em程度）
+    leftmargin  =2.0em,  % 左のインデント幅（デフォルトは2.5em程度）
     labelindent =0em  % ラベルの位置を調整（必要に応じて）
 }
 
@@ -421,26 +421,34 @@
 % \tcbox[重要]{ 重要 | アドバイス }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \tcbset{
-  % myWarning/.style={
   警告/.style={
       on line, % インライン
-    boxsep=0pt, % 枠の余白を調整
-    arc=0pt, % 角丸（0にすると四角）
+    % boxsep    = -0mm, % 枠の余白を調整
+    top       = -0.5mm,
+    bottom    = -0.25mm,
+    left      = 0.5mm,
+    right     = 0.5mm,
+    arc       = 0pt, % 角丸（0にすると四角）
     sharp corners, % 角を完全に四角にする
-    colframe=black, % 枠の色
-    colback=black, % 背景色（gray!20 は薄いグレー）
-    colupper=white, % 文字色
-    fontupper=\bfseries % 太文字
+    colframe  = black, % 枠の色
+    colback   = black, % 背景色（gray!20 は薄いグレー）
+    colupper  = white, % 文字色
+    fontupper = \bfseries % 太文字
+    % left=10mm,
   },
-  % myImportant/.style={
   重要/.style={
       on line, % インライン
-    boxsep=0pt, % 枠の余白を調整
-    arc=5pt, % 角丸（0にすると四角）
-    colframe=black, % 枠の色
-    colback=gray, % 背景色
-    colupper=white, % 文字色
-    fontupper=\bfseries % 太文字
+    % boxsep    = -0mm, % 枠の余白を調整
+    top       = -0.5mm,
+    bottom    = -0.25mm,
+    left      = 1.25mm,
+    right     = 1.25mm,
+    arc=3pt, % 角丸（0にすると四角）
+    colframe  = black, % 枠の色
+    colback   = gray, % 背景色
+    colupper  = white, % 文字色
+    fontupper = \bfseries % 太文字
+
   }
 }
 
