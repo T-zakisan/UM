@@ -1,6 +1,6 @@
 #####################################################################################
 # makeMain.py
-# [ 2025.03.06 ]
+# [ 2025.03.07 ]
 #  main.texをフォルダの内容、設定変数.styから生成
 #  ■issue
 #####################################################################################
@@ -39,7 +39,7 @@ def make_main():
 
 
   # 設定変数.sty をテキスト解析し，出力ファイル名生成
-  with open( folder_path / "設定全体.sty", "r", encoding="utf-8") as ff:
+  with open( pathlib.joinpath(folder_path, "設定全体.sty"), "r", encoding="utf-8") as ff:
     for line in ff:
       if line is not None and line[0] != "%":
         line = line.rstrip()  # 改行削除
@@ -54,13 +54,12 @@ def make_main():
 
     # 出力ファイル名
     file_name = f"main.tex"
-    tex_file = folder_path / file_name
+    tex_file = pathlib.joinpath(folder_path, file_name)
 
 
     # 既存の出力ファイル削除
     if os.path.exists(tex_file):
         os.remove(tex_file)
-
 
 
   # main.tex　前半固定部
@@ -77,37 +76,39 @@ def make_main():
             f"\\begin{{document}}\n\n" \
             f"\\input{{\\変数{{■共通パス}}/00_表紙.tex}}\n" \
             f"\\input{{\\変数{{■共通パス}}/10_まえがき.tex}}\n"
-    ff.write( myStr )
+    # ff.write( myStr )
 
 
 
-   # 前後左右の方向の有無
-   if os.path.exists(filename):
-     myStr = f"%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%¥n" \
-            f"\\input{{11_前後左右の方向.tex}}\n" \ 
-            f"%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n"
-     ff.write( myStr )
+    # 前後左右の方向の有無
+    if os.path.exists( pathlib.joinpath(folder_path, "11_前後左右の方向.tex" )):
+      myStr += f"%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%¥n" \
+              f"\\input{{./11_前後左右の方向.tex}}\n" \
+              f"%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n"
+      # ff.write( myStr )
 
 
-   myStr = f"\\input{{\\変数{{■共通パス}}/20_目次.tex}}\n" \
+    myStr += f"\\input{{\\変数{{■共通パス}}/20_目次.tex}}\n" \
             f"\\input{{\\変数{{■共通パス}}/30_安全上の注意事項.tex}}\n" \
             f"%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%\n"
-    ff.write( myStr )
+    # ff.write( myStr )
 
 
     # main.tex  可変部分
-    myStr = ""
+    # myStr = ""
     for filename in os.listdir(folder_path):
       if ".tex" in filename and filename != file_name:
         myStr += f"\\input{{./{filename}}}\n"
-    ff.write( myStr )
+    # ff.write( myStr )
 
 
 
   # main.tex　後半占め
-    myStr = f"%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n" \
+    myStr += f"%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n" \
             f"\\input{{\\変数{{■共通パス}}/99_裏表紙.tex}}\n\n" \
             f"\\end{{document}}\n\n"
+    
+    # ファイル書き出し
     ff.write( myStr )
 
 
