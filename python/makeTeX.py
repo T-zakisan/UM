@@ -1,6 +1,6 @@
 #####################################################################################
 # makeTeX.py
-# [ 2025.03.06 ]
+# [ 2025.03.07 ]
 #  ExcelファイルからTeX関係の各種ファイルを出力
 #   - TeXコマンド(変数として、文章制御等に利用)を***.styファイルとして出力
 #   - 各種表を*.texファイルとして出力
@@ -85,7 +85,7 @@ def create_sty_and_tex_files(excel_file_path):
 # [引数] base_path  Excelファイルの親パス
 #####################################################################################
 def create_version( sheet, base_path, lang ):
-  output_file_path = f"{base_path}\\設定全体.sty"
+  output_file_path = pathlib.joinpath(base_path, "設定全体.sty")
   with open(output_file_path, 'a', encoding='utf-8') as ff:
 
     myStr = "" # 文字列用変数をリセット
@@ -145,7 +145,7 @@ def create_variable( sheet, base_path ):
 
 
   # 相対パスのstyファイル(設定パス.sty)出力処理
-  output_file_path = f"{base_path}\\設定全体.sty"
+  output_file_path = pathlib.joinpath(base_path, "設定全体.sty")
   with open(output_file_path, 'w', encoding='utf-8') as ff:
 
     # ファイルコメント
@@ -173,6 +173,7 @@ def create_variable( sheet, base_path ):
     myStr = "" # 文字列用変数をリセット
     flag_lang = False # 表示言語用のフラグリセット
     flag_end = False
+    flag_directions = False
     for idx, row in enumerate( sheet.iter_rows(min_row=1)):
       col_a_value = row[0].value  # [列A]変数名
       col_b_value = row[1].value  # [列B]設定値
@@ -234,6 +235,18 @@ def create_variable( sheet, base_path ):
             # 次行号機ではない
             myStr += f"\\変数設定{{{col_a_value}}}{{{col_b_value}以降}} % {col_c_value }\n"
 
+
+        # ここから"前後左右の方向"用の値取得
+        if col_a_value == "機種名":
+          machine_type = col_b_value
+        if col_a_value == "機種" :
+          machine_model = col_b_value
+        if col_a_value == "BookNo":
+          book_no = col_b_value
+
+      if col_a_value == "前後左右の方向の有無" and col_b_value == "あり":
+        flag_directions = True
+
       if flag_end == True:
         break
 
@@ -261,9 +274,42 @@ def create_variable( sheet, base_path ):
     ff.write( myStr ) # テキスト書き込み
 
 
+  # "前後左右の方向"ありの場合：ファイル作成（ヘッダのみ作成）
+  if flag_directions == True:
+    filename = pathlib.joinpath(base_path, "11_前後左右の方向.tex" )
+    if not( os.path.exists( filename )):
+      with open(filename, 'w', encoding='utf-8') as ff:
+        myStr = f"%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n" \
+                f"% 機　種：{machine_type}\n" \
+                f"% 型　式：{machine_model}\n" \
+                f"% BookNo：{book_no}\n" \
+                f"%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n\n\n" \
+                f"% ※'ファイル名'が'方向.pdf'ではない場合は，状況に応じて変更すること！\n" \
+                f"% ■前後左右方向の画像作成ルール■■■■■■■■■■■■■\n" \
+                f"% 1.画像ファイル名\n" \
+                f"%     各機種フォルダの'図/方向.pdf'とすること！\n" \
+                f"%       →以下コード変更の工数削減\n" \
+                f"% 2.画像サイズ\n" \
+                f"%     幅×高＝mm×mmの寸法に収まる画像を作成すること！\n" \
+                f"%       →縮尺変更時に文字が拡大/縮小防止のため\n" \
+                f"% 3.画像の向き\n" \
+                f"%     掲載時の向きで作成すること！\n" \
+                f"%       →以下コード変更の工数削減\n" \
+                f"%       ※Inkscape : 回転が必要な場合は，右下のR値を90/-90とし画像を事前に逆回転させておくこと！\n" \
+                f"\n\n"\
+                f"\\begin{{figure}}[h]\n" \
+                f"\\centering\n" \
+                f"\\includepraphic[scale=1.0, angle=0, keepaspectratio]{{./図/方向.pdf}} % 画像サイズのまま，回転なし　※原則コレを使用！\n" \
+                f"%\\includepraphic[scale=1.0, angle=90, keepaspectratio]{{./図/方向.pdf}} % 画像サイズのまま，90度回転(CCW)\n" \
+                f"%\\includepraphic[width=\\textwidth, angle=0, keepaspectratio]{{./図/方向.pdf}} % 用紙幅にフィット，回転なし\n" \
+                f"%\\includepraphic[height=\\textwidth, angle=90, keepaspectratio]{{./図/方向.pdf}}% 用紙幅にフィット後に90度回転(CCW)\n" \
+                f"\\end{{figure}}\n"
+        ff.write( myStr ) # テキスト書き込み
+
+
 
   # 自作変数のstyファイル(設定変数.sty)出力処理
-  output_file_path = f"{base_path}\\設定変数.sty"
+  output_file_path = pathlib.joinpath(base_path, "設定変数.sty")
   with open(output_file_path, 'w', encoding='utf-8') as ff:
 
     # コメント部分
@@ -317,18 +363,16 @@ def escape_tex_string(s):
 def create_table_code(sheet, base_path):
 
 
-
-
   tex_file_name = sheet['A1'].value  # A2セルにファイル名(拡張子なし)が記述されている前提
   if not tex_file_name:
     print(f"シート '{sheet['A1'].value}' のセル[A2]にファイル名が記述されていません。")
     exit
 
-  output_dir = f"{base_path}\\表\\"
+  output_dir = pathlib.joinpath(base_path, "表")
   if not os.path.exists( output_dir ):
     os.makedirs( output_dir ) # なければディレクトリ生成
 
-  output_file_path = f"{output_dir}{tex_file_name}.tex" # ファイル名
+  output_file_path = pathlib.joinpath(output_dir, "{tex_file_name}.tex") # ファイル名
   with open(output_file_path, 'w', encoding='utf-8') as f:
 
 ##########################################################
