@@ -6,10 +6,9 @@
 #   - 各種表を*.texファイルとして出力
 #####################################################################################
 
-import os
+import os, sys
 import glob
-import tkinter as tk            # ダイアログ
-from tkinter import filedialog  # ダイアログ
+from tkinter import messagebox  # ダイアログ
 import openpyxl                 # Excel操作
 import pathlib                  # パスの処理
 import mojimoji                 # 全角半角
@@ -26,7 +25,7 @@ def create_sty_and_tex_files(excel_file_path):
   # 既存の出力ファイル削除
   ff = [ '*.pdf', '*.toc', '*.out', '*.aux', '*.log', 'main.tex' ]
   for pattern in ff:
-    for filepath in glob.glob( pattern ):
+    for filepath in pathlib.Path('.').glob( pattern ):
       try:
         os.remove(filepath)
       except FileNotFoundError:
@@ -52,7 +51,7 @@ def create_sty_and_tex_files(excel_file_path):
 
       # 各表ファイル出力
       elif sheet_index >= 5:  # 6番目(0スタート)以降のシート
-        create_table_code(sheet, os.path.dirname(excel_file_path) )  # 関数を呼び出す
+        create_table_code(sheet, pathlib.Path(excel_file_path).parent )  # 関数を呼び出す
 
 
     # [版]を後から追記したいので、もうひとサイクル！
@@ -61,7 +60,7 @@ def create_sty_and_tex_files(excel_file_path):
 
       # 変数設定ファイル出力
       if "版" in sheet_name:
-        create_version(sheet, os.path.dirname(excel_file_path), lang )  # 関数を呼び出す
+        create_version(sheet, pathlib.Path(excel_file_path).parent, lang )  # 関数を呼び出す
 
 
     # workbook.save(excel_file_path)
@@ -85,7 +84,7 @@ def create_sty_and_tex_files(excel_file_path):
 # [引数] base_path  Excelファイルの親パス
 #####################################################################################
 def create_version( sheet, base_path, lang ):
-  output_file_path = pathlib.joinpath(base_path, "設定全体.sty")
+  output_file_path = base_path.joinpath("設定全体.sty")
   with open(output_file_path, 'a', encoding='utf-8') as ff:
 
     myStr = "" # 文字列用変数をリセット
@@ -137,7 +136,7 @@ def create_version( sheet, base_path, lang ):
 # [引数] base_path  Excelファイルの親パス
 #####################################################################################
 def create_variable( sheet, base_path ):
-
+  
   # セル[A3]が空白なら終了：■共通フォルダ対策
   value = sheet.cell(3,1).value
   if value is None or str(value).strip() == "":
@@ -145,12 +144,12 @@ def create_variable( sheet, base_path ):
 
 
   # 相対パスのstyファイル(設定パス.sty)出力処理
-  output_file_path = pathlib.joinpath(base_path, "設定全体.sty")
+  output_file_path = base_path.joinpath("設定全体.sty")
   with open(output_file_path, 'w', encoding='utf-8') as ff:
 
     # ファイルコメント
     myStr = f"%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n" \
-            f"% ファイル名：{os.path.basename(output_file_path)}\n" \
+            f"% ファイル名：{output_file_path.name}\n" \
             f"% 内　　　容：日本語名コマンド用コマンド\n" \
             f"%           ：■共通への相対パス（変数・表生成.xlsmを完成のこと！）\n" \
             f"%           ：本文制御用コマンド定義\n" \
@@ -276,7 +275,7 @@ def create_variable( sheet, base_path ):
 
   # "前後左右の方向"ありの場合：ファイル作成（ヘッダのみ作成）
   if flag_directions == True:
-    filename = pathlib.joinpath(base_path, "11_前後左右の方向.tex" )
+    filename = base_path.joinpath( "11_前後左右の方向.tex" )
     if not( os.path.exists( filename )):
       with open(filename, 'w', encoding='utf-8') as ff:
         myStr = f"%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n" \
@@ -309,12 +308,12 @@ def create_variable( sheet, base_path ):
 
 
   # 自作変数のstyファイル(設定変数.sty)出力処理
-  output_file_path = pathlib.joinpath(base_path, "設定変数.sty")
+  output_file_path = base_path.joinpath( "設定変数.sty")
   with open(output_file_path, 'w', encoding='utf-8') as ff:
 
     # コメント部分
     myStr = f"%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n" \
-            f"% ファイル名：{os.path.basename(output_file_path)}\n" \
+            f"% ファイル名：{output_file_path.name}\n" \
             f"% 内　　　容：自作変数の設定(TeX制御含む、変数・表生成.xlsmを完成のこと！）\n" \
             f"%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n\n"
     ff.write( myStr )
@@ -368,17 +367,17 @@ def create_table_code(sheet, base_path):
     print(f"シート '{sheet['A1'].value}' のセル[A2]にファイル名が記述されていません。")
     exit
 
-  output_dir = pathlib.joinpath(base_path, "表")
+  output_dir = base_path.joinpath("表")
   if not os.path.exists( output_dir ):
     os.makedirs( output_dir ) # なければディレクトリ生成
 
-  output_file_path = pathlib.joinpath(output_dir, "{tex_file_name}.tex") # ファイル名
+  output_file_path = output_dir.joinpath("{tex_file_name}.tex") # ファイル名
   with open(output_file_path, 'w', encoding='utf-8') as f:
 
 ##########################################################
     # コメント部分出力
     myStr = f"%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n" \
-            f"% ファイル名：{os.path.basename(output_file_path)}\n" \
+            f"% ファイル名：{output_file_path.stem}\n" \
             f"% 内　　　容：{sheet['A1'].value}\n" \
             f"%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n\n"
     f.write( myStr ) # テキスト出力
@@ -559,25 +558,29 @@ def create_table_code(sheet, base_path):
 
 # メイン
 if __name__ == "__main__":
-  root = tk.Tk()
-  root.withdraw()
+  
+  ret = messagebox.askyesno('確認', '［は　い］：誤動作⇒終了！ \n\n［いいえ］：■共通の表作成')   #「はい」、「いいえ」を選択
+  if not ret:
+    script_dir = pathlib.Path( sys.argv[0] ).parent.parent
+    excel_file_path = script_dir.joinpath("変数・表生成.xlsm")
 
-  # フォルダ取得
-  folder_path = filedialog.askdirectory(
-    title       = "変数・表生成.xlsm のあるフォルダを選択",
-    initialdir  = "./",
-    mustexist   = True )
-  folder_path = pathlib.Path( folder_path ).absolute()
-  os.chdir(folder_path)  # カレントディレクトリ変更
 
-  excel_file_path = folder_path / "変数・表生成.xlsm"
+  # # フォルダ取得
+  # folder_path = filedialog.askdirectory(
+  #   title       = "変数・表生成.xlsm のあるフォルダを選択",
+  #   initialdir  = "./",
+  #   mustexist   = True )
+  # folder_path = pathlib.Path( folder_path ).absolute()
+  # os.chdir(folder_path)  # カレントディレクトリ変更
 
-  if excel_file_path:
-    result = create_sty_and_tex_files(excel_file_path)
-    # print( result )
-    if result == 0:
-      print("処理終了！")
-    else:
-      print("処理中にエラー発生！")
-  else:
-    print("ファイルが選択されませんでした。")
+  # excel_file_path = folder_path / "変数・表生成.xlsm"
+
+  # if excel_file_path:
+  #   result = create_sty_and_tex_files(excel_file_path)
+  #   # print( result )
+  #   if result == 0:
+  #     print("処理終了！")
+  #   else:
+  #     print("処理中にエラー発生！")
+  # else:
+  #   print("ファイルが選択されませんでした。")
