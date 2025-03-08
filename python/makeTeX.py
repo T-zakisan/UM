@@ -84,6 +84,7 @@ def create_sty_and_tex_files(excel_file_path):
 # [引数] base_path  Excelファイルの親パス
 #####################################################################################
 def create_version( sheet, base_path, lang ):
+  base_path = pathlib.Path( base_path )
   output_file_path = base_path.joinpath("設定全体.sty")
   with open(output_file_path, 'a', encoding='utf-8') as ff:
 
@@ -144,6 +145,7 @@ def create_variable( sheet, base_path ):
 
 
   # 相対パスのstyファイル(設定パス.sty)出力処理
+  base_path = pathlib.Path( base_path )
   output_file_path = base_path.joinpath("設定全体.sty")
   with open(output_file_path, 'w', encoding='utf-8') as ff:
 
@@ -367,6 +369,7 @@ def create_table_code(sheet, base_path):
     print(f"シート '{sheet['A1'].value}' のセル[A2]にファイル名が記述されていません。")
     exit
 
+  base_path = pathlib.Path( base_path )
   output_dir = base_path.joinpath("表")
   if not os.path.exists( output_dir ):
     os.makedirs( output_dir ) # なければディレクトリ生成
