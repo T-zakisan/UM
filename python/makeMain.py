@@ -5,33 +5,17 @@
 #  ■issue
 #####################################################################################
 
-import glob
-import os
-import sys
 import pathlib
-from tkinter import filedialog, messagebox
+from tkinter import messagebox
 
-def make_main():
-
-  # スクリプトのあるフォルダをカレントディレクトリに設定
-  script_dir = pathlib.Path( os.path.abspath(sys.argv[0]) ).parent
-
-
-  # フォルダ取得
-  folder_path = filedialog.askdirectory(
-    title       = "main.texのあるフォルダを選択",
-    initialdir  = script_dir,
-    mustexist   = True )
-  folder_path = pathlib.Path( folder_path ).absolute()
-  os.chdir(folder_path)  # カレントディレクトリ変更
-
+def make_main( folder_path ):
 
   # 既存の出力ファイル削除
   ff = [ '*.pdf', '*.toc', '*.out', '*.aux', '*.log', 'main.tex' ]
   for pattern in ff:
-    for filepath in glob.glob( pattern ):
+    for filepath in pathlib.Path('.').glob( pattern ):
       try:
-        os.remove(filepath)
+        filepath.unlink()
       except FileNotFoundError:
         print(f"ファイル {filepath} は存在しません。")
       except Exception as e:
@@ -39,7 +23,7 @@ def make_main():
 
 
   # 設定変数.sty をテキスト解析し，出力ファイル名生成
-  with open( pathlib.joinpath(folder_path, "設定全体.sty"), "r", encoding="utf-8") as ff:
+  with open( folder_path.joinpath("設定全体.sty"), "r", encoding="utf-8") as ff:
     for line in ff:
       if line is not None and line[0] != "%":
         line = line.rstrip()  # 改行削除
@@ -54,12 +38,12 @@ def make_main():
 
     # 出力ファイル名
     file_name = f"main.tex"
-    tex_file = pathlib.joinpath(folder_path, file_name)
+    tex_file = folder_path.joinpath(file_name)
 
 
     # 既存の出力ファイル削除
-    if os.path.exists(tex_file):
-        os.remove(tex_file)
+    if tex_file.exists():
+      tex_file.unlink()
 
 
   # main.tex　前半固定部
@@ -81,32 +65,30 @@ def make_main():
 
 
     # 前後左右の方向の有無
-    if os.path.exists( pathlib.joinpath(folder_path, "11_前後左右の方向.tex" )):
-      myStr += f"%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%¥n" \
-              f"\\input{{./11_前後左右の方向.tex}}\n" \
-              f"%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n"
+    if folder_path.joinpath("11_前後左右の方向.tex").exists():
+      myStr +=  f"%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%¥n" \
+                f"\\input{{./11_前後左右の方向.tex}}\n" \
+                f"%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n"
       # ff.write( myStr )
 
 
-    myStr += f"\\input{{\\変数{{■共通パス}}/20_目次.tex}}\n" \
-            f"\\input{{\\変数{{■共通パス}}/30_安全上の注意事項.tex}}\n" \
-            f"%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%\n"
+    myStr +=  f"\\input{{\\変数{{■共通パス}}/20_目次.tex}}\n" \
+              f"\\input{{\\変数{{■共通パス}}/30_安全上の注意事項.tex}}\n" \
+              f"%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%\n"
     # ff.write( myStr )
 
 
     # main.tex  可変部分
     # myStr = ""
-    for filename in os.listdir(folder_path):
+    for filename in folder_path.iterdir():
       if ".tex" in filename and filename != file_name:
         myStr += f"\\input{{./{filename}}}\n"
     # ff.write( myStr )
 
-
-
   # main.tex　後半占め
-    myStr += f"%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n" \
-            f"\\input{{\\変数{{■共通パス}}/99_裏表紙.tex}}\n\n" \
-            f"\\end{{document}}\n\n"
+    myStr +=  f"%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n" \
+              f"\\input{{\\変数{{■共通パス}}/99_裏表紙.tex}}\n\n" \
+              f"\\end{{document}}\n\n"
     
     # ファイル書き出し
     ff.write( myStr )
@@ -114,4 +96,21 @@ def make_main():
 
 # メイン
 if __name__ == "__main__":
-  make_main()
+  
+  messagebox.showinfo('注意', '単独起動はできません．') 
+
+  # # スクリプトのあるフォルダをカレントディレクトリに設定
+  # script_dir = pathlib.Path( os.path.abspath(sys.argv[0]) ).parent
+
+  # # フォルダ取得
+  # folder_path = filedialog.askdirectory(
+  #   title       = "main.texのあるフォルダを選択",
+  #   initialdir  = script_dir,
+  #   mustexist   = True )
+  # if not os.path.exists( folder_path ):
+  #   folder_path = pathlib.Path( folder_path ).absolute()
+  #   os.chdir(folder_path)  # カレントディレクトリ変更
+
+  #   make_main( folder_path )
+
+
