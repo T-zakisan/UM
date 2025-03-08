@@ -53,13 +53,13 @@ def run_selected_script():
             makeTeX.create_sty_and_tex_files( excel_path )
             input()
         if main_code_check.get():
-            makeMain.make_main( relative_path )
+            makeMain.make_Main( relative_path )
             input()
 
     elif selected_option == 2:  # まとめて実行
             excel_path = relative_path.joinpath( "変数・表生成.xlsm" )
             makeTeX.create_sty_and_tex_files( excel_path )
-            makeMain.make_main( relative_path )
+            makeMain.make_Main( relative_path )
 
     else:
         messagebox.showwarning("エラー", "オプションを選択してください。")
