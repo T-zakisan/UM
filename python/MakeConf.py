@@ -1,22 +1,62 @@
 #####################################################################################
 # TeX.py
-#   2025.03.07
-#   LuaLaTeXのコンパイルを行うスクリプト
+#  2025.03.07
+#  - LuaLaTeXのコンパイルを行うスクリプト
+
+
+
+
+
+
 #####################################################################################
 import tkinter as tk
 from tkinter import messagebox
 from tkinter import filedialog
 import pathlib                  # パスの処理
-import subprocess
 import sys
 import os
-
 
 # 自作スクリプト
 import makeMain # makeMain.py
 import makeTeX  # makeTeX.py    
 
+print( f"指定ディレクトリ(機種)の各種ファイルを生成します．" )
+print( f"--------------------------------------------------" )
+print( f"■設定ファイル\n  ・設定全体.sty\n  ・設定変数.sty" )
+print( f"■基本texファイル\n  ・main.tex" )
+print( f"■コンパイルファイル\n  ・_Compile(機種_号機_BookNo).py" )
+print( f"--------------------------------------------------" )
+print( f"対象をダイアログで選択してください．\n\n\n\n" )
+print( f"終了するべき場合" )
+print( f"  ※ 対象ディレクトリ がない / 作成していない" )
+print( f"  ※ 対象ディレクトリ に \"変数・表生成.xlsm\" がない" )
+print( f"  ※ 対象ディレクトリ の \"変数・表生成.xlsm\" のシート[変数]の赤文字部(全体設定)が適切でない" )
+print( f"ダイアログ > [キャンセル]" )
 
+
+path1 = pathlib.Path(sys.argv[0]) # script.path取得
+path1 = path1.parent.parent.parent # "■共通の親"を取得
+
+try:  # 正常時
+  path2 = pathlib.Path( filedialog.askdirectory(
+                          # initialdir = path1,
+                          title     = "対象フォルダを選択",
+                          mustexist = True)) # ダイアログで対象機種のパス取得
+  print( f"path1 : {path1}" )
+  print( f"path2 : {path2}" )
+  relative_path = path2.relative_to( path1 ) # 相対パス取得
+  relative_path = pathlib.Path("../../").joinpath( relative_path ) # 相対パス取得
+  print( f"relative_path : {relative_path}")
+  excel_path = relative_path.joinpath( "変数・表生成.xlsm" ) # エクセルファイルの相対パス生成
+  makeTeX.create_sty_and_tex_files( excel_path ) # 各種設定(sty)とtexファイル生成
+  makeMain.make_Main( relative_path ) # main.tex生成
+
+except ValueError:  # [キャンセル]選択時
+#  os.system('cls' if os.name == 'nt' else 'clear') # コンソールの表示を初期化
+
+
+'''
+# 以下GUIによる選択⋯想定不十分につき却下
 def run_selected_script():
     global ARGV # scrippt.path
 
@@ -53,13 +93,13 @@ def run_selected_script():
             makeTeX.create_sty_and_tex_files( excel_path )
             input()
         if main_code_check.get():
-            makeMain.make_Main( relative_path )
+            makeMain.make_main( relative_path )
             input()
 
     elif selected_option == 2:  # まとめて実行
             excel_path = relative_path.joinpath( "変数・表生成.xlsm" )
             makeTeX.create_sty_and_tex_files( excel_path )
-            makeMain.make_Main( relative_path )
+            makeMain.make_main( relative_path )
 
     else:
         messagebox.showwarning("エラー", "オプションを選択してください。")
@@ -135,3 +175,4 @@ root.bind("<Escape>", lambda event: root.quit())  # Escapeキーでキャンセ�
 
 
 root.mainloop()
+'''

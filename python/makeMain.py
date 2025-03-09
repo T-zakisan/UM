@@ -1,7 +1,9 @@
 #####################################################################################
 # makeMain.py
-# [ 2025.03.07 ]
-#  main.texをフォルダの内容、設定変数.styから生成
+#  2025.03.07
+#  - main.texをフォルダの内容、設定変数.styから生成
+#  - _Compile({機種}_{号機}_{機種}).pyのショートカット生成　※コンパイルファイル
+#  - （機種）_（号機）_（機種）.pyのショートカット生成　※
 #  ■issue
 #####################################################################################
 
@@ -26,9 +28,11 @@ def make_main( folder_path, machine_type, machine_model, book_no ):
   # main.tex　前半固定部
   with open(tex_file, 'w', encoding='utf-8') as ff:
     myStr = f"##################################################\n" \
-            f"# 機　種：{machine_type}\n" \
-            f"# 号　機：{machine_model}\n" \
-            f"# BookNo：{book_no}\n" \
+            f"# main.tex\n" \
+            f"#   made by makeMain.py\n" \
+            f"#   機　種：{machine_type}\n" \
+            f"#   号　機：{machine_model}\n" \
+            f"#   BookNo：{book_no}\n" \
             f"##################################################\n" \
             f"\\documentclass[11pt, a4paper]{{ltjsarticle}}\n\n" \
             f"\\usepackage{{設定全体}}          # 設定全体.sty\n" \
@@ -70,10 +74,10 @@ def make_main( folder_path, machine_type, machine_model, book_no ):
 
 
 # コンパイル用のスクリプト(機種名_BookNo_号機.py)を書き出すやつ #
-def make_compile( folder_path, machine_type, machine_model, book_no, model_no ):
+def make_compile( folder_path, machine_type, machine_model, book_no ):
   # 出力ファイル名
   machine_type = mojimoji.zen_to_han( machine_type ) # 全角→半角
-  file_name = f"{machine_type}_{machine_model}_{book_no}.py"
+  file_name = f"_Compile({machine_type}_{machine_model}_{book_no}).py"
   folder_path = pathlib.Path( folder_path )
   compile_file = folder_path.joinpath(file_name)
 
@@ -86,43 +90,46 @@ def make_compile( folder_path, machine_type, machine_model, book_no, model_no ):
   # コンパイル　前半固定部
   with open(compile_file, 'w', encoding='utf-8') as ff:
     myStr = f"##################################################\n" \
-            f"# LuaLatexコンパイル\n" \
-            f"# 機　種：{machine_type}\n" \
-            f"# 号　機：{machine_model}\n" \
-            f"# BookNo：{book_no}\n" \
+            f"# LuaLatexコンパイルスクリプト\n" \
+            f"#   made by makeMain.py\n" \
+            f"#   機　種：{machine_type}\n" \
+            f"#   号　機：{machine_model}\n" \
+            f"#   BookNo：{book_no}\n" \
             f"##################################################\n\n\n" \
             f"import subprocess\n" \
             f"import sys\n" \
             f"import os\n\n" \
-            f"def compile_lualatex()\n" \
+            f"def compile_lualatex():\n" \
             f"  try:\n" \
             f"    command = [\n" \
             f"      \"lualatex.exe\",\n" \
             f"      \"-output-directory=./\",\n" \
             f"      \"-jobname={machine_type}_{book_no}_{machine_model}\",\n" \
-            f"      \"-interaction=errorstopmode\",\n" \
+            f"      \"-interaction=batchmode\",\n" \
+            f"      \"-halt-on-error\",\n" \
             f"      \"-file-line-error\",\n" \
             f"      \"-synctex=1\",\n" \
-            f"      main.tex,\n" \
+            f"      \"--shell-escape\",\n" \
+            f"      \"main.tex\",\n" \
             f"    ]\n\n" \
-            f"    process = subprocess.Pope(\n" \
+            f"    process = subprocess.Popen(\n" \
             f"      command,\n" \
             f"      stdout=sys.stdout,\n" \
             f"      stderr=sys.stderr,\n" \
             f"      shell=True,\n" \
             f"    )\n" \
             f"    process.communicate()\n\n" \
-            f"    print( \"コンパイル終了\" )\n" \
+            f"    print( \"コンパイル終了 : [Enter] > 終了\" )\n" \
             f"    input()\n\n\n" \
             f"  except FileNotFoundError:\n" \
-            f"    print( \"lualatex.exe　が見つかりませんでした．\" )\n" \
+            f"    print( \"lualatex.exe  が見つかりませんでした．\" )\n" \
             f"  except Exception as e:\n" \
             f"    print( f\"エラーが発生しました: {{e}}\" )\n\n\n" \
             f"if __name__ == \"__main__\":\n" \
-            f"  if len(sys.argv) != 2:\n" \
-            f"    print(\"使用方法: {file_name}　をWクリック\")\n" \
+            f"  if len(sys.argv) != 1:\n" \
+            f"    print(\"使用方法: {file_name}  をWクリック\")\n" \
             f"  else:\n" \
-            f"    compile_lualatex( sys.argv[1] )\n" \
+            f"    compile_lualatex( )\n" \
 
 
     # ファイル書き出し

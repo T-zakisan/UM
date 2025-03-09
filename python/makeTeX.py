@@ -1,9 +1,9 @@
 #####################################################################################
 # makeTeX.py
-# [ 2025.03.07 ]
-#  ExcelファイルからTeX関係の各種ファイルを出力
-#   - TeXコマンド(変数として、文章制御等に利用)を***.styファイルとして出力
-#   - 各種表を*.texファイルとして出力
+#  2025.03.07
+#  - ExcelファイルからTeX関係の各種ファイルを出力
+#  - TeXコマンド(変数として、文章制御等に利用)を***.styファイルとして出力
+#  - 各種表を*.texファイルとして出力
 #####################################################################################
 
 import os, sys
@@ -152,6 +152,7 @@ def create_variable( sheet, base_path ):
     # ファイルコメント
     myStr = f"%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n" \
             f"% ファイル名：{output_file_path.name}\n" \
+            f"% made by makeTeX.py\n" \
             f"% 内　　　容：日本語名コマンド用コマンド\n" \
             f"%           ：■共通への相対パス（変数・表生成.xlsmを完成のこと！）\n" \
             f"%           ：本文制御用コマンド定義\n" \
@@ -281,6 +282,7 @@ def create_variable( sheet, base_path ):
     if not( os.path.exists( filename )):
       with open(filename, 'w', encoding='utf-8') as ff:
         myStr = f"%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n" \
+                f"% made by makeTeX.py\n" \
                 f"% 機　種：{machine_type}\n" \
                 f"% 型　式：{machine_model}\n" \
                 f"% BookNo：{book_no}\n" \
@@ -381,6 +383,7 @@ def create_table_code(sheet, base_path):
     # コメント部分出力
     myStr = f"%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n" \
             f"% ファイル名：{output_file_path.stem}\n" \
+            f"% made by makeTeX.py\n" \
             f"% 内　　　容：{sheet['A1'].value}\n" \
             f"%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n\n"
     f.write( myStr ) # テキスト出力
