@@ -1,0 +1,412 @@
+
+% \documentclass{ltjsarticle}
+\documentclass{ltjsbook}
+\usepackage{fontspec}
+
+\usepackage{設定全体}
+\usepackage{HANTA}
+
+
+
+
+% tcolorbox のスタイル定義
+\tcbset{
+  innerBox/.style={
+    colframe  = gray!50, % 枠の色
+    colback   = white, % 背景色
+    boxrule   = 0.2mm, % 枠線の太さ
+    width     = 70mm, % ボックスの幅
+    height    = 45mm, % ボックスの高さ
+    halign    = center, % 水平方向の中央揃え
+    valign    = center, % 垂直方向の中央揃え
+    center, % ボックス自体の中央配置
+    sharp corners % 角を丸くしない
+  },
+  innerBoxNone/.style={
+    colframe  = white, % 枠の色
+    colback   = white, % 背景色
+    boxrule   = 0.0mm, % 枠線の太さ
+    width     = 70mm, % ボックスの幅
+    height    = 45mm, % ボックスの高さ
+    halign    = center, % 水平方向の中央揃え
+    valign    = top, % 垂直方向の中央揃え
+    center, % ボックス自体の中央配置
+    sharp corners % 角を丸くしない
+  },
+  outerBox/.style={
+    colframe  = white, % 枠の色
+    colback   = white, % 背景色
+    boxrule   = 0.0mm, % 枠線の太さ
+    width     = 70mm, % ボックスの幅
+    height    = 60mm, % ボックスの高さ
+    halign    = left, % 水平方向の中央揃え
+    valign    = top, % 垂直方向の中央揃え
+    center, % ボックス自体の中央配置
+    sharp corners % 角を丸くしない
+  },
+  withImg/.style={
+    colframe  = white, % 枠の色
+    colback   = white, % 背景色
+    boxrule   = 0.0mm, % 枠線の太さ
+    width     = \textwidth, % ボックスの幅
+    halign    = left, % 水平方向の左寄せ
+    valign    = top, % 垂直方向の中央揃え
+    top       = 0.0mm,
+    % bottom    = 5.0mm,
+    left      = -0.3em,
+    right     = 0.0mm,
+    sharp corners % 角を丸くしない
+  }
+}
+
+
+\newsavebox{\imagebox}
+
+
+% \回込図 コマンドの定義
+\NewDocumentCommand{\回込図}{m m}{%
+  % #1: 画像ファイルパス (必須)
+  % #2: テキスト内容 (必須)
+  \vspace{1.8mm}
+  \sbox{\imagebox}{%
+    \begin{minipage}[t]{70mm}%
+      \includegraphics[width=70mm]{#1}%
+    \end{minipage}%
+  }%
+  \begin{minipage}[t]{\dimexpr\linewidth-75mm-\leftskip-0.3em} % 横幅を調整
+    \begin{tcolorbox}[withImg, height=\ht\imagebox] % 画像の高さに合わせる
+      #2
+    \end{tcolorbox}
+  \end{minipage}%
+  \hspace{\dimexpr 5mm + 0.3em}%
+  \usebox{\imagebox}%
+}
+
+
+\begin{document}
+
+% \subsection{test}%
+
+% % リストのインデントを 0 にする
+% \begin{enumerate}[
+%     leftmargin  = 0pt, 
+%     labelwidth  = 0pt, 
+%     itemindent  = 0pt,
+%   ]
+
+
+%   \begin{minipage}{0.48\columnwidth}
+%     \begin{tcolorbox}[outerBox]
+%       \item test
+%       \vspace{-3mm}
+%       \begin{tcolorbox}[innerBox]
+%         \adjustbox{valign=c}{\rule{5cm}{3cm}}
+%       \end{tcolorbox}
+%     \end{tcolorbox}
+%   \end{minipage}
+%   \hfill
+%   \begin{minipage}{0.48\columnwidth}
+%     \begin{tcolorbox}[outerBox]
+%       \item test
+%       \vspace{-3mm}
+%       \begin{tcolorbox}[innerBox]
+%         \adjustbox{valign=c}{\rule{5cm}{3cm}}
+%       \end{tcolorbox}
+%     \end{tcolorbox}
+%   \end{minipage}
+  
+  
+%   \begin{minipage}{0.48\columnwidth}
+%     \begin{tcolorbox}[outerBox]
+%       \item test
+%       \vspace{-3mm}
+%       \begin{tcolorbox}[innerBox]
+%         \adjustbox{valign=c}{\rule{5cm}{3cm}}
+%       \end{tcolorbox}
+%     \end{tcolorbox}
+%   \end{minipage}
+%   \hfill
+%   \begin{minipage}{0.48\columnwidth}
+%     \begin{tcolorbox}[outerBox]
+%       \item test
+%       \vspace{-3mm}
+%       \begin{tcolorbox}[innerBox]
+%         \adjustbox{valign=c}{\rule{5cm}{3cm}}
+%       \end{tcolorbox}
+%     \end{tcolorbox}
+%   \end{minipage}
+  
+
+%   \begin{minipage}{0.48\columnwidth}
+%     \begin{tcolorbox}[outerBox]
+%       \item test
+%       \vspace{-3mm}
+%       \begin{tcolorbox}[innerBox]
+%         \adjustbox{valign=c}{\rule{5cm}{3cm}}
+%       \end{tcolorbox}
+%     \end{tcolorbox}
+%   \end{minipage}
+%   \hfill
+%   \begin{minipage}{0.48\columnwidth}
+%     \begin{tcolorbox}[outerBox]
+%       \item test
+%       \vspace{-3mm}
+%       \begin{tcolorbox}[innerBox]
+%         \adjustbox{valign=c}{\rule{5cm}{3cm}}
+%       \end{tcolorbox}
+%     \end{tcolorbox}
+%   \end{minipage}
+
+
+%   \begin{minipage}{0.48\columnwidth}
+%     \begin{tcolorbox}[outerBox]
+%       \item test
+%       \vspace{-3mm}
+%       \begin{tcolorbox}[innerBox]
+%         \adjustbox{valign=c}{\rule{5cm}{3cm}}
+%       \end{tcolorbox}
+%     \end{tcolorbox}
+%   \end{minipage}
+%   \hfill
+%   \begin{minipage}{0.48\columnwidth}
+%     \begin{tcolorbox}[outerBox]
+%       \item test
+%       \vspace{-3mm}
+%       \begin{tcolorbox}[innerBox]
+%         \adjustbox{valign=c}{\rule{5cm}{3cm}}
+%       \end{tcolorbox}
+%     \end{tcolorbox}
+%   \end{minipage}
+
+
+% \clearpage
+
+
+% \begin{minipage}{0.48\columnwidth}
+%   \begin{tcolorbox}[outerBox]
+%     \item test
+%     \vspace{-3mm}
+%     \begin{tcolorbox}[innerBoxNone]
+%       \adjustbox{valign=c}{\rule{5cm}{3cm}}
+%     \end{tcolorbox}
+%   \end{tcolorbox}
+% \end{minipage}
+% \hfill
+% \begin{minipage}{0.48\columnwidth}
+%   \begin{tcolorbox}[outerBox]
+%     \item test
+%     \vspace{-3mm}
+%     \begin{tcolorbox}[innerBoxNone]
+%       \adjustbox{valign=c}{\rule{5cm}{3cm}}
+%     \end{tcolorbox}
+%   \end{tcolorbox}
+% \end{minipage}
+
+
+% \begin{minipage}{0.48\columnwidth}
+%   \begin{tcolorbox}[outerBox]
+%     \item test
+%     \vspace{-3mm}
+%     \begin{tcolorbox}[innerBoxNone]
+%       \adjustbox{valign=c}{\rule{5cm}{3cm}}
+%     \end{tcolorbox}
+%   \end{tcolorbox}
+% \end{minipage}
+% \hfill
+% \begin{minipage}{0.48\columnwidth}
+%   \begin{tcolorbox}[outerBox]
+%     \item test
+%     \vspace{-3mm}
+%     \begin{tcolorbox}[innerBoxNone]
+%       \adjustbox{valign=c}{\rule{5cm}{3cm}}
+%     \end{tcolorbox}
+%   \end{tcolorbox}
+% \end{minipage}
+
+
+% \begin{minipage}{0.48\columnwidth}
+%   \begin{tcolorbox}[outerBox]
+%     \item test
+%     \vspace{-3mm}
+%     \begin{tcolorbox}[innerBoxNone]
+%       \adjustbox{valign=c}{\rule{5cm}{3cm}}
+%     \end{tcolorbox}
+%   \end{tcolorbox}
+% \end{minipage}
+% \hfill
+% \begin{minipage}{0.48\columnwidth}
+%   \begin{tcolorbox}[outerBox]
+%     \item test
+%     \vspace{-3mm}
+%     \begin{tcolorbox}[innerBoxNone]
+%       \adjustbox{valign=c}{\rule{5cm}{3cm}}
+%     \end{tcolorbox}
+%   \end{tcolorbox}
+% \end{minipage}
+
+
+% \begin{minipage}{0.48\columnwidth}
+%   \begin{tcolorbox}[outerBox]
+%     \item test
+%     \vspace{-3mm}
+%     \begin{tcolorbox}[innerBoxNone]
+%       \adjustbox{valign=c}{\rule{5cm}{3cm}}
+%     \end{tcolorbox}
+%   \end{tcolorbox}
+% \end{minipage}
+% \hfill
+% \begin{minipage}{0.48\columnwidth}
+%   \begin{tcolorbox}[outerBox]
+%     \item test
+%     \vspace{-3mm}
+%     \begin{tcolorbox}[innerBoxNone]
+%       \adjustbox{valign=c}{\rule{5cm}{3cm}}
+%     \end{tcolorbox}
+%   \end{tcolorbox}
+% \end{minipage}
+
+% \end{enumerate}
+
+
+
+
+% \clearpage
+
+\subsection{見出し}
+
+\lipsum[2]
+こんにちは，今日の天気は晴天．
+小春日和で出かけるには，ちょうど良いでしょう．
+花粉対策を忘れないように！
+
+
+\subsubsection{見出し}
+
+
+
+\begin{enumerate}
+\回込図{./test.png}{%
+  \item こんにちは\\ ，今日の天気は晴天．
+        小春日和で出かけるには，ちょうど良いでしょう．
+        花粉対策を忘れないように！
+  \item 二つ目
+  \item 三つ目
+}
+\item 二つ目
+\item 三つ目
+\end{enumerate}
+
+
+
+
+
+
+% \newpage
+
+% % \chapter{チャプター}
+% \section{大見出し（レベル1）}
+% \subsection{中見出し（レベル2）}
+
+% \subsubsection{小見出し（レベル3）}%
+
+
+
+
+% \subsubsection{小見出し（レベル3）}%
+% \begin{minipage}[c]{\dimexpr\linewidth-75mm-\leftskip} % 横幅を調整
+%   こんにちは，今日の天気は晴天．
+%   小春日和で出かけるには，ちょうど良いでしょう．
+%   花粉対策を忘れないように．！
+%   \vfill%
+% \end{minipage}%
+% \hspace{5mm}%
+% \begin{minipage}[t]{70mm}
+%   \includegraphics[width=70mm]{test.png}
+%   \vspace{1em}
+% \end{minipage}%
+
+
+
+% \subsubsection{小見出し（レベル3）}%
+% \begin{minipage}[c]{\dimexpr\linewidth-75mm-\leftskip} % 横幅を調整
+%   こんにちは，今日の天気は晴天．
+%   小春日和で出かけるには，ちょうど良いでしょう．
+%   花粉対策を忘れないように．！
+%   \vfill%
+% \end{minipage}%
+% \hspace{5mm}%
+% \begin{minipage}[c]{70mm}
+%   \includegraphics[width=70mm]{./test.png}
+%   \vspace{1em}
+% \end{minipage}%
+
+
+
+% \subsubsection{小見出し（レベル3）}%
+% \begin{minipage}[c]{\dimexpr\linewidth-75mm-\leftskip} % 横幅を調整
+%   こんにちは，今日の天気は晴天．
+%   小春日和で出かけるには，ちょうど良いでしょう．
+%   花粉対策を忘れないように．！
+%   \vfill%
+% \end{minipage}%
+% \hspace{5mm}%
+% \begin{minipage}[b]{70mm}
+%   \includegraphics[width=70mm]{./test.png}
+%   \vspace{1em}
+% \end{minipage}%
+
+
+
+
+% \newpage
+% \subsubsection{小見出し（レベル3）}%
+% \begin{minipage}[c]{\dimexpr\linewidth-75mm-\leftskip} % 横幅を調整
+%   \lipsum[2]
+%   こんにちは，今日の天気は晴天．
+%   小春日和で出かけるには，ちょうど良いでしょう．
+%   花粉対策を忘れないように．！
+%   \vfill%
+% \end{minipage}%
+% \hspace{5mm}%
+% \begin{minipage}[t]{70mm} % 横幅を調整
+%   \includegraphics[width=70mm]{./test.png}%
+%   \vspace{1em}%
+% \end{minipage}%
+
+
+% \subsubsection{小見出し（レベル3）}%
+% \begin{minipage}[c]{\dimexpr\linewidth-75mm-\leftskip} % 横幅を調整
+%   \lipsum[2]
+%   こんにちは，今日の天気は晴天．
+%   小春日和で出かけるには，ちょうど良いでしょう．
+%   花粉対策を忘れないように．！
+%   \vfill%
+% \end{minipage}%
+% \hspace{5mm}%
+% \begin{minipage}[c]{70mm} % 横幅を調整
+%   \includegraphics[width=70mm]{./test.png}%
+%   \vspace{1em}%
+% \end{minipage}%
+
+
+
+% \subsubsection{小見出し（レベル3）}%
+% \begin{minipage}[c]{\dimexpr\linewidth-75mm-\leftskip} % 横幅を調整
+%   \lipsum[2]
+%   こんにちは，今日の天気は晴天．
+%   小春日和で出かけるには，ちょうど良いでしょう．
+%   花粉対策を忘れないように．！
+%   \vfill%
+% \end{minipage}%
+% \hspace{5mm}%
+% \begin{minipage}[b]{70mm} % 横幅を調整
+%   \includegraphics[width=70mm]{./test.png}%
+%   \vspace{1em}%
+% \end{minipage}%
+
+
+
+
+
+
+\end{document}
