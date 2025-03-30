@@ -1,128 +1,374 @@
 
-\documentclass[11pt, a4paper]{ltjsarticle}
-% \documentclass[twoside, 11pt]{ltjsarticle}%左右別レイアウト変更時のためのヤツ
-\usepackage{adjustbox} % 画像の中央配置
-\newcommand{\PATH}{../../} % ほげほげおｈげお
+% \documentclass{ltjsarticle}
+\documentclass{ltjsbook}
+\usepackage{fontspec}
+
+\usepackage{設定全体}
 \usepackage{HANTA}
-\usepackage{myValues}
 
 
 
 
-\ExplSyntaxOn
-\NewDocumentCommand{\版表示}{ m m m }{%
-  \begin{tabular}{cc} % ユーザー指定の列フォーマットを使用
-    % 列データを分割
-    \seq_set_split:Nnn \l_tmpa_seq { #1 } { #2 }
-    \seq_set_split:Nnn \l_tmpb_seq { #1 } { #3 }
-    % データをマッピング（A列 & B列）
-    \tl_clear:N \l_tmpa_tl
-    \seq_map_indexed_inline:Nn \l_tmpa_seq {
-      % \seq_item:Nn \l_tmpa_seq {##1} & \seq_item:Nn \l_tmpb_seq {##1} \\
-      % \seq_map_inline:Nn \l_tmpa_seq { ##1 } & \seq_map_inline:Nn \l_tmpb_seq { ##1 } \\
-      % \seq_item:Nn \l_tmpa_seq {##1} & \seq_item:Nn \l_tmpb_seq {##1} \\
-      % \seq_map_inline:Nn \l_tmpa_seq { ##1 \\} 
-      \tl_put_right:Nx \l_tmpa_tl { \seq_item:Nn \l_tmpa_seq {##1} & \seq_item:Nn \l_tmpb_seq {##1} \\ \hline }
-    }
-    \scantokens{\l_tmpa_tl}
-  \end{tabular}
+% tcolorbox のスタイル定義
+\tcbset{
+    innerBox/.style={
+      colframe  = gray!50, % 枠の色
+      colback   = white, % 背景色
+      boxrule   = 0.2mm, % 枠線の太さ
+      width     = 70mm, % ボックスの幅
+      height    = 45mm, % ボックスの高さ
+      halign    = center, % 水平方向の中央揃え
+      valign    = center, % 垂直方向の中央揃え
+      center, % ボックス自体の中央配置
+      sharp corners % 角を丸くしない
+    },
+    innerBoxNone/.style={
+      colframe  = white, % 枠の色
+      colback   = white, % 背景色
+      boxrule   = 0.0mm, % 枠線の太さ
+      width     = 70mm, % ボックスの幅
+      height    = 45mm, % ボックスの高さ
+      halign    = center, % 水平方向の中央揃え
+      valign    = top, % 垂直方向の中央揃え
+      center, % ボックス自体の中央配置
+      sharp corners % 角を丸くしない
+    },
+    outerBox/.style={
+      colframe  = white, % 枠の色
+      colback   = white, % 背景色
+      boxrule   = 0.0mm, % 枠線の太さ
+      width     = 70mm, % ボックスの幅
+      height    = 60mm, % ボックスの高さ
+      halign    = left, % 水平方向の中央揃え
+      valign    = top, % 垂直方向の中央揃え
+      center, % ボックス自体の中央配置
+      sharp corners % 角を丸くしない
+  },
+  withImg/.style={
+    colframe  = black, % 枠の色
+    colback   = red, % 背景色
+    boxrule   = 0.0mm, % 枠線の太さ
+    width     = \textwidth, % ボックスの幅
+    halign    = left, % 水平方向の中央揃え
+    valign    = top, % 垂直方向の中央揃え
+  }
 }
-\ExplSyntaxOff
 
-\usepackage{xhfill}
 
 
 \begin{document}
 
-% タイトル環境
-\begin{titlepage}
+% \subsection{test}%
+
+% % リストのインデントを 0 にする
+% \begin{enumerate}[
+%     leftmargin  = 0pt, 
+%     labelwidth  = 0pt, 
+%     itemindent  = 0pt,
+%   ]
 
 
-% 余白設定
-\newgeometry{
-  top     = 0.0mm, % ここは0mmにしている方が調整しやすい
-  bottom  = 10.0mm, % ここは社名部分のベースラインとなる
-  left    = 5.0mm,
-  right   = 5.0mm
-}
+%   \begin{minipage}{0.48\columnwidth}
+%     \begin{tcolorbox}[outerBox]
+%       \item test
+%       \vspace{-3mm}
+%       \begin{tcolorbox}[innerBox]
+%         \adjustbox{valign=c}{\rule{5cm}{3cm}}
+%       \end{tcolorbox}
+%     \end{tcolorbox}
+%   \end{minipage}
+%   \hfill
+%   \begin{minipage}{0.48\columnwidth}
+%     \begin{tcolorbox}[outerBox]
+%       \item test
+%       \vspace{-3mm}
+%       \begin{tcolorbox}[innerBox]
+%         \adjustbox{valign=c}{\rule{5cm}{3cm}}
+%       \end{tcolorbox}
+%     \end{tcolorbox}
+%   \end{minipage}
+  
+  
+%   \begin{minipage}{0.48\columnwidth}
+%     \begin{tcolorbox}[outerBox]
+%       \item test
+%       \vspace{-3mm}
+%       \begin{tcolorbox}[innerBox]
+%         \adjustbox{valign=c}{\rule{5cm}{3cm}}
+%       \end{tcolorbox}
+%     \end{tcolorbox}
+%   \end{minipage}
+%   \hfill
+%   \begin{minipage}{0.48\columnwidth}
+%     \begin{tcolorbox}[outerBox]
+%       \item test
+%       \vspace{-3mm}
+%       \begin{tcolorbox}[innerBox]
+%         \adjustbox{valign=c}{\rule{5cm}{3cm}}
+%       \end{tcolorbox}
+%     \end{tcolorbox}
+%   \end{minipage}
+  
+
+%   \begin{minipage}{0.48\columnwidth}
+%     \begin{tcolorbox}[outerBox]
+%       \item test
+%       \vspace{-3mm}
+%       \begin{tcolorbox}[innerBox]
+%         \adjustbox{valign=c}{\rule{5cm}{3cm}}
+%       \end{tcolorbox}
+%     \end{tcolorbox}
+%   \end{minipage}
+%   \hfill
+%   \begin{minipage}{0.48\columnwidth}
+%     \begin{tcolorbox}[outerBox]
+%       \item test
+%       \vspace{-3mm}
+%       \begin{tcolorbox}[innerBox]
+%         \adjustbox{valign=c}{\rule{5cm}{3cm}}
+%       \end{tcolorbox}
+%     \end{tcolorbox}
+%   \end{minipage}
 
 
-\centering  % 中央揃え
-\vspace*{50.0mm}  % 枠垂直位置の調整
-\begin{tcolorbox}[ % 外枠：枠のアウトラインとして使用
-  width     = 124.0mm + 10mm, % 幅
-  height    = 74.0mm  + 10mm, % 高さ
-  colframe  = white, % 枠の色
-  colback   = white, % 背景色
-  boxrule   = 0pt, % 枠の太さ：0にしても残るため色白必須
-  halign    = center, % 水平中央
-  valign    = center, % 垂直中央
-]
-  \begin{tcolorbox}[ % 内枠
-      width     = 124.0mm, % 幅
-      height    = 74.0mm, % 高さ
-      colframe  = black, % 枠の色
-      colback   = white, % 背景色
-      sharp corners, % 角を丸めない
-      boxrule   = 0.5mm, % 枠線の太さ
-      halign    = center, % 水平中央揃え
-      valign    = center, % 垂直中央揃え
-      top       = 5.0mm, % 上余白
-      left      = 5.0mm, % 左余白
-      right      = 5.0mm, % 右余白
-      bottom    = 5.0mm, % 下余白
-      ]
-    \HUGE{\textbf{\texttt{自動カーバ}}}\\[1.0mm]
-    \HUGE{\textbf{\texttt{Model\hspace{.5em}AC-S8}}}\\[5.0mm]
-    \HUGE{\textbf{\texttt{取扱説明書}}}\\[0.0mm]
-    \HUGE{\textbf{\texttt{パーツリスト}}}
-  \end{tcolorbox}
-\end{tcolorbox}
-
-\vspace{-5.0mm}
-\large{\textbf{\texttt{適応号機}}}\\
-\large{\textbf{\texttt{1092号機以降}}}\\
-
-\end{titlepage} % タイトル環境
+%   \begin{minipage}{0.48\columnwidth}
+%     \begin{tcolorbox}[outerBox]
+%       \item test
+%       \vspace{-3mm}
+%       \begin{tcolorbox}[innerBox]
+%         \adjustbox{valign=c}{\rule{5cm}{3cm}}
+%       \end{tcolorbox}
+%     \end{tcolorbox}
+%   \end{minipage}
+%   \hfill
+%   \begin{minipage}{0.48\columnwidth}
+%     \begin{tcolorbox}[outerBox]
+%       \item test
+%       \vspace{-3mm}
+%       \begin{tcolorbox}[innerBox]
+%         \adjustbox{valign=c}{\rule{5cm}{3cm}}
+%       \end{tcolorbox}
+%     \end{tcolorbox}
+%   \end{minipage}
 
 
-% タイトル環境
-\begin{titlepage}
-\centering
-
-\ 
-\vfill
-\vfill
+% \clearpage
 
 
-\begin{tcolorbox}[%
-    % width     = 130.0mm
-    colframe  = white, % 枠の色
-    colback   = white, % 背景色
-    valign    = top,
-    top       = 0.0mm,
-    left      = 10.0mm,
-  ]
-  \hspace{3em}
-  \Large{\texttt{取扱説明書}}\hspace{1em}
-  \large{\texttt{AC-R8}}\hspace{1em}
-  \large{\texttt{[ACR8250303]}}\\
-  \hspace{0em}\xrfill{0.5pt}
-  \begin{center}
-    \版表示{{|} 2025年3月3日 | 2025年3月3日 | 2025年3月3日 }{ 1.0 | 1.2 | 2.0 }
-    % \版表示{\detokenize{|}}{2025年3月3日|2025年3月3日|2025年3月3日}{1.0|1.2|2.0}% `|` で区切る
-    % \版表示{|}{2023-01-01|2023-02-01|2023-03-01}{v1.0|v1.1|v2.0}
-    % \版表示{|}{2025-03-03|2025-04-03|2025-05-03}{1.0|1.1|2.0}
-  \end{center}
-\end{tcolorbox}
-
-% \xhrulefill
+% \begin{minipage}{0.48\columnwidth}
+%   \begin{tcolorbox}[outerBox]
+%     \item test
+%     \vspace{-3mm}
+%     \begin{tcolorbox}[innerBoxNone]
+%       \adjustbox{valign=c}{\rule{5cm}{3cm}}
+%     \end{tcolorbox}
+%   \end{tcolorbox}
+% \end{minipage}
+% \hfill
+% \begin{minipage}{0.48\columnwidth}
+%   \begin{tcolorbox}[outerBox]
+%     \item test
+%     \vspace{-3mm}
+%     \begin{tcolorbox}[innerBoxNone]
+%       \adjustbox{valign=c}{\rule{5cm}{3cm}}
+%     \end{tcolorbox}
+%   \end{tcolorbox}
+% \end{minipage}
 
 
-\vfill
+% \begin{minipage}{0.48\columnwidth}
+%   \begin{tcolorbox}[outerBox]
+%     \item test
+%     \vspace{-3mm}
+%     \begin{tcolorbox}[innerBoxNone]
+%       \adjustbox{valign=c}{\rule{5cm}{3cm}}
+%     \end{tcolorbox}
+%   \end{tcolorbox}
+% \end{minipage}
+% \hfill
+% \begin{minipage}{0.48\columnwidth}
+%   \begin{tcolorbox}[outerBox]
+%     \item test
+%     \vspace{-3mm}
+%     \begin{tcolorbox}[innerBoxNone]
+%       \adjustbox{valign=c}{\rule{5cm}{3cm}}
+%     \end{tcolorbox}
+%   \end{tcolorbox}
+% \end{minipage}
 
-\end{titlepage} % タイトル環境
-\restoregeometry % デフォルトに戻す
+
+% \begin{minipage}{0.48\columnwidth}
+%   \begin{tcolorbox}[outerBox]
+%     \item test
+%     \vspace{-3mm}
+%     \begin{tcolorbox}[innerBoxNone]
+%       \adjustbox{valign=c}{\rule{5cm}{3cm}}
+%     \end{tcolorbox}
+%   \end{tcolorbox}
+% \end{minipage}
+% \hfill
+% \begin{minipage}{0.48\columnwidth}
+%   \begin{tcolorbox}[outerBox]
+%     \item test
+%     \vspace{-3mm}
+%     \begin{tcolorbox}[innerBoxNone]
+%       \adjustbox{valign=c}{\rule{5cm}{3cm}}
+%     \end{tcolorbox}
+%   \end{tcolorbox}
+% \end{minipage}
+
+
+% \begin{minipage}{0.48\columnwidth}
+%   \begin{tcolorbox}[outerBox]
+%     \item test
+%     \vspace{-3mm}
+%     \begin{tcolorbox}[innerBoxNone]
+%       \adjustbox{valign=c}{\rule{5cm}{3cm}}
+%     \end{tcolorbox}
+%   \end{tcolorbox}
+% \end{minipage}
+% \hfill
+% \begin{minipage}{0.48\columnwidth}
+%   \begin{tcolorbox}[outerBox]
+%     \item test
+%     \vspace{-3mm}
+%     \begin{tcolorbox}[innerBoxNone]
+%       \adjustbox{valign=c}{\rule{5cm}{3cm}}
+%     \end{tcolorbox}
+%   \end{tcolorbox}
+% \end{minipage}
+
+% \end{enumerate}
+
+
+
+
+% \clearpage
+
+\begin{figure}[h]
+  \fbox{
+  \begin{minipage}[c]{\dimexpr\linewidth-75mm-\leftskip} % 横幅を調整
+    % \begin{tcolorbox}[withImg]
+    こんにちは，今日の天気は晴天．
+      小春日和で出かけるには，ちょうど良いでしょう.
+      花粉対策を忘れないように．！
+    % \end{tcolorbox}
+  \end{minipage}%
+  }\vfill
+  \hspace{5mm}%
+  \begin{minipage}{70mm}%
+    \includegraphics[width=70mm]{./test.jpg}%
+  \end{minipage}%
+      \vspace{1em}%
+\end{figure}
+
+
+
+
+\chapter{チャプター}
+\section{大見出し（レベル1）}
+\subsection{中見出し（レベル2）}
+
+\subsubsection{小見出し（レベル3）}%
+
+
+
+
+\subsubsection{小見出し（レベル3）}%
+\begin{minipage}[c]{\dimexpr\linewidth-75mm-\leftskip} % 横幅を調整
+  こんにちは，今日の天気は晴天．
+  小春日和で出かけるには，ちょうど良いでしょう．
+  花粉対策を忘れないように．！
+  \vfill%
+\end{minipage}%
+\hspace{5mm}%
+\begin{minipage}[t]{70mm}
+  \includegraphics[width=70mm]{test.jpg}
+  \vspace{1em}
+\end{minipage}%
+
+
+
+\subsubsection{小見出し（レベル3）}%
+\begin{minipage}[c]{\dimexpr\linewidth-75mm-\leftskip} % 横幅を調整
+  こんにちは，今日の天気は晴天．
+  小春日和で出かけるには，ちょうど良いでしょう．
+  花粉対策を忘れないように．！
+  \vfill%
+\end{minipage}%
+\hspace{5mm}%
+\begin{minipage}[c]{70mm}
+  \includegraphics[width=70mm]{./test.jpg}
+  \vspace{1em}
+\end{minipage}%
+
+
+
+\subsubsection{小見出し（レベル3）}%
+\begin{minipage}[c]{\dimexpr\linewidth-75mm-\leftskip} % 横幅を調整
+  こんにちは，今日の天気は晴天．
+  小春日和で出かけるには，ちょうど良いでしょう．
+  花粉対策を忘れないように．！
+  \vfill%
+\end{minipage}%
+\hspace{5mm}%
+\begin{minipage}[b]{70mm}
+  \includegraphics[width=70mm]{./test.jpg}
+  \vspace{1em}
+\end{minipage}%
+
+
+
+
+\newpage
+\subsubsection{小見出し（レベル3）}%
+\begin{minipage}[c]{\dimexpr\linewidth-75mm-\leftskip} % 横幅を調整
+  \lipsum[2]
+  こんにちは，今日の天気は晴天．
+  小春日和で出かけるには，ちょうど良いでしょう．
+  花粉対策を忘れないように．！
+  \vfill%
+\end{minipage}%
+\hspace{5mm}%
+\begin{minipage}[t]{70mm} % 横幅を調整
+  \includegraphics[width=70mm]{./test.jpg}%
+  \vspace{1em}%
+\end{minipage}%
+
+
+\subsubsection{小見出し（レベル3）}%
+\begin{minipage}[c]{\dimexpr\linewidth-75mm-\leftskip} % 横幅を調整
+  \lipsum[2]
+  こんにちは，今日の天気は晴天．
+  小春日和で出かけるには，ちょうど良いでしょう．
+  花粉対策を忘れないように．！
+  \vfill%
+\end{minipage}%
+\hspace{5mm}%
+\begin{minipage}[c]{70mm} % 横幅を調整
+  \includegraphics[width=70mm]{./test.jpg}%
+  \vspace{1em}%
+\end{minipage}%
+
+
+
+\subsubsection{小見出し（レベル3）}%
+\begin{minipage}[c]{\dimexpr\linewidth-75mm-\leftskip} % 横幅を調整
+  \lipsum[2]
+  こんにちは，今日の天気は晴天．
+  小春日和で出かけるには，ちょうど良いでしょう．
+  花粉対策を忘れないように．！
+  \vfill%
+\end{minipage}%
+\hspace{5mm}%
+\begin{minipage}[b]{70mm} % 横幅を調整
+  \includegraphics[width=70mm]{./test.jpg}%
+  \vspace{1em}%
+\end{minipage}%
+
+
+
+
 
 
 \end{document}
