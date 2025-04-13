@@ -1,0 +1,120 @@
+\documentclass{article}
+\usepackage{fontspec}
+\usepackage{luatexja}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{tcolorbox}  % tcolorbox パッケージを使用
+\usepackage{graphicx}
+\usepackage{xparse}  % LaTeX3の関数を使うために必要
+\usepackage{multicol}
+\usepackage{calc}
+
+
+\usepackage[top     =20.0truemm,
+            bottom  =18.0truemm,
+            left    =20.0truemm,
+            right   =20.0truemm]{geometry}
+
+% 日本語フォントを指定
+\setmainfont{Times New Roman}  % 英文用のフォント
+\newfontface\myjapanesefont{MS Gothic}[Contextuals={WordInitial,WordFinal},Language=Japanese]  % 日本語用フォント設定
+
+
+\tcbset{
+  myboxstyle/.style={
+		% colbacktitle	=	gray!10,
+		colbacktitle	=	white,
+		colback				=	white,
+		coltitle			=	black,
+		colframe			=	black,
+		fonttitle			=	\bfseries,
+		top						=	2.0mm,
+		left					=	5.0mm,
+		bottom				=	2.0mm,
+		right					=	2.0mm,
+		boxrule				=	0.0mm,
+		leftrule			=	1.0mm,
+		rightrule			=	0.0mm,
+		width					=	\textwidth,
+		sharp corners,
+	}
+}
+
+
+
+
+\ExplSyntaxOn
+\NewDocumentCommand{\注意書}{ O{} m }{
+	\vspace*{0.0mm}
+	\tl_if_in:NnTF {危険,警告,注意}{#1}{
+		\begin{tcolorbox}[myboxstyle,
+			title = {\raisebox{-2.0pt}{\includegraphics[height=14pt, keepaspectratio]{./#1.png}} {\fontsize{14pt}{11pt}\selectfont \hspace{0.0em} \textbf{#1}}},
+		]
+	}{}
+	\tl_if_in:NnTF {重要,アドバイス}{#1}{
+		\begin{tcolorbox}[myboxstyle,
+			title = {\tcbox[colback=white, colframe=black, boxrule=0.2mm, top=0.0mm, bottom=0.0mm, left=1.0mm, right=1.0mm]{{\fontsize{11pt}{11pt}\selectfont \textbf{#1}}}},
+			colbacktitle	=	gray!10,
+			colback				=	gray!10,
+			leftrule			=	0.0mm,
+			left					=	6.0mm,
+		]
+	}{}
+		\begin{itemize}[left=0.0em, itemsep=-0.1em]
+			#2
+		\end{itemize}
+	\end{tcolorbox}
+	\vspace*{0.0mm}
+}
+\ExplSyntaxOff
+
+\setlength{\columnsep}{0pt}
+
+
+\begin{document}
+
+\noindent egegerge
+
+
+\注意書[注意]{
+	\item tetet
+	\item hｆげげｒげｇあああああああああああああああああああああああああああああああああああああああああああああ
+	\item ｈくぇへｒｇへｒ
+}
+
+
+\注意書[アドバイス]{
+	\item tetet
+	\item hｆげげｒげｇあああああああああああああああああああああああああああああああああああああああああああああ
+	\item ｈくぇへｒｇへｒ
+}
+
+
+\section{セクション}
+\subsection{サブセクション}
+\begin{enumerate}
+	\item tettetetete
+	\item eteggdgdgdfgdf
+	\begin{multicols}{2}
+		\item ああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああ
+		\item いいいいいいいいいいいいいいいいいいいい\\
+		いいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいい
+		\begin{enumerate}
+		\item ううううううううううううううううううううううううううううううううううううううううううううううううううううううううううううううううううう
+		\item ええええええええええええええええええええええええええええええええええええええええええええええええええええええええええええええええええ
+	\end{enumerate}
+		\columnbreak
+			\begin{flushright}
+				\includegraphics[width=70mm,height=45mm]{./注意.png}  % 画像の指定
+				\vfill
+			\end{flushright}
+		\end{multicols}
+	\item eteggdgdgdfgdf
+	\item eteggdgdgdfgdf
+	\item eteggdgdgdfgdf
+	\item dgdgdgdgdfgdgdfgdfgd
+\end{enumerate}
+
+
+
+\end{document}
