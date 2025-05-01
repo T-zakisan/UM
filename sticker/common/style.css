@@ -1,0 +1,164 @@
+body {
+	margin: 0;
+	font-family: sans-serif;
+}
+
+.header {
+	background-color: #333;
+	padding: 10px 20px;
+	display: flex;
+	align-items: center;
+	gap: 60px;
+}
+.header-title {
+	font-size: 22px;
+	font-weight: bold;
+	color: #ffd700; /* ゴールドっぽく目立つ色 */
+}
+.header a:hover {
+	text-decoration: underline;
+}
+/* ナビゲーションリンク */
+.header-nav {
+	display: flex;
+	gap: 20px;
+}
+.header-nav a {
+	color: white;
+	text-decoration: none;
+	font-size: 16px;
+	padding: 5px 10px;
+}
+.header-nav a:hover {
+	text-decoration: underline;
+}
+/* 現在ページを強調 */
+.header-nav a.active {
+	background-color: #555; /* 少し明るいグレー */
+	font-weight: bold;
+	border-radius: 5px;
+	padding: 6px 12px;
+}
+
+.container {
+	display: flex;
+	height: calc(100vh - 50px); /* ヘッダー高さ分引く */
+	padding: 10px;
+	box-sizing: border-box;
+}
+.left, .center, .right {
+	overflow-y: auto;
+	padding: 10px;
+	box-sizing: border-box;
+}
+.left {
+	width: 200px;
+	background: #f0f0f0;
+	position: relative;
+	z-index: 1;
+}
+.center {
+	flex: 1;
+	background: #fafafa;
+}
+.right {
+	width: 250px;
+	background: #ffffff;
+	border-left: 1px solid #ccc;
+}
+h2 {
+	margin-top: 0;
+}
+.tag-item {
+	padding: 5px;
+	border-bottom: 1px solid #ccc;
+}
+.tag-item:hover {
+	background-color: #e0e0e0;
+}
+#thumbnail-view {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 5px;
+}
+.sticker-item {
+	width: 110px;
+	text-align: center;
+	position: relative;
+	z-index: auto;
+	transition: transform 0.2s, z-index 0.2s;
+}
+.sticker-item.active {
+	z-index: 1000; 
+}
+.thumbnail-image {
+	width: 100px;
+	height: 100px;
+	object-fit: contain;
+	border: 1px solid #ccc;
+	transition: all 0.2s;
+	cursor: pointer;
+}
+.thumbnail-image.expanded {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	width: 400px;
+	height: 400px;
+	transform: translate(-50%, -50%);
+	z-index: 2000;
+	border: 2px solid #666;
+	background: white;
+}
+.selected-tag {
+	background-color: #cce5ff;
+	font-weight: bold;
+}
+#reset-tags {
+	background-color: rgb(255, 255, 255);
+	border: 1px solid #ccc;
+	cursor: pointer;
+}
+#reset-tags:hover {
+	background-color: #ddd;
+}
+
+/* 🎯 ←ここから追加 */
+input[type="text"] {
+	font-size: 16px;
+	height: 2em;
+	padding: 4px 8px;
+	width: 90%;
+	box-sizing: border-box;
+}
+
+label {
+	font-weight: bold;
+}
+
+
+#stock-list {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr); /* 2列にする */
+	gap: 10px;
+}
+
+#stock-list .sticker-item {
+	width: 100%; /* グリッド内なので100%に */
+	box-sizing: border-box;
+}
+
+
+.thumbnail-image.expanded {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	width: 400px;
+	height: 400px;
+	transform: translate(-50%, -50%);
+	z-index: 2000;
+	border: 2px solid #666;
+	background: white;
+}
+
+
